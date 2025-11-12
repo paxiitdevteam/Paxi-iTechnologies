@@ -48,8 +48,8 @@ class LanguageSystem {
      * Load available languages from translations directory
      */
     async loadAvailableLanguages() {
-        // Only 2 languages for now: English and French
-        this.availableLanguages = ['en', 'fr'];
+        // All available languages: English, French, Arabic, German, Spanish
+        this.availableLanguages = ['en', 'fr', 'ar', 'de', 'es'];
         
         // Try to detect from localStorage or config
         if (typeof window !== 'undefined' && window.localStorage) {
@@ -57,11 +57,12 @@ class LanguageSystem {
             if (saved) {
                 try {
                     const parsed = JSON.parse(saved);
-                    // Only keep languages that are in our 2-language list
-                    this.availableLanguages = parsed.filter(lang => ['en', 'fr'].includes(lang));
+                    // Keep languages that exist in our translation files
+                    const validLanguages = ['en', 'fr', 'ar', 'de', 'es'];
+                    this.availableLanguages = parsed.filter(lang => validLanguages.includes(lang));
                     // Ensure we have at least default language
                     if (this.availableLanguages.length === 0) {
-                        this.availableLanguages = ['en', 'fr'];
+                        this.availableLanguages = ['en', 'fr', 'ar', 'de', 'es'];
                     }
                 } catch (e) {
                     console.warn('Failed to parse available languages from storage');
