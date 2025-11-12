@@ -1,0 +1,55 @@
+{
+    "roles": {
+        "super_admin": {
+            "name": "Super Administrator",
+            "permissions": [
+                "pages.create",
+                "pages.edit",
+                "pages.delete",
+                "pages.view",
+                "services.create",
+                "services.edit",
+                "services.delete",
+                "services.view",
+                "content.create",
+                "content.edit",
+                "content.delete",
+                "content.view",
+                "users.create",
+                "users.edit",
+                "users.delete",
+                "users.view",
+                "settings.edit",
+                "settings.view"
+            ]
+        },
+        "admin": {
+            "name": "Administrator",
+            "permissions": [
+                "pages.create",
+                "pages.edit",
+                "pages.view",
+                "services.create",
+                "services.edit",
+                "services.view",
+                "content.create",
+                "content.edit",
+                "content.view",
+                "users.view",
+                "settings.view"
+            ]
+        },
+        "editor": {
+            "name": "Editor",
+            "permissions": [
+                "pages.edit",
+                "pages.view",
+                "services.edit",
+                "services.view",
+                "content.edit",
+                "content.view"
+            ]
+        }
+    }
+}
+

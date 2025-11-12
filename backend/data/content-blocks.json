@@ -1,0 +1,81 @@
+[
+    {
+        "id": 1,
+        "key": "hero-title",
+        "type": "text",
+        "category": "homepage",
+        "content": {
+            "en": "Welcome to Paxi iTechnologies",
+            "fr": "Bienvenue chez Paxi iTechnologies"
+        },
+        "description": "Main hero title on homepage",
+        "created": "2025-01-01T00:00:00.000Z",
+        "modified": "2025-01-01T00:00:00.000Z"
+    },
+    {
+        "id": 2,
+        "key": "hero-subtitle",
+        "type": "text",
+        "category": "homepage",
+        "content": {
+            "en": "Smart IT Management. Clear Results.",
+            "fr": "Gestion IT Intelligente. Résultats Clairs."
+        },
+        "description": "Hero subtitle on homepage",
+        "created": "2025-01-01T00:00:00.000Z",
+        "modified": "2025-01-01T00:00:00.000Z"
+    },
+    {
+        "id": 3,
+        "key": "hero-description",
+        "type": "text",
+        "category": "homepage",
+        "content": {
+            "en": "We build clear, modern, and smart IT systems — with real-world results.",
+            "fr": "Nous construisons des systèmes IT clairs, modernes et intelligents — avec des résultats concrets."
+        },
+        "description": "Hero description on homepage",
+        "created": "2025-01-01T00:00:00.000Z",
+        "modified": "2025-01-01T00:00:00.000Z"
+    },
+    {
+        "id": 4,
+        "key": "about-mission",
+        "type": "text",
+        "category": "about",
+        "content": {
+            "en": "We build clear, modern, and smart IT systems — with real-world results.",
+            "fr": "Nous construisons des systèmes IT clairs, modernes et intelligents — avec des résultats concrets."
+        },
+        "description": "Mission statement on about page",
+        "created": "2025-01-01T00:00:00.000Z",
+        "modified": "2025-01-01T00:00:00.000Z"
+    },
+    {
+        "id": 5,
+        "key": "contact-address",
+        "type": "text",
+        "category": "contact",
+        "content": {
+            "en": "49 AVE LUCIE AUBRAC BONNEUIL-SUR-MARNE, VAL DE MARNE 94380 FRANCE",
+            "fr": "49 AVE LUCIE AUBRAC BONNEUIL-SUR-MARNE, VAL DE MARNE 94380 FRANCE"
+        },
+        "description": "Company address",
+        "created": "2025-01-01T00:00:00.000Z",
+        "modified": "2025-01-01T00:00:00.000Z"
+    },
+    {
+        "id": 6,
+        "key": "contact-phone",
+        "type": "text",
+        "category": "contact",
+        "content": {
+            "en": "+33782391311",
+            "fr": "+33782391311"
+        },
+        "description": "Company phone number",
+        "created": "2025-01-01T00:00:00.000Z",
+        "modified": "2025-01-01T00:00:00.000Z"
+    }
+]
+

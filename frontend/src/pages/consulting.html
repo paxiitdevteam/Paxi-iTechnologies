@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IT Consulting Services - Paxi iTechnologies. Strategic IT Blueprints, Device Refresh Projects, Cloud Migrations, and more.">
+    <title>IT Consulting Services - Paxi iTechnologies</title>
+    
+    <!-- Systems - Load in order -->
+    <script src="/services/path-manager.js"></script>
+    <script src="/services/port-manager.js"></script>
+    <script src="/services/api-path-manager.js"></script>
+    <script type="module" src="/cls/lang-core.js"></script>
+    <script src="/cls/lang-switcher.js"></script>
+    <script src="/components/translation-plugin.js"></script>
+    <script src="/services/cookie-manager.js"></script>
+    
+    <!-- Simple initialization -->
+    <script>
+        (function() {
+            'use strict';
+            if (window.__PAGE_INIT__) return;
+            window.__PAGE_INIT__ = true;
+            
+            function init() {
+                // Initialize language system
+                if (typeof window.CLS !== 'undefined' && !window.CLS.initialized) {
+                    window.CLS.initialize();
+                }
+                
+                // Initialize language switcher
+                if (typeof window.LanguageSwitcher !== 'undefined') {
+                    const container = document.getElementById('lang-switcher');
+                    if (container) {
+                        const switcher = new window.LanguageSwitcher('lang-switcher');
+                        switcher.initialize();
+                    }
+                }
+                
+                // Initialize translation plugin
+                if (typeof window.TranslationPlugin !== 'undefined') {
+                    window.translationPlugin = new window.TranslationPlugin({
+                        googleTranslateEnabled: true,
+                        clsEnabled: true,
+                        position: 'bottom-right',
+                        showWidget: true
+                    });
+                    window.translationPlugin.initialize();
+                }
+                
+                // Update footer year
+                const yearSpan = document.getElementById('current-year');
+                if (yearSpan) {
+                    yearSpan.textContent = new Date().getFullYear();
+                }
+                
+                // Mark active nav link
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === '/consulting.html' || link.getAttribute('href') === '/consulting') {
+                        link.style.color = 'var(--primary-color)';
+                        link.style.fontWeight = '600';
+                    }
+                });
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init, { once: true });
+            } else {
+                init();
+            }
+        })();
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #006d77;
+            --secondary-color: #83c5be;
+            --accent-color: #ffddd2;
+            --accent-2: #e29578;
+            --bg-light: #edf6f9;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--bg-white, #ffffff);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color, #2563eb);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .logo:hover {
+            color: var(--secondary-color, #1e40af);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark, #1f2937);
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color, #2563eb);
+        }
+        
+        .lang-switcher-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, rgba(0, 109, 119, 0.85) 0%, rgba(131, 197, 190, 0.85) 100%), url('/assets/images/optimized/it_conso.jpg') center/cover no-repeat;
+            color: white;
+            padding: 8rem 2rem 6rem;
+            text-align: center;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            opacity: 0.95;
+        }
+        
+        /* Section Styles */
+        .section {
+            padding: 5rem 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .consulting-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        
+        .consulting-intro h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .consulting-intro p {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+        
+        /* Consulting Services Grid */
+        .consulting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+        
+        .consulting-card {
+            background: var(--bg-white);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        
+        .consulting-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .consulting-card .btn {
+            pointer-events: none;
+        }
+        
+        .consulting-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .consulting-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .consulting-card h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .consulting-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .consulting-card ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .consulting-card ul li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-light);
+        }
+        
+        .consulting-card ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--primary-color);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+        
+        .cta-section .btn {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .cta-section .btn:hover {
+            background: var(--bg-light);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background: var(--text-dark, #1f2937);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+                padding: 1rem;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-color);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                width: 100%;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .nav-links a {
+                display: block;
+                padding: 0.5rem 0;
+                font-size: 1rem;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            .lang-switcher-container {
+                width: 100%;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border-color);
+                margin-left: 0;
+            }
+            
+            .page-header {
+                padding: 6rem 1.5rem 4rem;
+                min-height: 50vh;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .consulting-intro h2 {
+                font-size: 2rem;
+            }
+            
+            .consulting-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .consulting-card {
+                padding: 1.5rem;
+            }
+            
+            .btn {
+                min-height: 44px;
+                width: 100%;
+            }
+            
+            .section {
+                padding: 3rem 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 5rem 1rem 3rem;
+                min-height: 40vh;
+            }
+            
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .logo {
+                font-size: 1.25rem;
+            }
+            
+            .btn {
+                min-height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Component -->
+    <header>
+        <nav>
+            <a href="/" class="logo">Paxi iTechnologies</a>
+            <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="/" data-translate="nav.home">Home</a></li>
+                <li><a href="/about.html" data-translate="nav.about">About</a></li>
+                <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+                <li><a href="/consulting.html">Consulting</a></li>
+                <li><a href="/support.html">Support</a></li>
+                <li><a href="/governance.html">Governance</a></li>
+                <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                <li class="lang-switcher-container">
+                    <div id="lang-switcher"></div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <script>
+        // Mobile menu toggle
+        (function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    const isActive = navLinks.classList.toggle('active');
+                    menuToggle.classList.toggle('active');
+                    menuToggle.setAttribute('aria-expanded', isActive);
+                });
+                
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        navLinks.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        })();
+    </script>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 data-translate="consulting.title">IT Consulting Services</h1>
+            <p data-translate="consulting.subtitle">A structured approach to organizational change that guarantees future business success</p>
+        </div>
+    </section>
+
+    <!-- Consulting Intro -->
+    <section class="section">
+        <div class="container">
+            <div class="consulting-intro">
+                <h2 data-translate="consulting.introTitle">IT Consulting that is about more than just giving advice</h2>
+                <p data-translate="consulting.introText">We provide strategic IT consulting services that help organizations transform their technology infrastructure, optimize operations, and achieve their business goals. Our structured approach ensures measurable results and long-term success.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Consulting Services -->
+    <section class="section" style="background: var(--bg-light);">
+        <div class="container">
+            <div class="consulting-grid">
+                <!-- Strategic IT Blueprints -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">📋</div>
+                    <h3 data-translate="consulting.strategicBlueprints.title">Strategic IT Blueprints</h3>
+                    <h4 data-translate="consulting.strategicBlueprints.subtitle">Design your digital future today</h4>
+                    <p data-translate="consulting.strategicBlueprints.description">Technology changes quickly, and it can be difficult to stay ahead of the curve. But with our strategic IT planning, we will help you reimagine your business and design your future.</p>
+                    <ul>
+                        <li data-translate="consulting.strategicBlueprints.features.0">Technology roadmap development</li>
+                        <li data-translate="consulting.strategicBlueprints.features.1">Business-IT alignment strategies</li>
+                        <li data-translate="consulting.strategicBlueprints.features.2">Short-term and long-term planning</li>
+                        <li data-translate="consulting.strategicBlueprints.features.3">Cost optimization analysis</li>
+                        <li data-translate="consulting.strategicBlueprints.features.4">Risk assessment and mitigation</li>
+                        <li data-translate="consulting.strategicBlueprints.features.5">Actionable implementation plans</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.strategicBlueprints.button">Drop us a line</span>
+                </a>
+
+                <!-- Device Refresh Projects -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">🔄</div>
+                    <h3 data-translate="consulting.deviceRefresh.title">Device Refresh Projects</h3>
+                    <h4 data-translate="consulting.deviceRefresh.subtitle">Enterprise device lifecycle management</h4>
+                    <p data-translate="consulting.deviceRefresh.description">Comprehensive device refresh and lifecycle projects. We integrate CRM and ITSM systems for seamless operations and efficient asset management.</p>
+                    <ul>
+                        <li data-translate="consulting.deviceRefresh.features.0">Device procurement and deployment</li>
+                        <li data-translate="consulting.deviceRefresh.features.1">Asset management and inventory</li>
+                        <li data-translate="consulting.deviceRefresh.features.2">CRM integration (Salesforce)</li>
+                        <li data-translate="consulting.deviceRefresh.features.3">ITSM integration (Jira, ServiceNow)</li>
+                        <li data-translate="consulting.deviceRefresh.features.4">Endpoint security and compliance</li>
+                        <li data-translate="consulting.deviceRefresh.features.5">Lifecycle planning and optimization</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.deviceRefresh.button">Get Started</span>
+                </a>
+
+                <!-- IT Project Consulting -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">🚀</div>
+                    <h3 data-translate="consulting.itProjectConsulting.title">IT Project Consulting</h3>
+                    <h4 data-translate="consulting.itProjectConsulting.subtitle">Expert project management and execution</h4>
+                    <p data-translate="consulting.itProjectConsulting.description">Expert project management following PMI and Agile frameworks. We manage end-to-end technology projects from planning to deployment, ensuring systems are delivered on time, within scope, and ready for real-world performance.</p>
+                    <ul>
+                        <li data-translate="consulting.itProjectConsulting.features.0">PMI and Agile frameworks</li>
+                        <li data-translate="consulting.itProjectConsulting.features.1">End-to-end project lifecycle</li>
+                        <li data-translate="consulting.itProjectConsulting.features.2">Scope, time, and budget control</li>
+                        <li data-translate="consulting.itProjectConsulting.features.3">Risk management and mitigation</li>
+                        <li data-translate="consulting.itProjectConsulting.features.4">Stakeholder communication</li>
+                        <li data-translate="consulting.itProjectConsulting.features.5">Quality assurance and testing</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.itProjectConsulting.button">Talk with us</span>
+                </a>
+
+                <!-- Security & Compliance -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">🔒</div>
+                    <h3 data-translate="consulting.securityCompliance.title">Security & Compliance</h3>
+                    <h4 data-translate="consulting.securityCompliance.subtitle">Safe & Compliant – the way your data should be</h4>
+                    <p data-translate="consulting.securityCompliance.description">Cyberattacks are rising, and everyone is at risk. But with our team of cybersecurity engineers, we can offer you the protection you need to mitigate exposure risks and reduce the severity of attacks.</p>
+                    <ul>
+                        <li data-translate="consulting.securityCompliance.features.0">Security strategy development</li>
+                        <li data-translate="consulting.securityCompliance.features.1">Governance and compliance frameworks</li>
+                        <li data-translate="consulting.securityCompliance.features.2">Advanced security testing</li>
+                        <li data-translate="consulting.securityCompliance.features.3">Threat detection and response</li>
+                        <li data-translate="consulting.securityCompliance.features.4">Security controls implementation</li>
+                        <li data-translate="consulting.securityCompliance.features.5">Compliance audits and assessments</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.securityCompliance.button">Security Services</span>
+                </a>
+
+                <!-- Cloud Migrations -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">☁️</div>
+                    <h3 data-translate="consulting.cloudMigrations.title">Cloud Migrations</h3>
+                    <h4 data-translate="consulting.cloudMigrations.subtitle">Journey to the next level of business</h4>
+                    <p data-translate="consulting.cloudMigrations.description">We get the results you need in today's competitive business world by utilizing our drive to transform the way you do business. Whether you are looking to move to a public, private or hybrid-cloud, we give you the strategy, advice, expertise, and technology management skills.</p>
+                    <ul>
+                        <li data-translate="consulting.cloudMigrations.features.0">Cloud strategy development</li>
+                        <li data-translate="consulting.cloudMigrations.features.1">Public, private, and hybrid cloud solutions</li>
+                        <li data-translate="consulting.cloudMigrations.features.2">Migration planning and execution</li>
+                        <li data-translate="consulting.cloudMigrations.features.3">Cost optimization and governance</li>
+                        <li data-translate="consulting.cloudMigrations.features.4">Azure and AWS expertise</li>
+                        <li data-translate="consulting.cloudMigrations.features.5">Post-migration support</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.cloudMigrations.button">Start your Cloud Migration</span>
+                </a>
+
+                <!-- Disaster Management & Recovery -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">🛡️</div>
+                    <h3 data-translate="consulting.disasterRecovery.title">Disaster Management & Recovery</h3>
+                    <h4 data-translate="consulting.disasterRecovery.subtitle">Keep your business operational - always</h4>
+                    <p data-translate="consulting.disasterRecovery.description">Disasters are never something we hope for but are always something we should plan for. Whether it be a natural disaster or a cyberattack, with our disaster management and recovery expertise, we will not only help you be prepared for anything, but we will also make sure your data can be instantly recovered.</p>
+                    <ul>
+                        <li data-translate="consulting.disasterRecovery.features.0">Disaster recovery planning</li>
+                        <li data-translate="consulting.disasterRecovery.features.1">Business continuity strategies</li>
+                        <li data-translate="consulting.disasterRecovery.features.2">Data backup and replication</li>
+                        <li data-translate="consulting.disasterRecovery.features.3">Recovery time objective (RTO) optimization</li>
+                        <li data-translate="consulting.disasterRecovery.features.4">Recovery point objective (RPO) planning</li>
+                        <li data-translate="consulting.disasterRecovery.features.5">Regular testing and validation</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.disasterRecovery.button">Disaster Recovery Services</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Microsoft Consulting Section -->
+    <section class="section">
+        <div class="container">
+            <div class="consulting-intro">
+                <h2 data-translate="consulting.microsoftTitle">Microsoft Consulting Services</h2>
+                <p data-translate="consulting.microsoftSubtitle">Upgrade your IT strategy and boost your ROI with optimized, specialist Microsoft services. Transform your business efficiency with the power and versatility of Microsoft.</p>
+            </div>
+            
+            <div class="consulting-grid">
+                <!-- Microsoft 365 Consulting -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">📧</div>
+                    <h3 data-translate="consulting.microsoft365.title">Microsoft 365 Consulting</h3>
+                    <h4 data-translate="consulting.microsoft365.subtitle">Better security with Microsoft 365 Business & Enterprise</h4>
+                    <p data-translate="consulting.microsoft365.description">Our planning, implementation, and management solutions enable your organization's digital transformation with a secure and flexible environment, using a combination of business applications, enterprise services, and cloud services.</p>
+                    <ul>
+                        <li data-translate="consulting.microsoft365.features.0">Microsoft 365 planning and implementation</li>
+                        <li data-translate="consulting.microsoft365.features.1">Advanced security features and threat management</li>
+                        <li data-translate="consulting.microsoft365.features.2">Reduced licensing fees and hardware costs</li>
+                        <li data-translate="consulting.microsoft365.features.3">Migration expertise and strategic planning</li>
+                        <li data-translate="consulting.microsoft365.features.4">Ongoing support and optimization</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.microsoft365.button">Microsoft 365 Services</span>
+                </a>
+
+                <!-- Microsoft Teams -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">💬</div>
+                    <h3 data-translate="consulting.microsoftTeams.title">Microsoft Teams</h3>
+                    <h4 data-translate="consulting.microsoftTeams.subtitle">Centralized communication and collaboration</h4>
+                    <p data-translate="consulting.microsoftTeams.description">Get expertise on the collaborative tools your team needs to improve their efficiency with centralized communication, security solutions, ubiquity, and easy access.</p>
+                    <ul>
+                        <li data-translate="consulting.microsoftTeams.features.0">Teams deployment and configuration</li>
+                        <li data-translate="consulting.microsoftTeams.features.1">Security and compliance setup</li>
+                        <li data-translate="consulting.microsoftTeams.features.2">Integration with Office 365</li>
+                        <li data-translate="consulting.microsoftTeams.features.3">User training and adoption</li>
+                        <li data-translate="consulting.microsoftTeams.features.4">Ongoing support and optimization</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.microsoftTeams.button">Teams Consulting</span>
+                </a>
+
+                <!-- Microsoft Azure -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">☁️</div>
+                    <h3 data-translate="consulting.microsoftAzure.title">Microsoft Azure Consulting</h3>
+                    <h4 data-translate="consulting.microsoftAzure.subtitle">Build, manage and install applications on a centralized network</h4>
+                    <p data-translate="consulting.microsoftAzure.description">Our team is available to help you either optimize your existing infrastructure or migrate to Azure cloud. Build scalable cloud solutions that grow with your business.</p>
+                    <ul>
+                        <li data-translate="consulting.microsoftAzure.features.0">Azure cloud migration</li>
+                        <li data-translate="consulting.microsoftAzure.features.1">Infrastructure optimization</li>
+                        <li data-translate="consulting.microsoftAzure.features.2">Application deployment and management</li>
+                        <li data-translate="consulting.microsoftAzure.features.3">Cost control and governance</li>
+                        <li data-translate="consulting.microsoftAzure.features.4">Security and compliance</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.microsoftAzure.button">Azure Services</span>
+                </a>
+
+                <!-- SharePoint Development -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">📁</div>
+                    <h3 data-translate="consulting.sharePoint.title">SharePoint Development</h3>
+                    <h4 data-translate="consulting.sharePoint.subtitle">Save time, money, and efforts with SharePoint</h4>
+                    <p data-translate="consulting.sharePoint.description">Choose SharePoint as your ideal platform for ideas exchange, team collaboration, and task automation. We implement planning, configuration, maintenance, and SharePoint integration and technical support.</p>
+                    <ul>
+                        <li data-translate="consulting.sharePoint.features.0">SharePoint planning and configuration</li>
+                        <li data-translate="consulting.sharePoint.features.1">Team collaboration setup</li>
+                        <li data-translate="consulting.sharePoint.features.2">Task automation implementation</li>
+                        <li data-translate="consulting.sharePoint.features.3">Integration with Microsoft 365</li>
+                        <li data-translate="consulting.sharePoint.features.4">Technical support and maintenance</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.sharePoint.button">SharePoint Services</span>
+                </a>
+
+                <!-- Windows 10 / 11 Consulting -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">🪟</div>
+                    <h3 data-translate="consulting.windows.title">Windows 10 / 11 Consulting</h3>
+                    <h4 data-translate="consulting.windows.subtitle">Support & Migration services</h4>
+                    <p data-translate="consulting.windows.description">We can help develop a strategy, implement, and train your employees during your Windows 10 or Windows 11 migration journey. Ensure a smooth transition with minimal disruption to your business operations.</p>
+                    <ul>
+                        <li data-translate="consulting.windows.features.0">Migration strategy development</li>
+                        <li data-translate="consulting.windows.features.1">Windows 10 and Windows 11 deployment</li>
+                        <li data-translate="consulting.windows.features.2">Employee training programs</li>
+                        <li data-translate="consulting.windows.features.3">Ongoing support and maintenance</li>
+                        <li data-translate="consulting.windows.features.4">Compatibility testing and assessment</li>
+                        <li data-translate="consulting.windows.features.5">Upgrade path planning</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.windows.button">Windows Services</span>
+                </a>
+
+                <!-- Power Platform -->
+                <a href="/contact.html" class="consulting-card">
+                    <div class="consulting-card-icon">⚡</div>
+                    <h3 data-translate="consulting.powerPlatform.title">Power Platform</h3>
+                    <h4 data-translate="consulting.powerPlatform.subtitle">Power up business intelligence and employee efficiency</h4>
+                    <p data-translate="consulting.powerPlatform.description">Connect Power apps, Power BI, and Microsoft Dynamics 365 to Azure, creating end-to-end business solutions with data-driven insight apps.</p>
+                    <ul>
+                        <li data-translate="consulting.powerPlatform.features.0">Power BI implementation</li>
+                        <li data-translate="consulting.powerPlatform.features.1">Power Apps development</li>
+                        <li data-translate="consulting.powerPlatform.features.2">Integration with Dynamics 365</li>
+                        <li data-translate="consulting.powerPlatform.features.3">Data-driven insights and analytics</li>
+                        <li data-translate="consulting.powerPlatform.features.4">End-to-end business solutions</li>
+                    </ul>
+                    <span class="btn btn-primary" data-translate="consulting.powerPlatform.button">Power Platform Services</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 data-translate="consulting.ctaTitle">Ready to Transform Your IT Infrastructure?</h2>
+            <p data-translate="consulting.ctaText">Let's discuss how our consulting services can help your business achieve its goals. Contact us today.</p>
+            <a href="/contact.html" class="btn" data-translate="consulting.ctaButton">Contact Us</a>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Paxi iTechnologies</h3>
+                <p data-translate="home.subtitle">Smart IT Management. Clear Results.</p>
+            </div>
+            <div class="footer-section">
+                <h3 data-translate="nav.home">Quick Links</h3>
+                <ul>
+                    <li><a href="/" data-translate="nav.home">Home</a></li>
+                    <li><a href="/about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+                    <li><a href="/consulting.html">Consulting</a></li>
+                    <li><a href="/governance.html">Governance</a></li>
+                <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 data-translate="consulting.footerServices">Consulting Services</h3>
+                <ul>
+                    <li><a href="/consulting.html" data-translate="consulting.footerStrategic">Strategic IT Blueprints</a></li>
+                    <li><a href="/consulting.html" data-translate="consulting.footerDevice">Device Refresh Projects</a></li>
+                    <li><a href="/consulting.html" data-translate="consulting.footerProject">IT Project Consulting</a></li>
+                    <li><a href="/consulting.html" data-translate="consulting.footerSecurity">Security & Compliance</a></li>
+                    <li><a href="/consulting.html" data-translate="consulting.footerCloud">Cloud Migrations</a></li>
+                    <li><a href="/consulting.html" data-translate="consulting.footerMicrosoft">Microsoft Consulting</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="/terms-of-service.html">Terms of Service</a></li>
+                    <li><a href="/cookies-disclaimer.html">Cookie Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="mailto:contact@paxiit.com">Email</a></li>
+                    <li><a href="tel:+33782391311">+33 7 82 39 13 11</a></li>
+                </ul>
+                <div class="social-media-icons" style="margin-top: 1.5rem;">
+                    <a href="https://www.linkedin.com/company/paxi-itechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-linkedin.svg" alt="LinkedIn" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.facebook.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-facebook.svg" alt="Facebook" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://twitter.com/paxiitech" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-twitter.svg" alt="Twitter" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.instagram.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-instagram.svg" alt="Instagram" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.youtube.com/@paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block;">
+                        <img src="/assets/images/optimized/icons8-youtube.svg" alt="YouTube" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-translate="footer.copyright" data-translate-params='{"year": "2025"}'><span id="current-year">2025</span></p>
+        </div>
+    </footer>
+</body>
+</html>
+

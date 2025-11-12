@@ -1,0 +1,3289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Paxi iTechnologies</title>
+    
+    <!-- Systems - Load in order -->
+    <script src="/services/path-manager.js?v=2.0.0"></script>
+    <script src="/services/port-manager.js?v=2.0.0"></script>
+    <script src="/services/api-path-manager.js?v=2.0.0"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #006d77;
+            --secondary: #83c5be;
+            --accent: #ffddd2;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+        }
+        
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+        
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-box h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .login-box p {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #005a63;
+        }
+        
+        .btn:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .alert.error {
+            background: #fee2e2;
+            color: var(--error);
+            border: 1px solid #fecaca;
+        }
+        
+        .alert.success {
+            background: #d1fae5;
+            color: var(--success);
+            border: 1px solid #a7f3d0;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+        
+        .dashboard.active {
+            display: block;
+        }
+        
+        .dashboard-header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .dashboard-header h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-info span {
+            color: var(--text-light);
+        }
+        
+        .dashboard-content {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-right: 2px solid var(--border);
+            padding: 2rem 0;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar-menu a {
+            display: block;
+            padding: 1rem 2rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: var(--bg-light);
+            border-left-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-card .label {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+        
+        .table {
+            width: 100%;
+            background: white;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .table tr:hover {
+            background: var(--bg-light);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            width: auto;
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background: #6bb3a8;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--primary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        
+        .modal-close:hover {
+            color: var(--text-dark);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="login-container">
+        <div class="login-box">
+            <h1>Admin Dashboard</h1>
+            <p>Paxi iTechnologies Website Management</p>
+            <div id="login-alert"></div>
+            <div style="background: #e0f2fe; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; font-size: 0.875rem;">
+                <strong>Default Credentials:</strong><br>
+                Username: <code>admin</code><br>
+                Password: <code>admin123</code>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn" id="login-btn">Login</button>
+            </form>
+            <div style="text-align: center; margin-top: 1rem;">
+                <button type="button" class="btn btn-secondary" onclick="testConnection()" style="width: auto; padding: 0.5rem 1rem; font-size: 0.875rem;">Test Backend Connection</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <div class="user-info">
+                <span id="username-display"></span>
+                <button class="btn btn-sm" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <div class="dashboard-content">
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="menu-link active" data-section="overview">📊 Overview</a></li>
+                    <li><a href="#" class="menu-link" data-section="pages">📄 Pages</a></li>
+                    <li><a href="#" class="menu-link" data-section="services">🛠️ Services</a></li>
+                    <li><a href="#" class="menu-link" data-section="content">✏️ Content</a></li>
+                    <li><a href="#" class="menu-link" data-section="users">👥 Users</a></li>
+                    <li><a href="#" class="menu-link" data-section="media">🎬 Media</a></li>
+                    <li><a href="#" class="menu-link" data-section="settings">⚙️ Settings</a></li>
+                </ul>
+            </div>
+            
+            <div class="main-content">
+                <!-- Overview Section -->
+                <div id="overview" class="content-section active">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Dashboard Overview</h2>
+                        <button class="btn btn-secondary" onclick="refreshDashboardStats()">🔄 Refresh</button>
+                    </div>
+                    
+                    <!-- Main Statistics Grid -->
+                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="font-size: 3rem;">📄</div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-pages">0</h3>
+                                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Total Pages</p>
+                                    <small style="opacity: 0.8;" id="recent-pages">0 modified recently</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="font-size: 3rem;">🛠️</div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-services">0</h3>
+                                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Total Services</p>
+                                    <small style="opacity: 0.8;" id="services-categories">0 categories</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="font-size: 3rem;">✏️</div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-content">0</h3>
+                                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Content Blocks</p>
+                                    <small style="opacity: 0.8;" id="content-languages">0 languages</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="font-size: 3rem;">👥</div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-users">0</h3>
+                                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Total Users</p>
+                                    <small style="opacity: 0.8;" id="active-users">0 active</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Statistics -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                        <!-- Services by Category -->
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin-top: 0; color: var(--primary);">Services by Category</h3>
+                            <div id="services-category-chart" style="margin-top: 1rem;">
+                                <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Users by Role -->
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin-top: 0; color: var(--primary);">Users by Role</h3>
+                            <div id="users-role-chart" style="margin-top: 1rem;">
+                                <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content Statistics -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                        <!-- Content by Category -->
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin-top: 0; color: var(--primary);">Content by Category</h3>
+                            <div id="content-category-chart" style="margin-top: 1rem;">
+                                <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Content by Language -->
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin-top: 0; color: var(--primary);">Content by Language</h3>
+                            <div id="content-language-chart" style="margin-top: 1rem;">
+                                <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h3 style="margin-top: 0; color: var(--primary);">Recent Activity</h3>
+                        <div id="recent-activity-list" style="margin-top: 1rem;">
+                            <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- System Status -->
+                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 1.5rem;">
+                        <h3 style="margin-top: 0; color: var(--primary);">System Status</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                            <div>
+                                <strong>Last Updated:</strong>
+                                <div id="system-last-updated" style="color: var(--text-light);">-</div>
+                            </div>
+                            <div>
+                                <strong>Maintenance Mode:</strong>
+                                <div id="system-maintenance" style="color: var(--text-light);">-</div>
+                            </div>
+                            <div>
+                                <strong>Data Files:</strong>
+                                <div id="system-data-files" style="color: var(--text-light);">-</div>
+                            </div>
+                            <div>
+                                <strong>Recent Logins:</strong>
+                                <div id="system-recent-logins" style="color: var(--text-light);">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pages Section -->
+                <div id="pages" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Pages Management</h2>
+                        <button class="btn btn-primary" onclick="showCreatePageModal()">+ Create New Page</button>
+                    </div>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Page Name</th>
+                                    <th>URL</th>
+                                    <th>Size</th>
+                                    <th>Last Modified</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pages-table-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem;">Loading pages...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Page Editor Modal -->
+                <div id="page-editor-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 1200px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3 id="modal-title">Edit Page</h3>
+                            <button class="modal-close" onclick="closePageEditor()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div class="form-group">
+                                <label>Page Name</label>
+                                <input type="text" id="page-name-input" placeholder="page-name.html" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                            </div>
+                            <div class="form-group">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <label>Page Content (HTML)</label>
+                                    <div>
+                                        <button class="btn btn-sm btn-secondary" onclick="showMediaPicker()" style="margin-right: 0.5rem;">📷 Insert Media</button>
+                                        <button class="btn btn-sm btn-secondary" onclick="previewPage()" style="margin-right: 0.5rem;">Preview</button>
+                                        <button class="btn btn-sm btn-secondary" onclick="formatHTML()">Format</button>
+                                    </div>
+                                </div>
+                                <textarea id="page-content-input" style="width: 100%; min-height: 500px; padding: 1rem; border: 2px solid var(--border); border-radius: 0.5rem; font-family: 'Courier New', monospace; font-size: 0.9rem;" placeholder="<!DOCTYPE html>..."></textarea>
+                            </div>
+                            <div id="page-editor-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closePageEditor()">Cancel</button>
+                            <button class="btn btn-primary" onclick="savePage()">Save Page</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Page Preview Modal -->
+                <div id="page-preview-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 95%; width: 1400px; max-height: 95vh;">
+                        <div class="modal-header">
+                            <h3>Page Preview</h3>
+                            <button class="modal-close" onclick="closePreview()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(95vh - 120px);">
+                            <iframe id="page-preview-frame" style="width: 100%; min-height: 600px; border: 1px solid var(--border); border-radius: 0.5rem;"></iframe>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Media Picker Modal -->
+                <div id="media-picker-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 1000px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3>Select Media</h3>
+                            <button class="modal-close" onclick="closeMediaPicker()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div>
+                                    <select id="media-picker-filter" onchange="filterMediaPicker()" style="padding: 0.5rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                        <option value="all">All Types</option>
+                                        <option value="image">Images Only</option>
+                                        <option value="video">Videos Only</option>
+                                    </select>
+                                </div>
+                                <label for="media-picker-upload" class="btn btn-sm btn-primary" style="cursor: pointer;">
+                                    📤 Upload New
+                                </label>
+                                <input type="file" id="media-picker-upload" multiple accept="image/*,video/*" style="display: none;" onchange="handleMediaPickerUpload(event)">
+                            </div>
+                            <div id="media-picker-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closeMediaPicker()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Services Section -->
+                <div id="services" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Services Management</h2>
+                        <button class="btn btn-primary" onclick="showCreateServiceModal()">+ Create New Service</button>
+                    </div>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Service Name</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="services-table-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem;">Loading services...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Service Editor Modal -->
+                <div id="service-editor-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 1000px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3 id="service-modal-title">Edit Service</h3>
+                            <button class="modal-close" onclick="closeServiceEditor()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div class="form-group">
+                                <label>Service Name *</label>
+                                <input type="text" id="service-name-input" placeholder="Service Name" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Icon (Emoji)</label>
+                                <input type="text" id="service-icon-input" placeholder="📋" maxlength="2" style="width: 100px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="service-category-input" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                    <option value="consulting">Consulting</option>
+                                    <option value="management">Management</option>
+                                    <option value="infrastructure">Infrastructure</option>
+                                    <option value="operations">Operations</option>
+                                    <option value="automation">Automation</option>
+                                    <option value="events">Events</option>
+                                    <option value="methodology">Methodology</option>
+                                    <option value="general">General</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Description *</label>
+                                <textarea id="service-description-input" placeholder="Service description..." style="width: 100%; min-height: 100px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Details (one per line)</label>
+                                <textarea id="service-details-input" placeholder="Detail 1&#10;Detail 2&#10;Detail 3" style="width: 100%; min-height: 150px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;"></textarea>
+                                <small style="color: var(--text-light);">Enter each detail on a new line</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Additional Fields (JSON format, optional)</label>
+                                <textarea id="service-extra-input" placeholder='{"certifications": ["PMP", "ITIL"], "technologies": ["Azure", "AWS"]}' style="width: 100%; min-height: 100px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem; font-family: 'Courier New', monospace; font-size: 0.9rem;"></textarea>
+                                <small style="color: var(--text-light);">Optional: certifications, technologies, platforms, experience, methodology</small>
+                            </div>
+                            <div id="service-editor-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closeServiceEditor()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveService()">Save Service</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Content Section -->
+                <div id="content" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Content Editor</h2>
+                        <button class="btn btn-primary" onclick="showCreateContentModal()">+ Create New Content Block</button>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="margin-right: 1rem;">Filter by Category:</label>
+                        <select id="content-category-filter" onchange="filterContentBlocks()" style="padding: 0.5rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                            <option value="">All Categories</option>
+                            <option value="homepage">Homepage</option>
+                            <option value="about">About</option>
+                            <option value="services">Services</option>
+                            <option value="contact">Contact</option>
+                            <option value="general">General</option>
+                        </select>
+                    </div>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Type</th>
+                                    <th>Category</th>
+                                    <th>Languages</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="content-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem;">Loading content blocks...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Content Editor Modal -->
+                <div id="content-editor-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 1100px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3 id="content-modal-title">Edit Content Block</h3>
+                            <button class="modal-close" onclick="closeContentEditor()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div class="form-group">
+                                <label>Content Key *</label>
+                                <input type="text" id="content-key-input" placeholder="hero-title" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                                <small style="color: var(--text-light);">Unique identifier for this content block (e.g., hero-title, about-mission)</small>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label>Type</label>
+                                    <select id="content-type-input" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                        <option value="text">Text</option>
+                                        <option value="html">HTML</option>
+                                        <option value="markdown">Markdown</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <select id="content-category-input" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                        <option value="homepage">Homepage</option>
+                                        <option value="about">About</option>
+                                        <option value="services">Services</option>
+                                        <option value="contact">Contact</option>
+                                        <option value="general">General</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" id="content-description-input" placeholder="Brief description of this content block" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                            </div>
+                            <div class="form-group">
+                                <label>Content (Multi-language) *</label>
+                                <div style="border: 2px solid var(--border); border-radius: 0.5rem; padding: 1rem; background: var(--bg-light);">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                        <div>
+                                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">English (en)</label>
+                                            <textarea id="content-en-input" placeholder="English content..." style="width: 100%; min-height: 120px; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem;" required></textarea>
+                                        </div>
+                                        <div>
+                                            <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">French (fr)</label>
+                                            <textarea id="content-fr-input" placeholder="French content..." style="width: 100%; min-height: 120px; padding: 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem;" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="content-editor-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closeContentEditor()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveContentBlock()">Save Content Block</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Users Section -->
+                <div id="users" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>User Management</h2>
+                        <button class="btn btn-primary" onclick="showCreateUserModal()">+ Create New User</button>
+                    </div>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem;">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- User Editor Modal -->
+                <div id="user-editor-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 800px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3 id="user-modal-title">Edit User</h3>
+                            <button class="modal-close" onclick="closeUserEditor()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div class="form-group">
+                                <label>Username *</label>
+                                <input type="text" id="user-username-input" placeholder="username" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <input type="email" id="user-email-input" placeholder="user@example.com" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label>Role</label>
+                                    <select id="user-role-input" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                        <option value="admin">Admin</option>
+                                        <option value="super_admin">Super Admin</option>
+                                        <option value="editor">Editor</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <select id="user-status-input" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label id="user-password-label">Password *</label>
+                                <input type="password" id="user-password-input" placeholder="New password" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                <small style="color: var(--text-light);">Minimum 6 characters</small>
+                            </div>
+                            <div id="user-editor-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closeUserEditor()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveUser()">Save User</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div id="settings" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Website Settings</h2>
+                        <div style="display: flex; gap: 1rem;">
+                            <button class="btn btn-secondary" onclick="showChangePasswordModal()">🔒 Change Password</button>
+                            <button class="btn btn-secondary" onclick="showPermissionsModal()">🛡️ Manage Permissions</button>
+                        </div>
+                    </div>
+                    <div id="settings-loading" style="text-align: center; padding: 2rem;">Loading settings...</div>
+                    <div id="settings-content" style="display: none;">
+                        <form id="settings-form">
+                            <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                                <h3 style="margin-bottom: 1rem; color: var(--primary);">Site Information</h3>
+                                <div class="form-group">
+                                    <label>Site Name</label>
+                                    <input type="text" id="setting-site-name" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Domain</label>
+                                    <input type="text" id="setting-site-domain" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="setting-site-email" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="text" id="setting-site-phone" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea id="setting-site-address" style="width: 100%; min-height: 80px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                                <h3 style="margin-bottom: 1rem; color: var(--primary);">SEO Settings</h3>
+                                <div class="form-group">
+                                    <label>Default Title</label>
+                                    <input type="text" id="setting-seo-title" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Default Description</label>
+                                    <textarea id="setting-seo-description" style="width: 100%; min-height: 80px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Keywords (comma-separated)</label>
+                                    <input type="text" id="setting-seo-keywords" placeholder="keyword1, keyword2, keyword3" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                </div>
+                            </div>
+                            
+                            <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                                <h3 style="margin-bottom: 1rem; color: var(--primary);">Social Media</h3>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div class="form-group">
+                                        <label>Facebook URL</label>
+                                        <input type="url" id="setting-social-facebook" placeholder="https://facebook.com/..." style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Twitter URL</label>
+                                        <input type="url" id="setting-social-twitter" placeholder="https://twitter.com/..." style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>LinkedIn URL</label>
+                                        <input type="url" id="setting-social-linkedin" placeholder="https://linkedin.com/..." style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Instagram URL</label>
+                                        <input type="url" id="setting-social-instagram" placeholder="https://instagram.com/..." style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                                <h3 style="margin-bottom: 1rem; color: var(--primary);">Features</h3>
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox" id="setting-feature-maintenance" style="width: auto;">
+                                        Maintenance Mode
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox" id="setting-feature-registration" style="width: auto;">
+                                        Allow Registration
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <input type="checkbox" id="setting-feature-comments" style="width: auto;">
+                                        Enable Comments
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div id="settings-alert" style="margin-bottom: 1rem;"></div>
+                            
+                            <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                                <button type="button" class="btn btn-secondary" onclick="resetSettingsForm()">Reset</button>
+                                <button type="submit" class="btn btn-primary">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Change Password Modal -->
+                <div id="change-password-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 500px;">
+                        <div class="modal-header">
+                            <h3>Change Password</h3>
+                            <button class="modal-close" onclick="closeChangePasswordModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Current Password *</label>
+                                <input type="password" id="change-password-current" placeholder="Enter current password" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password *</label>
+                                <input type="password" id="change-password-new" placeholder="Enter new password (min 6 characters)" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                                <small style="color: var(--text-light);">Minimum 6 characters</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password *</label>
+                                <input type="password" id="change-password-confirm" placeholder="Confirm new password" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                            </div>
+                            <div id="change-password-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closeChangePasswordModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="savePasswordChange()">Change Password</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Password Reset Request Modal -->
+                <div id="password-reset-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 500px;">
+                        <div class="modal-header">
+                            <h3>Reset Password</h3>
+                            <button class="modal-close" onclick="closePasswordResetModal()">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Email Address *</label>
+                                <input type="email" id="reset-password-email" placeholder="Enter your email address" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                                <small style="color: var(--text-light);">A reset token will be sent to your email</small>
+                            </div>
+                            <div id="reset-password-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closePasswordResetModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="requestPasswordReset()">Send Reset Link</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Permissions Management Modal -->
+                <div id="permissions-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 1000px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3>Manage Permissions</h3>
+                            <button class="modal-close" onclick="closePermissionsModal()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div id="permissions-loading" style="text-align: center; padding: 2rem;">Loading permissions...</div>
+                            <div id="permissions-content" style="display: none;">
+                                <div id="permissions-form"></div>
+                            </div>
+                            <div id="permissions-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closePermissionsModal()">Cancel</button>
+                            <button class="btn btn-primary" onclick="savePermissions()">Save Permissions</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Media Management Section -->
+                <div id="media" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Media Library</h2>
+                        <div style="display: flex; gap: 1rem;">
+                            <label for="media-upload-input" class="btn btn-primary" style="cursor: pointer;">
+                                📤 Upload Media
+                            </label>
+                            <input type="file" id="media-upload-input" multiple accept="image/*,video/*,audio/*,.pdf" style="display: none;" onchange="handleMediaUpload(event)">
+                        </div>
+                    </div>
+                    
+                    <div id="media-loading" style="text-align: center; padding: 2rem;">Loading media...</div>
+                    <div id="media-content" style="display: none;">
+                        <div id="media-filter" style="margin-bottom: 1rem;">
+                            <select id="media-type-filter" onchange="filterMedia()" style="padding: 0.5rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                <option value="all">All Types</option>
+                                <option value="image">Images</option>
+                                <option value="video">Videos</option>
+                                <option value="audio">Audio</option>
+                                <option value="document">Documents</option>
+                            </select>
+                        </div>
+                        <div id="media-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let sessionId = null;
+        let currentUser = null;
+        
+        // API URL helper using PMS (Path Manager System) - Handles HTTPS via Nginx proxy
+        function getAPIUrl(path) {
+            const protocol = window.location.protocol;
+            const cleanPath = path.startsWith('/') ? path : '/' + path;
+            
+            // HTTPS: Use relative path through Nginx reverse proxy
+            if (protocol === 'https:') {
+                return cleanPath;
+            }
+            
+            // HTTP: Use PMS or direct port access (development)
+            if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
+                const baseURL = window.PMS.getBaseURL('api');
+                const apiPath = window.PMS.api(path);
+                const fullUrl = `${baseURL}${apiPath}`;
+                console.log('🔗 PMS API URL:', { baseURL, apiPath, fullUrl });
+                return fullUrl;
+            }
+            // Fallback only if PMS not loaded
+            console.warn('⚠️ PMS not available, using fallback');
+            const hostname = window.location.hostname;
+            const port = 8000;
+            return `http://${hostname}:${port}${cleanPath}`;
+        }
+        
+        // Test backend connection - Use PMS directly like other pages
+        async function testConnection() {
+            const alertDiv = document.getElementById('login-alert');
+            alertDiv.innerHTML = '<div class="alert" style="background: #fff3cd; color: #856404;">Testing backend connection...</div>';
+            
+            try {
+                // Use PMS exactly as designed - same as PMS.testBackendConnection()
+                if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
+                    const baseURL = window.PMS.getBaseURL('api');
+                    const testEndpoint = window.PMS.api('/admin/status');
+                    const apiUrl = `${baseURL}${testEndpoint}`;
+                    console.log('🔗 Testing API URL via PMS:', apiUrl);
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        alertDiv.innerHTML = '<div class="alert success">✅ Backend is reachable!</div>';
+                    } else {
+                        alertDiv.innerHTML = '<div class="alert error">⚠️ Backend responded but authentication required</div>';
+                    }
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Cannot connect to backend: ${error.message}<br><small>Make sure the server is running: ./start.sh or node server.js</small></div>`;
+            }
+        }
+        
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            // Test connection on load
+            testConnection();
+            
+            const savedSession = localStorage.getItem('admin_session');
+            if (savedSession) {
+                sessionId = savedSession;
+                checkSession();
+            }
+        });
+        
+        // Login form handler
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('login-btn');
+            const alertDiv = document.getElementById('login-alert');
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
+            alertDiv.innerHTML = '';
+            
+            try {
+                const apiUrl = getAPIUrl('/api/admin/login');
+                console.log('🔗 Login API URL:', apiUrl);
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                // Check response status and structure
+                if (!response.ok) {
+                    showAlert('error', data.message || `Login failed: ${response.status} ${response.statusText}`);
+                    console.error('Login failed:', response.status, data);
+                    return;
+                }
+                
+                // Log successful response for debugging - DETAILED
+                console.log('=== LOGIN RESPONSE DEBUG ===');
+                console.log('Status:', response.status);
+                console.log('Response OK:', response.ok);
+                console.log('Full response data:', JSON.stringify(data, null, 2));
+                console.log('data.success:', data.success);
+                console.log('data.data:', data.data);
+                console.log('data.data type:', typeof data.data);
+                console.log('data.data.sessionId:', data.data ? data.data.sessionId : 'N/A');
+                console.log('data.sessionId (direct):', data.sessionId);
+                console.log('===========================');
+                
+                // Handle successful login response
+                if (data.success) {
+                    // Try multiple possible locations for sessionId
+                    let foundSessionId = null;
+                    let foundUsername = null;
+                    
+                    if (data.data && data.data.sessionId) {
+                        // Standard nested structure: data.data.sessionId
+                        foundSessionId = data.data.sessionId;
+                        foundUsername = data.data.username;
+                    } else if (data.sessionId) {
+                        // Root level: data.sessionId
+                        foundSessionId = data.sessionId;
+                        foundUsername = data.username || data.data?.username || username;
+                    }
+                    
+                    if (foundSessionId) {
+                        sessionId = foundSessionId;
+                        currentUser = foundUsername || username;
+                        localStorage.setItem('admin_session', sessionId);
+                        console.log('✅ Login successful! Session:', sessionId);
+                        console.log('✅ Username:', currentUser);
+                        showDashboard();
+                    } else {
+                        // Success but no sessionId found anywhere
+                        showAlert('error', 'Login successful but no session received. Please try again.');
+                        console.error('❌ Login response missing sessionId. Full response:', data);
+                    }
+                } else {
+                    // Login failed
+                    showAlert('error', data.message || 'Login failed. Please check your credentials.');
+                    console.error('Login failed:', data);
+                }
+            } catch (error) {
+                showAlert('error', `Connection error: ${error.message}<br><small>Make sure the server is running on port 8000</small>`);
+                console.error('Login error:', error);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+            }
+        });
+        
+        // Check session
+        async function checkSession() {
+            if (!sessionId) return;
+            
+            try {
+                const apiUrl = getAPIUrl('/api/admin/status');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.authenticated) {
+                    // Session is valid
+                    currentUser = data.data.username || 'Admin';
+                    showDashboard();
+                    loadDashboardData();
+                } else {
+                    // Session invalid or expired
+                    localStorage.removeItem('admin_session');
+                    sessionId = null;
+                    currentUser = null;
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+                // On error, clear session
+                localStorage.removeItem('admin_session');
+                sessionId = null;
+                currentUser = null;
+            }
+        }
+        
+        // Show dashboard
+        function showDashboard() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('username-display').textContent = currentUser || 'Admin';
+            loadDashboardData();
+        }
+        
+        // Logout
+        async function logout() {
+            if (sessionId) {
+                try {
+                    const logoutUrl = getAPIUrl('/api/admin/logout');
+                    await fetch(logoutUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${sessionId}`
+                        }
+                    });
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+            
+            sessionId = null;
+            currentUser = null;
+            localStorage.removeItem('admin_session');
+            document.getElementById('login-page').style.display = 'flex';
+            document.getElementById('dashboard').classList.remove('active');
+        }
+        
+        // Load dashboard data
+        async function loadDashboardData() {
+            if (!sessionId) {
+                console.warn('loadDashboardData: No sessionId available');
+                return;
+            }
+            
+            // Load dashboard statistics
+            await loadDashboardStats();
+            
+            // Load media files
+            await loadMediaFiles();
+            
+            // Load pages
+            try {
+                console.log('Loading pages with sessionId:', sessionId.substring(0, 20) + '...');
+                const apiUrl = getAPIUrl('/api/admin/pages');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.error('Pages request failed:', response.status, response.statusText);
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Error data:', errorData);
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    // Pages count is now handled by dashboard stats
+                    if (data.data.pages) {
+                        renderPagesTable(data.data.pages);
+                    }
+                } else {
+                    console.error('Pages response not successful:', data);
+                }
+            } catch (error) {
+                console.error('Error loading pages:', error);
+            }
+            
+            // Load services
+            try {
+                const apiUrl = getAPIUrl('/api/admin/services');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        // Services count is now handled by dashboard stats
+                        if (data.data.services) {
+                            renderServicesTable(data.data.services);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading services:', error);
+            }
+            
+            // Load content blocks
+            try {
+                const apiUrl = getAPIUrl('/api/admin/content');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        if (data.data.contentBlocks) {
+                            renderContentBlocksTable(data.data.contentBlocks);
+                            window.allContentBlocks = data.data.contentBlocks; // Store for filtering
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading content blocks:', error);
+            }
+            
+            // Load users
+            try {
+                const apiUrl = getAPIUrl('/api/admin/users');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        if (data.data.users) {
+                            renderUsersTable(data.data.users);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+            
+            // Load settings
+            try {
+                const apiUrl = getAPIUrl('/api/admin/settings');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        populateSettingsForm(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+        
+        // ========== DASHBOARD STATISTICS ==========
+        
+        // Load dashboard statistics
+        async function loadDashboardStats() {
+            try {
+                const apiUrl = getAPIUrl('/api/admin/overview');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        renderDashboardStats(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+        
+        // Refresh dashboard stats
+        async function refreshDashboardStats() {
+            await loadDashboardStats();
+        }
+        
+        // Render dashboard statistics
+        function renderDashboardStats(stats) {
+            // Main stats
+            document.getElementById('total-pages').textContent = stats.pages?.total || 0;
+            document.getElementById('recent-pages').textContent = `${stats.pages?.recent || 0} modified recently`;
+            document.getElementById('total-services').textContent = stats.services?.total || 0;
+            document.getElementById('services-categories').textContent = `${Object.keys(stats.services?.byCategory || {}).length} categories`;
+            document.getElementById('total-content').textContent = stats.content?.total || 0;
+            document.getElementById('content-languages').textContent = `${Object.keys(stats.content?.byLanguage || {}).length} languages`;
+            document.getElementById('total-users').textContent = stats.users?.total || 0;
+            document.getElementById('active-users').textContent = `${stats.users?.active || 0} active`;
+            
+            // Services by Category Chart
+            renderCategoryChart('services-category-chart', stats.services?.byCategory || {});
+            
+            // Users by Role Chart
+            renderRoleChart('users-role-chart', stats.users?.byRole || {});
+            
+            // Content by Category Chart
+            renderCategoryChart('content-category-chart', stats.content?.byCategory || {});
+            
+            // Content by Language Chart
+            renderLanguageChart('content-language-chart', stats.content?.byLanguage || {});
+            
+            // Recent Activity
+            renderRecentActivity(stats.recentActivity || []);
+            
+            // System Status
+            if (stats.system) {
+                const lastUpdated = new Date(stats.system.lastUpdated);
+                document.getElementById('system-last-updated').textContent = lastUpdated.toLocaleString();
+                document.getElementById('system-maintenance').textContent = stats.system.maintenanceMode ? '🟡 Enabled' : '🟢 Disabled';
+                document.getElementById('system-data-files').textContent = stats.system.totalDataFiles || 0;
+                document.getElementById('system-recent-logins').textContent = stats.users?.recentLogins || 0;
+            }
+        }
+        
+        // Render category chart
+        function renderCategoryChart(containerId, data) {
+            const container = document.getElementById(containerId);
+            const entries = Object.entries(data);
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-light);">No data available</div>';
+                return;
+            }
+            
+            const total = Object.values(data).reduce((sum, val) => sum + val, 0);
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            
+            entries.forEach(([category, count]) => {
+                const percentage = total > 0 ? (count / total * 100).toFixed(1) : 0;
+                html += `
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-weight: 600;">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                            <span style="color: var(--text-light);">${count} (${percentage}%)</span>
+                        </div>
+                        <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, var(--primary), var(--accent)); height: 100%; width: ${percentage}%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        // Render role chart
+        function renderRoleChart(containerId, data) {
+            const container = document.getElementById(containerId);
+            const entries = Object.entries(data);
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-light);">No data available</div>';
+                return;
+            }
+            
+            const roleColors = {
+                'super_admin': '#dc3545',
+                'admin': '#ffc107',
+                'editor': '#28a745'
+            };
+            
+            const roleNames = {
+                'super_admin': 'Super Admin',
+                'admin': 'Admin',
+                'editor': 'Editor'
+            };
+            
+            const total = Object.values(data).reduce((sum, val) => sum + val, 0);
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            
+            entries.forEach(([role, count]) => {
+                const percentage = total > 0 ? (count / total * 100).toFixed(1) : 0;
+                const color = roleColors[role] || 'var(--primary)';
+                html += `
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-weight: 600;">${roleNames[role] || role}</span>
+                            <span style="color: var(--text-light);">${count} (${percentage}%)</span>
+                        </div>
+                        <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="background: ${color}; height: 100%; width: ${percentage}%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        // Render language chart
+        function renderLanguageChart(containerId, data) {
+            const container = document.getElementById(containerId);
+            const entries = Object.entries(data);
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-light);">No data available</div>';
+                return;
+            }
+            
+            const languageNames = {
+                'en': 'English',
+                'fr': 'French',
+                'es': 'Spanish',
+                'de': 'German',
+                'ar': 'Arabic'
+            };
+            
+            const total = Object.values(data).reduce((sum, val) => sum + val, 0);
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            
+            entries.forEach(([lang, count]) => {
+                const percentage = total > 0 ? (count / total * 100).toFixed(1) : 0;
+                html += `
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-weight: 600;">${languageNames[lang] || lang.toUpperCase()}</span>
+                            <span style="color: var(--text-light);">${count} (${percentage}%)</span>
+                        </div>
+                        <div style="background: var(--bg-light); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, #4facfe, #00f2fe); height: 100%; width: ${percentage}%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        // Render recent activity
+        function renderRecentActivity(activities) {
+            const container = document.getElementById('recent-activity-list');
+            
+            if (activities.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-light);">No recent activity</div>';
+                return;
+            }
+            
+            const activityIcons = {
+                'page': '📄',
+                'user': '👤',
+                'service': '🛠️',
+                'content': '✏️'
+            };
+            
+            const activityLabels = {
+                'modified': 'Modified',
+                'created': 'Created',
+                'deleted': 'Deleted',
+                'login': 'Logged in'
+            };
+            
+            let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
+            
+            activities.forEach(activity => {
+                const date = new Date(activity.timestamp);
+                const timeAgo = getTimeAgo(date);
+                html += `
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg-light); border-radius: 0.5rem;">
+                        <div style="font-size: 1.5rem;">${activityIcons[activity.type] || '📌'}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${activityLabels[activity.action] || activity.action} ${activity.item}</div>
+                            <div style="font-size: 0.875rem; color: var(--text-light);">${timeAgo}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        // Get time ago string
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            return date.toLocaleDateString();
+        }
+        
+        // ========== MEDIA MANAGEMENT ==========
+        let allMediaFiles = [];
+        
+        // Load media files
+        async function loadMediaFiles() {
+            try {
+                const apiUrl = getAPIUrl('/api/admin/media');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allMediaFiles = data.data;
+                        renderMediaGrid(data.data);
+                        document.getElementById('media-loading').style.display = 'none';
+                        document.getElementById('media-content').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading media files:', error);
+                document.getElementById('media-loading').innerHTML = `<div class="alert error">Error loading media: ${error.message}</div>`;
+            }
+        }
+        
+        // Handle media upload
+        async function handleMediaUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                try {
+                    const response = await fetch('/api/admin/media-upload', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${sessionId}`
+                            // Don't set Content-Type - browser will set it with boundary
+                        },
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        console.log('File uploaded:', data.data.filename);
+                    } else {
+                        console.error('Upload failed:', data.message);
+                        alert(`Failed to upload ${file.name}: ${data.message}`);
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert(`Error uploading ${file.name}: ${error.message}`);
+                }
+            }
+            
+            // Reset input and reload media
+            event.target.value = '';
+            await loadMediaFiles();
+        }
+        
+        // Filter media by type
+        function filterMedia() {
+            const filterType = document.getElementById('media-type-filter').value;
+            const filtered = filterType === 'all' 
+                ? allMediaFiles 
+                : allMediaFiles.filter(file => file.type === filterType);
+            renderMediaGrid(filtered);
+        }
+        
+        // Render media grid
+        function renderMediaGrid(files) {
+            const grid = document.getElementById('media-grid');
+            
+            if (files.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">No media files found</div>';
+                return;
+            }
+            
+            let html = '';
+            files.forEach(file => {
+                const sizeKB = (file.size / 1024).toFixed(1);
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const sizeStr = file.size > 1024 * 1024 ? `${sizeMB} MB` : `${sizeKB} KB`;
+                
+                html += `
+                    <div style="background: white; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <div style="position: relative; padding-top: 100%; background: var(--bg-light);">
+                            ${file.type === 'image' ? `
+                                <img src="${file.url}" alt="${file.filename}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                            ` : file.type === 'video' ? `
+                                <video src="${file.url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" muted></video>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem;">🎬</div>
+                            ` : file.type === 'audio' ? `
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem;">🎵</div>
+                            ` : `
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem;">📄</div>
+                            `}
+                        </div>
+                        <div style="padding: 1rem;">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.filename}">${file.filename}</div>
+                            <div style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.5rem;">
+                                ${file.type.toUpperCase()} • ${sizeStr}
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-sm" onclick="copyMediaUrl('${file.url}')" style="flex: 1;">Copy URL</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteMediaFile('${file.filename}')" style="flex: 1;">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        // Copy media URL
+        function copyMediaUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                alert('URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy URL');
+            });
+        }
+        
+        // Delete media file
+        async function deleteMediaFile(filename) {
+            if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/media/${encodeURIComponent(filename)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    await loadMediaFiles();
+                } else {
+                    alert(`Failed to delete file: ${data.message}`);
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                alert(`Error deleting file: ${error.message}`);
+            }
+        }
+        
+        // Render pages table
+        function renderPagesTable(pages) {
+            const tbody = document.getElementById('pages-table-body');
+            
+            if (pages.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No pages found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = pages.map(page => `
+                <tr>
+                    <td><strong>${page.name}</strong></td>
+                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                    <td>${formatBytes(page.size)}</td>
+                    <td>${formatDate(page.modified)}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm btn-secondary" onclick="viewPage('${page.name}')" title="View">👁️</button>
+                            <button class="btn btn-sm btn-primary" onclick="editPage('${page.name}')" title="Edit">✏️</button>
+                            <button class="btn btn-sm" onclick="previewPageInBrowser('${page.url}')" title="Preview" style="background: var(--success);">🔗</button>
+                            ${page.name !== 'admin.html' && page.name !== 'index.html' ? `<button class="btn btn-sm" onclick="deletePage('${page.name}')" title="Delete" style="background: var(--error);">🗑️</button>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Menu navigation
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                
+                // Update active menu
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Show section
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+            });
+        });
+        
+        // Helper functions
+        function showAlert(type, message) {
+            const alertDiv = document.getElementById('login-alert');
+            alertDiv.className = `alert ${type}`;
+            alertDiv.textContent = message;
+        }
+        
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+        
+        let currentEditingPage = null;
+        let isCreatingNewPage = false;
+        
+        // Show create page modal
+        function showCreatePageModal() {
+            isCreatingNewPage = true;
+            currentEditingPage = null;
+            document.getElementById('modal-title').textContent = 'Create New Page';
+            document.getElementById('page-name-input').value = '';
+            document.getElementById('page-name-input').disabled = false;
+            document.getElementById('page-content-input').value = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Page - Paxi iTechnologies</title>
+</head>
+<body>
+    <h1>New Page</h1>
+    <p>Start editing your page content here...</p>
+</body>
+</html>`;
+            document.getElementById('page-editor-alert').innerHTML = '';
+            document.getElementById('page-editor-modal').style.display = 'flex';
+        }
+        
+        // View page (read-only)
+        async function viewPage(pageName) {
+            try {
+                const response = await fetch(`/api/admin/pages/${encodeURIComponent(pageName)}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Error loading page: ' + (error.message || 'Unknown error'));
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    isCreatingNewPage = false;
+                    currentEditingPage = pageName;
+                    document.getElementById('modal-title').textContent = `View: ${pageName}`;
+                    document.getElementById('page-name-input').value = pageName;
+                    document.getElementById('page-name-input').disabled = true;
+                    document.getElementById('page-content-input').value = data.data.content;
+                    document.getElementById('page-content-input').readOnly = true;
+                    document.getElementById('page-editor-alert').innerHTML = '';
+                    document.getElementById('page-editor-modal').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Error loading page: ' + error.message);
+            }
+        }
+        
+        // Edit page
+        async function editPage(pageName) {
+            try {
+                const response = await fetch(`/api/admin/pages/${encodeURIComponent(pageName)}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Error loading page: ' + (error.message || 'Unknown error'));
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    isCreatingNewPage = false;
+                    currentEditingPage = pageName;
+                    document.getElementById('modal-title').textContent = `Edit: ${pageName}`;
+                    document.getElementById('page-name-input').value = pageName;
+                    document.getElementById('page-name-input').disabled = true;
+                    document.getElementById('page-content-input').value = data.data.content;
+                    document.getElementById('page-content-input').readOnly = false;
+                    document.getElementById('page-editor-alert').innerHTML = '';
+                    document.getElementById('page-editor-modal').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Error loading page: ' + error.message);
+            }
+        }
+        
+        // Close page editor
+        function closePageEditor() {
+            document.getElementById('page-editor-modal').style.display = 'none';
+            currentEditingPage = null;
+            isCreatingNewPage = false;
+            document.getElementById('page-content-input').readOnly = false;
+        }
+        
+        // Save page
+        async function savePage() {
+            const pageName = document.getElementById('page-name-input').value.trim();
+            const pageContent = document.getElementById('page-content-input').value.trim();
+            const alertDiv = document.getElementById('page-editor-alert');
+            
+            if (!pageName) {
+                alertDiv.innerHTML = '<div class="alert error">Page name is required</div>';
+                return;
+            }
+            
+            if (!pageContent) {
+                alertDiv.innerHTML = '<div class="alert error">Page content is required</div>';
+                return;
+            }
+            
+            // Ensure .html extension
+            const finalPageName = pageName.endsWith('.html') ? pageName : pageName + '.html';
+            
+            try {
+                const url = isCreatingNewPage 
+                    ? '/api/admin/pages'
+                    : `/api/admin/pages/${encodeURIComponent(currentEditingPage)}`;
+                const method = isCreatingNewPage ? 'POST' : 'PUT';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: finalPageName,
+                        content: pageContent
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ Page saved successfully!</div>';
+                    setTimeout(() => {
+                        closePageEditor();
+                        loadDashboardData(); // Refresh pages list
+                    }, 1000);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to save page'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Delete page
+        async function deletePage(pageName) {
+            if (!confirm(`Are you sure you want to delete "${pageName}"?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/pages/${encodeURIComponent(pageName)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert('✅ Page deleted successfully!');
+                    loadDashboardData(); // Refresh pages list
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Failed to delete page'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // Preview page in modal
+        function previewPage() {
+            const content = document.getElementById('page-content-input').value;
+            const previewFrame = document.getElementById('page-preview-frame');
+            const previewModal = document.getElementById('page-preview-modal');
+            
+            if (!content.trim()) {
+                alert('No content to preview');
+                return;
+            }
+            
+            // Create blob URL for preview
+            const blob = new Blob([content], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            previewFrame.src = url;
+            previewModal.style.display = 'flex';
+            
+            // Clean up blob URL when modal closes
+            previewModal.addEventListener('click', function cleanup(e) {
+                if (e.target === previewModal) {
+                    URL.revokeObjectURL(url);
+                    previewModal.removeEventListener('click', cleanup);
+                }
+            });
+        }
+        
+        // Close preview
+        function closePreview() {
+            const previewModal = document.getElementById('page-preview-modal');
+            const previewFrame = document.getElementById('page-preview-frame');
+            previewModal.style.display = 'none';
+            previewFrame.src = 'about:blank';
+        }
+        
+        // Preview page in browser
+        function previewPageInBrowser(url) {
+            window.open(url, '_blank');
+        }
+        
+        // ========== MEDIA PICKER FOR PAGE EDITOR ==========
+        let mediaPickerFiles = [];
+        
+        // Show media picker
+        async function showMediaPicker() {
+            document.getElementById('media-picker-modal').style.display = 'flex';
+            await loadMediaPickerFiles();
+        }
+        
+        // Close media picker
+        function closeMediaPicker() {
+            document.getElementById('media-picker-modal').style.display = 'none';
+        }
+        
+        // Load media files for picker
+        async function loadMediaPickerFiles() {
+            try {
+                const apiUrl = getAPIUrl('/api/admin/media');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        mediaPickerFiles = data.data;
+                        renderMediaPickerGrid(data.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading media for picker:', error);
+            }
+        }
+        
+        // Filter media picker
+        function filterMediaPicker() {
+            const filterType = document.getElementById('media-picker-filter').value;
+            const filtered = filterType === 'all' 
+                ? mediaPickerFiles 
+                : mediaPickerFiles.filter(file => file.type === filterType);
+            renderMediaPickerGrid(filtered);
+        }
+        
+        // Render media picker grid
+        function renderMediaPickerGrid(files) {
+            const grid = document.getElementById('media-picker-grid');
+            
+            if (files.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-light);">No media files found. Upload some media first!</div>';
+                return;
+            }
+            
+            let html = '';
+            files.forEach(file => {
+                html += `
+                    <div style="background: white; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s;" onclick="insertMediaIntoPage('${file.url}', '${file.type}', '${file.filename.replace(/'/g, "\\'")}')" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <div style="position: relative; padding-top: 100%; background: var(--bg-light);">
+                            ${file.type === 'image' ? `
+                                <img src="${file.url}" alt="${file.filename}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                            ` : file.type === 'video' ? `
+                                <video src="${file.url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" muted></video>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem;">🎬</div>
+                            ` : `
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem;">📄</div>
+                            `}
+                        </div>
+                        <div style="padding: 0.5rem; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.filename}">${file.filename}</div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
+        }
+        
+        // Insert media into page content
+        function insertMediaIntoPage(url, type, filename) {
+            const textarea = document.getElementById('page-content-input');
+            const cursorPos = textarea.selectionStart;
+            const textBefore = textarea.value.substring(0, cursorPos);
+            const textAfter = textarea.value.substring(cursorPos);
+            
+            let insertCode = '';
+            if (type === 'image') {
+                insertCode = `\n<img src="${url}" alt="${filename}" style="max-width: 100%; height: auto;">\n`;
+            } else if (type === 'video') {
+                insertCode = `\n<video src="${url}" controls style="max-width: 100%; height: auto;"></video>\n`;
+            } else {
+                insertCode = `\n<a href="${url}" target="_blank">${filename}</a>\n`;
+            }
+            
+            textarea.value = textBefore + insertCode + textAfter;
+            textarea.focus();
+            textarea.setSelectionRange(cursorPos + insertCode.length, cursorPos + insertCode.length);
+            
+            closeMediaPicker();
+        }
+        
+        // Handle media upload from picker
+        async function handleMediaPickerUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                try {
+                    const response = await fetch('/api/admin/media-upload', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${sessionId}`
+                        },
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        console.log('File uploaded:', data.data.filename);
+                    } else {
+                        alert(`Failed to upload ${file.name}: ${data.message}`);
+                    }
+                } catch (error) {
+                    alert(`Error uploading ${file.name}: ${error.message}`);
+                }
+            }
+            
+            event.target.value = '';
+            await loadMediaPickerFiles();
+        }
+        
+        // Format HTML (basic indentation)
+        function formatHTML() {
+            const textarea = document.getElementById('page-content-input');
+            const content = textarea.value;
+            
+            // Simple HTML formatting (basic indentation)
+            let formatted = content
+                .replace(/></g, '>\n<')
+                .split('\n')
+                .map(line => {
+                    const trimmed = line.trim();
+                    if (!trimmed) return '';
+                    // Add indentation based on closing tags
+                    if (trimmed.startsWith('</')) {
+                        return trimmed;
+                    }
+                    return trimmed;
+                })
+                .filter(line => line)
+                .join('\n');
+            
+            textarea.value = formatted;
+        }
+        
+        // ========== SERVICES MANAGEMENT ==========
+        let currentEditingService = null;
+        let isCreatingNewService = false;
+        
+        // Render services table
+        function renderServicesTable(services) {
+            const tbody = document.getElementById('services-table-body');
+            
+            if (services.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No services found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = services.map(service => `
+                <tr>
+                    <td style="font-size: 1.5rem; text-align: center;">${service.icon || '📋'}</td>
+                    <td><strong>${service.name}</strong></td>
+                    <td><span style="background: var(--bg-light); padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.875rem;">${service.category || 'general'}</span></td>
+                    <td style="max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${service.description || ''}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm btn-secondary" onclick="viewService(${service.id})" title="View">👁️</button>
+                            <button class="btn btn-sm btn-primary" onclick="editService(${service.id})" title="Edit">✏️</button>
+                            <button class="btn btn-sm" onclick="deleteService(${service.id})" title="Delete" style="background: var(--error);">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Show create service modal
+        function showCreateServiceModal() {
+            isCreatingNewService = true;
+            currentEditingService = null;
+            document.getElementById('service-modal-title').textContent = 'Create New Service';
+            document.getElementById('service-name-input').value = '';
+            document.getElementById('service-icon-input').value = '📋';
+            document.getElementById('service-category-input').value = 'general';
+            document.getElementById('service-description-input').value = '';
+            document.getElementById('service-details-input').value = '';
+            document.getElementById('service-extra-input').value = '';
+            document.getElementById('service-editor-alert').innerHTML = '';
+            document.getElementById('service-editor-modal').style.display = 'flex';
+        }
+        
+        // View service (read-only)
+        async function viewService(serviceId) {
+            try {
+                const response = await fetch(`/api/admin/services/${serviceId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Error loading service: ' + (error.message || 'Unknown error'));
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    populateServiceForm(data.data, true);
+                    document.getElementById('service-modal-title').textContent = `View: ${data.data.name}`;
+                    document.getElementById('service-editor-modal').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Error loading service: ' + error.message);
+            }
+        }
+        
+        // Edit service
+        async function editService(serviceId) {
+            try {
+                const response = await fetch(`/api/admin/services/${serviceId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Error loading service: ' + (error.message || 'Unknown error'));
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    isCreatingNewService = false;
+                    currentEditingService = serviceId;
+                    populateServiceForm(data.data, false);
+                    document.getElementById('service-modal-title').textContent = `Edit: ${data.data.name}`;
+                    document.getElementById('service-editor-modal').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Error loading service: ' + error.message);
+            }
+        }
+        
+        // Populate service form
+        function populateServiceForm(service, readOnly) {
+            document.getElementById('service-name-input').value = service.name || '';
+            document.getElementById('service-icon-input').value = service.icon || '📋';
+            document.getElementById('service-category-input').value = service.category || 'general';
+            document.getElementById('service-description-input').value = service.description || '';
+            document.getElementById('service-details-input').value = (service.details || []).join('\n');
+            
+            // Extract extra fields (certifications, technologies, etc.)
+            const extraFields = {};
+            if (service.certifications) extraFields.certifications = service.certifications;
+            if (service.technologies) extraFields.technologies = service.technologies;
+            if (service.platforms) extraFields.platforms = service.platforms;
+            if (service.experience) extraFields.experience = service.experience;
+            if (service.methodology) extraFields.methodology = service.methodology;
+            
+            document.getElementById('service-extra-input').value = Object.keys(extraFields).length > 0 
+                ? JSON.stringify(extraFields, null, 2) 
+                : '';
+            
+            // Set readonly state
+            document.getElementById('service-name-input').readOnly = readOnly;
+            document.getElementById('service-icon-input').readOnly = readOnly;
+            document.getElementById('service-category-input').disabled = readOnly;
+            document.getElementById('service-description-input').readOnly = readOnly;
+            document.getElementById('service-details-input').readOnly = readOnly;
+            document.getElementById('service-extra-input').readOnly = readOnly;
+        }
+        
+        // Close service editor
+        function closeServiceEditor() {
+            document.getElementById('service-editor-modal').style.display = 'none';
+            currentEditingService = null;
+            isCreatingNewService = false;
+            // Reset readonly states
+            document.getElementById('service-name-input').readOnly = false;
+            document.getElementById('service-icon-input').readOnly = false;
+            document.getElementById('service-category-input').disabled = false;
+            document.getElementById('service-description-input').readOnly = false;
+            document.getElementById('service-details-input').readOnly = false;
+            document.getElementById('service-extra-input').readOnly = false;
+        }
+        
+        // Save service
+        async function saveService() {
+            const name = document.getElementById('service-name-input').value.trim();
+            const icon = document.getElementById('service-icon-input').value.trim();
+            const category = document.getElementById('service-category-input').value;
+            const description = document.getElementById('service-description-input').value.trim();
+            const detailsText = document.getElementById('service-details-input').value.trim();
+            const extraText = document.getElementById('service-extra-input').value.trim();
+            const alertDiv = document.getElementById('service-editor-alert');
+            
+            if (!name || !description) {
+                alertDiv.innerHTML = '<div class="alert error">Service name and description are required</div>';
+                return;
+            }
+            
+            // Parse details (split by newline)
+            const details = detailsText ? detailsText.split('\n').filter(d => d.trim()) : [];
+            
+            // Parse extra fields
+            let extraFields = {};
+            if (extraText) {
+                try {
+                    extraFields = JSON.parse(extraText);
+                } catch (e) {
+                    alertDiv.innerHTML = '<div class="alert error">Invalid JSON in extra fields</div>';
+                    return;
+                }
+            }
+            
+            const serviceData = {
+                name,
+                icon: icon || '📋',
+                category,
+                description,
+                details,
+                ...extraFields
+            };
+            
+            try {
+                const url = isCreatingNewService 
+                    ? '/api/admin/services'
+                    : `/api/admin/services/${currentEditingService}`;
+                const method = isCreatingNewService ? 'POST' : 'PUT';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(serviceData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ Service saved successfully!</div>';
+                    setTimeout(() => {
+                        closeServiceEditor();
+                        loadDashboardData(); // Refresh services list
+                    }, 1000);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to save service'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Delete service
+        async function deleteService(serviceId) {
+            if (!confirm(`Are you sure you want to delete this service?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/services/${serviceId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert('✅ Service deleted successfully!');
+                    loadDashboardData(); // Refresh services list
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Failed to delete service'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // ========== CONTENT BLOCKS MANAGEMENT ==========
+        let currentEditingContent = null;
+        let isCreatingNewContent = false;
+        let allContentBlocks = [];
+        
+        // Render content blocks table
+        function renderContentBlocksTable(contentBlocks) {
+            const tbody = document.getElementById('content-table-body');
+            allContentBlocks = contentBlocks; // Store for filtering
+            
+            if (contentBlocks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No content blocks found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = contentBlocks.map(block => {
+                const languages = Object.keys(block.content || {}).join(', ') || 'none';
+                return `
+                    <tr>
+                        <td><strong><code>${block.key}</code></strong></td>
+                        <td><span style="background: var(--bg-light); padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.875rem;">${block.type || 'text'}</span></td>
+                        <td><span style="background: var(--bg-light); padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.875rem;">${block.category || 'general'}</span></td>
+                        <td>${languages}</td>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${block.description || '-'}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-sm btn-secondary" onclick="viewContentBlock(${block.id})" title="View">👁️</button>
+                                <button class="btn btn-sm btn-primary" onclick="editContentBlock(${block.id})" title="Edit">✏️</button>
+                                <button class="btn btn-sm" onclick="deleteContentBlock(${block.id})" title="Delete" style="background: var(--error);">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Filter content blocks by category
+        function filterContentBlocks() {
+            const categoryFilter = document.getElementById('content-category-filter').value;
+            const filtered = categoryFilter 
+                ? allContentBlocks.filter(block => block.category === categoryFilter)
+                : allContentBlocks;
+            renderContentBlocksTable(filtered);
+        }
+        
+        // Show create content modal
+        function showCreateContentModal() {
+            isCreatingNewContent = true;
+            currentEditingContent = null;
+            document.getElementById('content-modal-title').textContent = 'Create New Content Block';
+            document.getElementById('content-key-input').value = '';
+            document.getElementById('content-key-input').disabled = false;
+            document.getElementById('content-type-input').value = 'text';
+            document.getElementById('content-category-input').value = 'general';
+            document.getElementById('content-description-input').value = '';
+            document.getElementById('content-en-input').value = '';
+            document.getElementById('content-fr-input').value = '';
+            document.getElementById('content-editor-alert').innerHTML = '';
+            document.getElementById('content-editor-modal').style.display = 'flex';
+        }
+        
+        // View content block (read-only)
+        async function viewContentBlock(contentId) {
+            try {
+                const response = await fetch(`/api/admin/content/${contentId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Error loading content block: ' + (error.message || 'Unknown error'));
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    populateContentForm(data.data, true);
+                    document.getElementById('content-modal-title').textContent = `View: ${data.data.key}`;
+                    document.getElementById('content-editor-modal').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Error loading content block: ' + error.message);
+            }
+        }
+        
+        // Edit content block
+        async function editContentBlock(contentId) {
+            try {
+                const response = await fetch(`/api/admin/content/${contentId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Error loading content block: ' + (error.message || 'Unknown error'));
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    isCreatingNewContent = false;
+                    currentEditingContent = contentId;
+                    populateContentForm(data.data, false);
+                    document.getElementById('content-modal-title').textContent = `Edit: ${data.data.key}`;
+                    document.getElementById('content-editor-modal').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Error loading content block: ' + error.message);
+            }
+        }
+        
+        // Populate content form
+        function populateContentForm(contentBlock, readOnly) {
+            document.getElementById('content-key-input').value = contentBlock.key || '';
+            document.getElementById('content-type-input').value = contentBlock.type || 'text';
+            document.getElementById('content-category-input').value = contentBlock.category || 'general';
+            document.getElementById('content-description-input').value = contentBlock.description || '';
+            
+            // Populate language content
+            const content = contentBlock.content || {};
+            document.getElementById('content-en-input').value = content.en || '';
+            document.getElementById('content-fr-input').value = content.fr || '';
+            
+            // Set readonly state
+            document.getElementById('content-key-input').readOnly = readOnly;
+            document.getElementById('content-type-input').disabled = readOnly;
+            document.getElementById('content-category-input').disabled = readOnly;
+            document.getElementById('content-description-input').readOnly = readOnly;
+            document.getElementById('content-en-input').readOnly = readOnly;
+            document.getElementById('content-fr-input').readOnly = readOnly;
+        }
+        
+        // Close content editor
+        function closeContentEditor() {
+            document.getElementById('content-editor-modal').style.display = 'none';
+            currentEditingContent = null;
+            isCreatingNewContent = false;
+            // Reset readonly states
+            document.getElementById('content-key-input').readOnly = false;
+            document.getElementById('content-type-input').disabled = false;
+            document.getElementById('content-category-input').disabled = false;
+            document.getElementById('content-description-input').readOnly = false;
+            document.getElementById('content-en-input').readOnly = false;
+            document.getElementById('content-fr-input').readOnly = false;
+        }
+        
+        // Save content block
+        async function saveContentBlock() {
+            const key = document.getElementById('content-key-input').value.trim();
+            const type = document.getElementById('content-type-input').value;
+            const category = document.getElementById('content-category-input').value;
+            const description = document.getElementById('content-description-input').value.trim();
+            const contentEn = document.getElementById('content-en-input').value.trim();
+            const contentFr = document.getElementById('content-fr-input').value.trim();
+            const alertDiv = document.getElementById('content-editor-alert');
+            
+            if (!key || !contentEn || !contentFr) {
+                alertDiv.innerHTML = '<div class="alert error">Content key, English content, and French content are required</div>';
+                return;
+            }
+            
+            const contentData = {
+                key,
+                type,
+                category,
+                description,
+                content: {
+                    en: contentEn,
+                    fr: contentFr
+                }
+            };
+            
+            try {
+                const url = isCreatingNewContent 
+                    ? '/api/admin/content'
+                    : `/api/admin/content/${currentEditingContent}`;
+                const method = isCreatingNewContent ? 'POST' : 'PUT';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(contentData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ Content block saved successfully!</div>';
+                    setTimeout(() => {
+                        closeContentEditor();
+                        loadDashboardData(); // Refresh content blocks list
+                    }, 1000);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to save content block'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Delete content block
+        async function deleteContentBlock(contentId) {
+            if (!confirm(`Are you sure you want to delete this content block?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/content/${contentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert('✅ Content block deleted successfully!');
+                    loadDashboardData(); // Refresh content blocks list
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Failed to delete content block'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // ========== USER MANAGEMENT ==========
+        let currentEditingUser = null;
+        let isCreatingNewUser = false;
+        
+        // Render users table
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('users-table-body');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No users found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = users.map(user => {
+                const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never';
+                const roleBadge = user.role === 'super_admin' ? '🔴 Super Admin' : user.role === 'admin' ? '🟡 Admin' : '🟢 Editor';
+                const statusBadge = user.status === 'active' ? '🟢 Active' : '🔴 Inactive';
+                return `
+                    <tr>
+                        <td><strong>${user.username}</strong></td>
+                        <td>${user.email}</td>
+                        <td>${roleBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>${lastLogin}</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-sm btn-primary" onclick="editUser(${user.id})" title="Edit">✏️</button>
+                                <button class="btn btn-sm" onclick="deleteUser(${user.id})" title="Delete" style="background: var(--error);">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // Show create user modal
+        function showCreateUserModal() {
+            isCreatingNewUser = true;
+            currentEditingUser = null;
+            document.getElementById('user-modal-title').textContent = 'Create New User';
+            document.getElementById('user-username-input').value = '';
+            document.getElementById('user-username-input').disabled = false;
+            document.getElementById('user-email-input').value = '';
+            document.getElementById('user-role-input').value = 'admin';
+            document.getElementById('user-status-input').value = 'active';
+            document.getElementById('user-password-input').value = '';
+            document.getElementById('user-password-input').required = true;
+            document.getElementById('user-password-label').textContent = 'Password *';
+            document.getElementById('user-editor-alert').innerHTML = '';
+            document.getElementById('user-editor-modal').style.display = 'flex';
+        }
+        
+        // Edit user
+        async function editUser(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    alert('Error loading user: ' + (error.message || 'Unknown error'));
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    isCreatingNewUser = false;
+                    currentEditingUser = userId;
+                    populateUserForm(data.data);
+                    document.getElementById('user-modal-title').textContent = `Edit: ${data.data.username}`;
+                    document.getElementById('user-password-input').required = false;
+                    document.getElementById('user-password-label').textContent = 'Password (leave blank to keep current)';
+                    document.getElementById('user-editor-modal').style.display = 'flex';
+                }
+            } catch (error) {
+                alert('Error loading user: ' + error.message);
+            }
+        }
+        
+        // Populate user form
+        function populateUserForm(user) {
+            document.getElementById('user-username-input').value = user.username || '';
+            document.getElementById('user-email-input').value = user.email || '';
+            document.getElementById('user-role-input').value = user.role || 'admin';
+            document.getElementById('user-status-input').value = user.status || 'active';
+            document.getElementById('user-password-input').value = '';
+        }
+        
+        // Close user editor
+        function closeUserEditor() {
+            document.getElementById('user-editor-modal').style.display = 'none';
+            currentEditingUser = null;
+            isCreatingNewUser = false;
+        }
+        
+        // Save user
+        async function saveUser() {
+            const username = document.getElementById('user-username-input').value.trim();
+            const email = document.getElementById('user-email-input').value.trim();
+            const role = document.getElementById('user-role-input').value;
+            const status = document.getElementById('user-status-input').value;
+            const password = document.getElementById('user-password-input').value;
+            const alertDiv = document.getElementById('user-editor-alert');
+            
+            if (!username || !email) {
+                alertDiv.innerHTML = '<div class="alert error">Username and email are required</div>';
+                return;
+            }
+            
+            if (isCreatingNewUser && !password) {
+                alertDiv.innerHTML = '<div class="alert error">Password is required for new users</div>';
+                return;
+            }
+            
+            if (password && password.length < 6) {
+                alertDiv.innerHTML = '<div class="alert error">Password must be at least 6 characters</div>';
+                return;
+            }
+            
+            const userData = {
+                username,
+                email,
+                role,
+                status
+            };
+            
+            if (password) {
+                userData.password = password;
+            }
+            
+            try {
+                const url = isCreatingNewUser 
+                    ? '/api/admin/users'
+                    : `/api/admin/users/${currentEditingUser}`;
+                const method = isCreatingNewUser ? 'POST' : 'PUT';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ User saved successfully!</div>';
+                    setTimeout(() => {
+                        closeUserEditor();
+                        loadDashboardData(); // Refresh users list
+                    }, 1000);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to save user'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Delete user
+        async function deleteUser(userId) {
+            if (!confirm(`Are you sure you want to delete this user?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert('✅ User deleted successfully!');
+                    loadDashboardData(); // Refresh users list
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Failed to delete user'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // ========== SETTINGS MANAGEMENT ==========
+        
+        // Populate settings form
+        function populateSettingsForm(settings) {
+            // Site information
+            if (settings.site) {
+                document.getElementById('setting-site-name').value = settings.site.name || '';
+                document.getElementById('setting-site-domain').value = settings.site.domain || '';
+                document.getElementById('setting-site-email').value = settings.site.email || '';
+                document.getElementById('setting-site-phone').value = settings.site.phone || '';
+                document.getElementById('setting-site-address').value = settings.site.address || '';
+            }
+            
+            // SEO settings
+            if (settings.seo) {
+                document.getElementById('setting-seo-title').value = settings.seo.defaultTitle || '';
+                document.getElementById('setting-seo-description').value = settings.seo.defaultDescription || '';
+                document.getElementById('setting-seo-keywords').value = settings.seo.defaultKeywords || '';
+            }
+            
+            // Social media
+            if (settings.social) {
+                document.getElementById('setting-social-facebook').value = settings.social.facebook || '';
+                document.getElementById('setting-social-twitter').value = settings.social.twitter || '';
+                document.getElementById('setting-social-linkedin').value = settings.social.linkedin || '';
+                document.getElementById('setting-social-instagram').value = settings.social.instagram || '';
+            }
+            
+            // Features
+            if (settings.features) {
+                document.getElementById('setting-feature-maintenance').checked = settings.features.maintenanceMode || false;
+                document.getElementById('setting-feature-registration').checked = settings.features.allowRegistration || false;
+                document.getElementById('setting-feature-comments').checked = settings.features.enableComments || false;
+            }
+            
+            // Show settings form
+            document.getElementById('settings-loading').style.display = 'none';
+            document.getElementById('settings-content').style.display = 'block';
+        }
+        
+        // Reset settings form
+        function resetSettingsForm() {
+            loadDashboardData(); // Reload settings
+        }
+        
+        // Handle settings form submission
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const settingsData = {
+                site: {
+                    name: document.getElementById('setting-site-name').value.trim(),
+                    domain: document.getElementById('setting-site-domain').value.trim(),
+                    email: document.getElementById('setting-site-email').value.trim(),
+                    phone: document.getElementById('setting-site-phone').value.trim(),
+                    address: document.getElementById('setting-site-address').value.trim()
+                },
+                seo: {
+                    defaultTitle: document.getElementById('setting-seo-title').value.trim(),
+                    defaultDescription: document.getElementById('setting-seo-description').value.trim(),
+                    defaultKeywords: document.getElementById('setting-seo-keywords').value.trim()
+                },
+                social: {
+                    facebook: document.getElementById('setting-social-facebook').value.trim(),
+                    twitter: document.getElementById('setting-social-twitter').value.trim(),
+                    linkedin: document.getElementById('setting-social-linkedin').value.trim(),
+                    instagram: document.getElementById('setting-social-instagram').value.trim()
+                },
+                features: {
+                    maintenanceMode: document.getElementById('setting-feature-maintenance').checked,
+                    allowRegistration: document.getElementById('setting-feature-registration').checked,
+                    enableComments: document.getElementById('setting-feature-comments').checked
+                }
+            };
+            
+            const alertDiv = document.getElementById('settings-alert');
+            
+            try {
+                const response = await fetch('/api/admin/settings', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settingsData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ Settings saved successfully!</div>';
+                    setTimeout(() => {
+                        alertDiv.innerHTML = '';
+                    }, 3000);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to save settings'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        });
+        
+        // ========== PASSWORD MANAGEMENT ==========
+        
+        // Show change password modal
+        function showChangePasswordModal() {
+            document.getElementById('change-password-current').value = '';
+            document.getElementById('change-password-new').value = '';
+            document.getElementById('change-password-confirm').value = '';
+            document.getElementById('change-password-alert').innerHTML = '';
+            document.getElementById('change-password-modal').style.display = 'flex';
+        }
+        
+        // Close change password modal
+        function closeChangePasswordModal() {
+            document.getElementById('change-password-modal').style.display = 'none';
+        }
+        
+        // Save password change
+        async function savePasswordChange() {
+            const currentPassword = document.getElementById('change-password-current').value;
+            const newPassword = document.getElementById('change-password-new').value;
+            const confirmPassword = document.getElementById('change-password-confirm').value;
+            const alertDiv = document.getElementById('change-password-alert');
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alertDiv.innerHTML = '<div class="alert error">All fields are required</div>';
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alertDiv.innerHTML = '<div class="alert error">New password must be at least 6 characters</div>';
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alertDiv.innerHTML = '<div class="alert error">New passwords do not match</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        currentPassword: currentPassword,
+                        newPassword: newPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ Password changed successfully!</div>';
+                    setTimeout(() => {
+                        closeChangePasswordModal();
+                    }, 1500);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to change password'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Show password reset modal
+        function showPasswordResetModal() {
+            document.getElementById('reset-password-email').value = '';
+            document.getElementById('reset-password-alert').innerHTML = '';
+            document.getElementById('password-reset-modal').style.display = 'flex';
+        }
+        
+        // Close password reset modal
+        function closePasswordResetModal() {
+            document.getElementById('password-reset-modal').style.display = 'none';
+        }
+        
+        // Request password reset
+        async function requestPasswordReset() {
+            const email = document.getElementById('reset-password-email').value.trim();
+            const alertDiv = document.getElementById('reset-password-alert');
+            
+            if (!email) {
+                alertDiv.innerHTML = '<div class="alert error">Email is required</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/password-reset-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ If the email exists, a password reset link has been sent. Check the console for the reset token (development mode).</div>';
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to send reset link'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // ========== PERMISSIONS MANAGEMENT ==========
+        let currentPermissions = null;
+        
+        // Show permissions modal
+        async function showPermissionsModal() {
+            document.getElementById('permissions-loading').style.display = 'block';
+            document.getElementById('permissions-content').style.display = 'none';
+            document.getElementById('permissions-modal').style.display = 'flex';
+            
+            try {
+                const apiUrl = getAPIUrl('/api/admin/permissions');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        currentPermissions = data.data;
+                        renderPermissionsForm(data.data);
+                        document.getElementById('permissions-loading').style.display = 'none';
+                        document.getElementById('permissions-content').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                document.getElementById('permissions-loading').innerHTML = `<div class="alert error">Error loading permissions: ${error.message}</div>`;
+            }
+        }
+        
+        // Close permissions modal
+        function closePermissionsModal() {
+            document.getElementById('permissions-modal').style.display = 'none';
+        }
+        
+        // Render permissions form
+        function renderPermissionsForm(permissions) {
+            const formDiv = document.getElementById('permissions-form');
+            const allPermissions = [
+                'pages.create', 'pages.edit', 'pages.delete', 'pages.view',
+                'services.create', 'services.edit', 'services.delete', 'services.view',
+                'content.create', 'content.edit', 'content.delete', 'content.view',
+                'users.create', 'users.edit', 'users.delete', 'users.view',
+                'settings.edit', 'settings.view'
+            ];
+            
+            let html = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">';
+            
+            Object.keys(permissions.roles).forEach(roleKey => {
+                const role = permissions.roles[roleKey];
+                html += `
+                    <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; border: 2px solid var(--border);">
+                        <h4 style="margin-bottom: 1rem; color: var(--primary);">${role.name}</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                `;
+                
+                allPermissions.forEach(perm => {
+                    const checked = role.permissions.includes(perm) ? 'checked' : '';
+                    const disabled = roleKey === 'super_admin' ? 'disabled' : '';
+                    html += `
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem;">
+                            <input type="checkbox" data-role="${roleKey}" data-permission="${perm}" ${checked} ${disabled} style="width: auto;">
+                            <span>${perm}</span>
+                        </label>
+                    `;
+                });
+                
+                html += '</div></div>';
+            });
+            
+            html += '</div>';
+            formDiv.innerHTML = html;
+        }
+        
+        // Save permissions
+        async function savePermissions() {
+            if (!currentPermissions) return;
+            
+            const formDiv = document.getElementById('permissions-form');
+            const checkboxes = formDiv.querySelectorAll('input[type="checkbox"]');
+            
+            // Update permissions from checkboxes
+            Object.keys(currentPermissions.roles).forEach(roleKey => {
+                const role = currentPermissions.roles[roleKey];
+                role.permissions = [];
+                
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.dataset.role === roleKey && checkbox.checked) {
+                        role.permissions.push(checkbox.dataset.permission);
+                    }
+                });
+            });
+            
+            const alertDiv = document.getElementById('permissions-alert');
+            
+            try {
+                const response = await fetch('/api/admin/permissions', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(currentPermissions)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ Permissions saved successfully!</div>';
+                    setTimeout(() => {
+                        closePermissionsModal();
+                    }, 1500);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to save permissions'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>
+

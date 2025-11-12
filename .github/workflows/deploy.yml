@@ -1,0 +1,60 @@
+name: Deploy to NAS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Fix paths for production
+        run: |
+          find frontend/src -name '*.html' -type f -exec sed -i 's|/frontend/src/|/|g' {} \;
+          echo "✅ Paths fixed for production"
+      
+      - name: Verify services.html API URL fix
+        run: |
+          if grep -q "Services API URL:" frontend/src/pages/services.html; then
+            echo "✅ Services API URL fix verified"
+          else
+            echo "⚠️ Services API URL fix not found"
+            exit 1
+          fi
+      
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add frontend/src/
+          git diff --staged --quiet || git commit -m "Auto-fix paths for production deployment"
+          git push https://x-access-token:$GITHUB_TOKEN@github.com/${{ github.repository }}.git main || echo "No changes to commit"
+      
+      - name: Deploy to NAS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NAS_HOST }}
+          username: ${{ secrets.NAS_USER }}
+          port: ${{ secrets.NAS_PORT }}
+          key: ${{ secrets.NAS_SSH_KEY }}
+          script: |
+            cd /volume1/web/paxiit_website
+            git pull origin main
+            export PATH=/volume1/@appstore/Node.js_v20/usr/local/bin:/usr/local/bin:$PATH
+            export ENABLE_LOGGING=true
+            pkill -f 'node server.js' || true
+            sleep 2
+            nohup node server.js > server.log 2>&1 &
+            echo "✅ Deployment complete"
+            sleep 5
+            curl -s http://localhost:8000/api/services && echo "✅ Services API working" || echo "⚠️ Server may need manual restart"
+            tail -20 server.log
+

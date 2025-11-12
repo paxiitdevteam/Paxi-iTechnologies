@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Governance & Best Practices - Paxi iTechnologies. GDPR, ISO 27001, ITIL, Security Best Practices, and Cloud Governance services.">
+    <title>Governance & Best Practices - Paxi iTechnologies</title>
+    
+    <!-- Systems - Load in order -->
+    <script src="/services/path-manager.js"></script>
+    <script src="/services/port-manager.js"></script>
+    <script src="/services/api-path-manager.js"></script>
+    <script type="module" src="/cls/lang-core.js"></script>
+    <script src="/cls/lang-switcher.js"></script>
+    <script src="/components/translation-plugin.js"></script>
+    <script src="/services/cookie-manager.js"></script>
+    
+    <!-- Simple initialization -->
+    <script>
+        (function() {
+            'use strict';
+            if (window.__PAGE_INIT__) return;
+            window.__PAGE_INIT__ = true;
+            
+            function init() {
+                // Initialize language system
+                if (typeof window.CLS !== 'undefined' && !window.CLS.initialized) {
+                    window.CLS.initialize();
+                }
+                
+                // Initialize language switcher
+                if (typeof window.LanguageSwitcher !== 'undefined') {
+                    const container = document.getElementById('lang-switcher');
+                    if (container) {
+                        const switcher = new window.LanguageSwitcher('lang-switcher');
+                        switcher.initialize();
+                    }
+                }
+                
+                // Initialize translation plugin
+                if (typeof window.TranslationPlugin !== 'undefined') {
+                    window.translationPlugin = new window.TranslationPlugin({
+                        googleTranslateEnabled: true,
+                        clsEnabled: true,
+                        position: 'bottom-right',
+                        showWidget: true
+                    });
+                    window.translationPlugin.initialize();
+                }
+                
+                // Update footer year
+                const yearSpan = document.getElementById('current-year');
+                if (yearSpan) {
+                    yearSpan.textContent = new Date().getFullYear();
+                }
+                
+                // Mark active nav link
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === '/governance.html' || link.getAttribute('href') === '/governance') {
+                        link.style.color = 'var(--primary-color)';
+                        link.style.fontWeight = '600';
+                    }
+                });
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init, { once: true });
+            } else {
+                init();
+            }
+        })();
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #006d77;
+            --secondary-color: #83c5be;
+            --accent-color: #ffddd2;
+            --accent-2: #e29578;
+            --bg-light: #edf6f9;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--bg-white, #ffffff);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color, #2563eb);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .logo:hover {
+            color: var(--secondary-color, #1e40af);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark, #1f2937);
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color, #2563eb);
+        }
+        
+        .lang-switcher-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            gap: 0.25rem;
+            background: none;
+            border: none;
+        }
+        
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-dark);
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, rgba(0, 109, 119, 0.85) 0%, rgba(131, 197, 190, 0.85) 100%), url('/assets/images/optimized/cyber_audit.png') center/cover no-repeat;
+            color: white;
+            padding: 8rem 2rem 6rem;
+            text-align: center;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Section Styles */
+        .section {
+            padding: 5rem 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Hero Features */
+        .hero-features {
+            background: var(--bg-light);
+            padding: 3rem 2rem;
+        }
+        
+        .hero-features h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-item {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-item h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .feature-item p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 4rem;
+        }
+        
+        .content-section h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+        
+        .content-section h3 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .content-section p {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-section ul {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        
+        .content-section ul li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-light);
+            font-size: 1.05rem;
+        }
+        
+        .content-section ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        
+        /* Framework Cards */
+        .framework-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .framework-card {
+            background: var(--bg-white);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        
+        .framework-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .framework-card .btn {
+            pointer-events: none;
+        }
+        
+        .framework-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .framework-card h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .framework-card h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .framework-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        
+        .framework-card ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .framework-card ul li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-light);
+        }
+        
+        .framework-card ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .benefit-card {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .benefit-card h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        
+        .benefit-card p {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--primary-color);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+        
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background: var(--text-dark, #1f2937);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+                padding: 1rem;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-color);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                width: 100%;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .nav-links a {
+                display: block;
+                padding: 0.5rem 0;
+                font-size: 1rem;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            .lang-switcher-container {
+                width: 100%;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border-color);
+                margin-left: 0;
+            }
+            
+            .page-header {
+                padding: 6rem 1.5rem 4rem;
+                min-height: 50vh;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .content-section h2 {
+                font-size: 1.75rem;
+            }
+            
+            .content-section h3 {
+                font-size: 1.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .framework-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header-cta {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                min-height: 44px;
+            }
+            
+            .section {
+                padding: 3rem 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 5rem 1rem 3rem;
+                min-height: 40vh;
+            }
+            
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .logo {
+                font-size: 1.25rem;
+            }
+            
+            .btn {
+                min-height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Component -->
+    <header>
+        <nav>
+            <a href="/" class="logo">Paxi iTechnologies</a>
+            <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="/" data-translate="nav.home">Home</a></li>
+                <li><a href="/about.html" data-translate="nav.about">About</a></li>
+                <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+                <li><a href="/consulting.html">Consulting</a></li>
+                <li><a href="/support.html">Support</a></li>
+                <li><a href="/governance.html">Governance</a></li>
+                <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                <li class="lang-switcher-container">
+                    <div id="lang-switcher"></div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <script>
+        // Mobile menu toggle
+        (function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    const isActive = navLinks.classList.toggle('active');
+                    menuToggle.classList.toggle('active');
+                    menuToggle.setAttribute('aria-expanded', isActive);
+                });
+                
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        navLinks.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        })();
+    </script>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 data-translate="governance.title">Governance & Best Practices Services</h1>
+            <p data-translate="governance.subtitle">Regulate your data and seamlessly protect your reputation and security</p>
+            <p style="font-size: 1rem; opacity: 0.9;" data-translate="governance.subtitle2">Governance & Best Practices Services for SMEs and corporate businesses</p>
+            <div class="page-header-cta">
+                <a href="/contact.html" class="btn btn-primary" data-translate="governance.cta1">Speak to a Governance Expert</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero Features -->
+    <section class="hero-features">
+        <div class="container">
+            <h2 data-translate="governance.heroTitle">Stay in control of your compliance, security, and asset performance</h2>
+                <div class="features-grid">
+                    <a href="/contact.html" class="feature-item">
+                        <div class="feature-icon">💰</div>
+                        <h3 data-translate="governance.features.cost.title">Cost Optimization</h3>
+                        <p data-translate="governance.features.cost.description">Affordably manage and optimize costs with powerful reporting and governance</p>
+                    </a>
+                    <a href="/contact.html" class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <h3 data-translate="governance.features.compliance.title">Compliance Management</h3>
+                        <p data-translate="governance.features.compliance.description">Stay compliant with audit trails to track, report, and remediate issues</p>
+                    </a>
+                    <a href="/contact.html" class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <h3 data-translate="governance.features.security.title">Security Policies</h3>
+                        <p data-translate="governance.features.security.description">Secure and up-to-date with policies that cover your asset security</p>
+                    </a>
+                    <a href="/contact.html" class="feature-item">
+                        <div class="feature-icon">📈</div>
+                        <h3 data-translate="governance.features.scalable.title">Scalable Solutions</h3>
+                        <p data-translate="governance.features.scalable.description">Seamlessly build and scale applications while remaining in control</p>
+                    </a>
+                </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section -->
+    <section class="section">
+        <div class="container">
+            <div class="content-section">
+                <h2 data-translate="governance.section1.title">Protect your reputation and profitability with governance experts</h2>
+                <p data-translate="governance.section1.p1">Maintain control while working on migrating applications and workflows to the cloud with our team of certified engineers. With their vast experience of governance frameworks, compliance standards, and transition strategy, we will work to reduce governance costs, risk, and general compliance issues.</p>
+                
+                <h3 data-translate="governance.section1.helpTitle">How can we help you maintain control over your governance and compliance?</h3>
+                <ul>
+                    <li data-translate="governance.section1.helpItems.0">Monitoring your environment to assess security and compliance position</li>
+                    <li data-translate="governance.section1.helpItems.1">Operational governance with identification and resolution of security issues and vulnerabilities</li>
+                    <li data-translate="governance.section1.helpItems.2">Corporate risk reduction through proper documentation of evolving challenges and risk tolerance</li>
+                    <li data-translate="governance.section1.helpItems.3">Complete visibility across governance, risk, and compliance with real-time monitoring and remediation</li>
+                </ul>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/contact.html" class="btn btn-primary" data-translate="governance.section1.button">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Framework Services -->
+    <section class="section" style="background: var(--bg-light);">
+        <div class="container">
+            <div class="content-section">
+                <h2 style="text-align: center; margin-bottom: 3rem;" data-translate="governance.frameworks.title">Governance Frameworks & Standards</h2>
+                
+                <div class="framework-grid">
+                    <!-- GDPR -->
+                    <a href="/contact.html" class="framework-card">
+                        <div class="framework-icon">🛡️</div>
+                        <h3 data-translate="governance.frameworks.gdpr.title">GDPR Compliance</h3>
+                        <h4 data-translate="governance.frameworks.gdpr.subtitle">General Data Protection Regulation</h4>
+                        <p data-translate="governance.frameworks.gdpr.description">Ensure your organization complies with GDPR requirements for data protection and privacy. We help you implement the necessary controls and processes to protect personal data.</p>
+                        <ul>
+                            <li data-translate="governance.frameworks.gdpr.features.0">GDPR gap analysis and assessment</li>
+                            <li data-translate="governance.frameworks.gdpr.features.1">Data protection impact assessments (DPIA)</li>
+                            <li data-translate="governance.frameworks.gdpr.features.2">Privacy policy and consent management</li>
+                            <li data-translate="governance.frameworks.gdpr.features.3">Data subject rights implementation</li>
+                            <li data-translate="governance.frameworks.gdpr.features.4">Breach notification procedures</li>
+                            <li data-translate="governance.frameworks.gdpr.features.5">Ongoing compliance monitoring</li>
+                        </ul>
+                        <span class="btn btn-primary" data-translate="governance.frameworks.gdpr.button">GDPR Services</span>
+                    </a>
+
+                    <!-- ISO 27001 -->
+                    <a href="/contact.html" class="framework-card">
+                        <div class="framework-icon">🔐</div>
+                        <h3 data-translate="governance.frameworks.iso27001.title">ISO 27001</h3>
+                        <h4 data-translate="governance.frameworks.iso27001.subtitle">Information Security Management System</h4>
+                        <p data-translate="governance.frameworks.iso27001.description">Implement and maintain an ISO 27001 certified Information Security Management System (ISMS) to protect your organization's information assets.</p>
+                        <ul>
+                            <li data-translate="governance.frameworks.iso27001.features.0">ISO 27001 gap analysis</li>
+                            <li data-translate="governance.frameworks.iso27001.features.1">ISMS design and implementation</li>
+                            <li data-translate="governance.frameworks.iso27001.features.2">Security controls implementation</li>
+                            <li data-translate="governance.frameworks.iso27001.features.3">Internal audits and assessments</li>
+                            <li data-translate="governance.frameworks.iso27001.features.4">Certification support</li>
+                            <li data-translate="governance.frameworks.iso27001.features.5">Continuous improvement</li>
+                        </ul>
+                        <span class="btn btn-primary" data-translate="governance.frameworks.iso27001.button">ISO 27001 Services</span>
+                    </a>
+
+                    <!-- ITIL -->
+                    <a href="/contact.html" class="framework-card">
+                        <div class="framework-icon">📋</div>
+                        <h3 data-translate="governance.frameworks.itil.title">ITIL Framework</h3>
+                        <h4 data-translate="governance.frameworks.itil.subtitle">IT Service Management Best Practices</h4>
+                        <p data-translate="governance.frameworks.itil.description">Implement ITIL best practices to improve IT service delivery, align IT with business needs, and optimize IT operations.</p>
+                        <ul>
+                            <li data-translate="governance.frameworks.itil.features.0">ITIL maturity assessment</li>
+                            <li data-translate="governance.frameworks.itil.features.1">Service strategy and design</li>
+                            <li data-translate="governance.frameworks.itil.features.2">Service transition and operation</li>
+                            <li data-translate="governance.frameworks.itil.features.3">Continual service improvement</li>
+                            <li data-translate="governance.frameworks.itil.features.4">ITIL process implementation</li>
+                            <li data-translate="governance.frameworks.itil.features.5">Training and certification support</li>
+                        </ul>
+                        <span class="btn btn-primary" data-translate="governance.frameworks.itil.button">ITIL Services</span>
+                    </a>
+
+                    <!-- Cloud Governance -->
+                    <a href="/contact.html" class="framework-card">
+                        <div class="framework-icon">☁️</div>
+                        <h3 data-translate="governance.frameworks.cloud.title">Cloud Governance</h3>
+                        <h4 data-translate="governance.frameworks.cloud.subtitle">Secure your cloud environment with governance experts</h4>
+                        <p data-translate="governance.frameworks.cloud.description">Cloud governance ensures compliance of your systems and procedures to enforce standards and satisfy compliance, control, and security requirements for workloads running on the cloud.</p>
+                        <ul>
+                            <li data-translate="governance.frameworks.cloud.features.0">Cloud environment monitoring and assessment</li>
+                            <li data-translate="governance.frameworks.cloud.features.1">Security and compliance position evaluation</li>
+                            <li data-translate="governance.frameworks.cloud.features.2">Operational governance and vulnerability resolution</li>
+                            <li data-translate="governance.frameworks.cloud.features.3">Risk reduction and documentation</li>
+                            <li data-translate="governance.frameworks.cloud.features.4">Real-time monitoring and remediation</li>
+                            <li data-translate="governance.frameworks.cloud.features.5">Cost optimization and reporting</li>
+                        </ul>
+                        <span class="btn btn-primary" data-translate="governance.frameworks.cloud.button">Cloud Governance Services</span>
+                    </a>
+
+                    <!-- Security Best Practices -->
+                    <a href="/contact.html" class="framework-card">
+                        <div class="framework-icon">🔒</div>
+                        <h3 data-translate="governance.frameworks.security.title">Security Best Practices</h3>
+                        <h4 data-translate="governance.frameworks.security.subtitle">Comprehensive security consulting</h4>
+                        <p data-translate="governance.frameworks.security.description">We take pride in our security expertise and ability to offer accurate reporting and corrective action to detect security flaws and vulnerabilities.</p>
+                        <ul>
+                            <li data-translate="governance.frameworks.security.features.0">Security posture assessment</li>
+                            <li data-translate="governance.frameworks.security.features.1">Security policy development</li>
+                            <li data-translate="governance.frameworks.security.features.2">Threat detection and response</li>
+                            <li data-translate="governance.frameworks.security.features.3">Vulnerability management</li>
+                            <li data-translate="governance.frameworks.security.features.4">Security awareness training</li>
+                            <li data-translate="governance.frameworks.security.features.5">Incident response planning</li>
+                        </ul>
+                        <span class="btn btn-primary" data-translate="governance.frameworks.security.button">Security Services</span>
+                    </a>
+
+                    <!-- Compliance & Audit -->
+                    <a href="/contact.html" class="framework-card">
+                        <div class="framework-icon">📊</div>
+                        <h3 data-translate="governance.frameworks.compliance.title">Compliance & Audit</h3>
+                        <h4 data-translate="governance.frameworks.compliance.subtitle">Stay compliant with comprehensive audit trails</h4>
+                        <p data-translate="governance.frameworks.compliance.description">Maintain compliance with industry standards and regulations through proper documentation, monitoring, and remediation processes.</p>
+                        <ul>
+                            <li data-translate="governance.frameworks.compliance.features.0">Compliance gap analysis</li>
+                            <li data-translate="governance.frameworks.compliance.features.1">Audit trail implementation</li>
+                            <li data-translate="governance.frameworks.compliance.features.2">Regulatory compliance support</li>
+                            <li data-translate="governance.frameworks.compliance.features.3">Internal and external audits</li>
+                            <li data-translate="governance.frameworks.compliance.features.4">Remediation planning and execution</li>
+                            <li data-translate="governance.frameworks.compliance.features.5">Compliance reporting and documentation</li>
+                        </ul>
+                        <span class="btn btn-primary" data-translate="governance.frameworks.compliance.button">Compliance Services</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section">
+        <div class="container">
+            <div class="content-section">
+                <h2 data-translate="governance.benefits.title">Benefits of Our Governance & Best Practices Services</h2>
+                
+                <div class="benefits-grid">
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="governance.benefits.risk.title">Risk Reduction</h4>
+                        <p data-translate="governance.benefits.risk.description">Identify and mitigate risks before they impact your business operations and reputation.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="governance.benefits.cost.title">Cost Optimization</h4>
+                        <p data-translate="governance.benefits.cost.description">Reduce governance costs through efficient processes and optimized resource allocation.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="governance.benefits.compliance.title">Compliance Assurance</h4>
+                        <p data-translate="governance.benefits.compliance.description">Ensure continuous compliance with industry standards and regulations.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="governance.benefits.security.title">Enhanced Security</h4>
+                        <p data-translate="governance.benefits.security.description">Protect your data and systems with comprehensive security controls and monitoring.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="governance.benefits.visibility.title">Improved Visibility</h4>
+                        <p data-translate="governance.benefits.visibility.description">Gain complete visibility across governance, risk, and compliance with real-time monitoring.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="governance.benefits.continuity.title">Business Continuity</h4>
+                        <p data-translate="governance.benefits.continuity.description">Ensure business continuity through proper governance and risk management.</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 data-translate="governance.cta.title">Comprehensive Governance & Best Practices Support</h2>
+            <p data-translate="governance.cta.p1">Get comprehensive governance and best practices support from our team of certified consultants. Our local team is available around the clock to help with any governance, compliance, or security issues your organization may have.</p>
+            <p data-translate="governance.cta.p2">If you're looking for a governance expert to help you achieve compliance and implement best practices, drop us a line, and our certified consultants would be more than happy to have a chat about your needs.</p>
+            <a href="/contact.html" class="btn btn-primary" data-translate="governance.cta.button">Contact Us Today</a>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Paxi iTechnologies</h3>
+                <p data-translate="home.subtitle">Smart IT Management. Clear Results.</p>
+            </div>
+            <div class="footer-section">
+                <h3 data-translate="nav.home">Quick Links</h3>
+                <ul>
+                    <li><a href="/" data-translate="nav.home">Home</a></li>
+                    <li><a href="/about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+                    <li><a href="/consulting.html">Consulting</a></li>
+                    <li><a href="/support.html">Support</a></li>
+                    <li><a href="/governance.html">Governance</a></li>
+                    <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 data-translate="governance.footerServices">Governance Services</h3>
+                <ul>
+                    <li><a href="/governance.html" data-translate="governance.footerGDPR">GDPR Compliance</a></li>
+                    <li><a href="/governance.html" data-translate="governance.footerISO">ISO 27001</a></li>
+                    <li><a href="/governance.html" data-translate="governance.footerITIL">ITIL Framework</a></li>
+                    <li><a href="/governance.html" data-translate="governance.footerCloud">Cloud Governance</a></li>
+                    <li><a href="/governance.html" data-translate="governance.footerSecurity">Security Best Practices</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="/terms-of-service.html">Terms of Service</a></li>
+                    <li><a href="/cookies-disclaimer.html">Cookie Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="mailto:contact@paxiit.com">Email</a></li>
+                    <li><a href="tel:+33782391311">+33 7 82 39 13 11</a></li>
+                </ul>
+                <div class="social-media-icons" style="margin-top: 1.5rem;">
+                    <a href="https://www.linkedin.com/company/paxi-itechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-linkedin.svg" alt="LinkedIn" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.facebook.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-facebook.svg" alt="Facebook" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://twitter.com/paxiitech" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-twitter.svg" alt="Twitter" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.instagram.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-instagram.svg" alt="Instagram" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.youtube.com/@paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block;">
+                        <img src="/assets/images/optimized/icons8-youtube.svg" alt="YouTube" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-translate="footer.copyright" data-translate-params='{"year": "2025"}'><span id="current-year">2025</span></p>
+        </div>
+    </footer>
+</body>
+</html>
+

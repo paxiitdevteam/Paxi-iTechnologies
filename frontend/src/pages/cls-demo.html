@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLS Demo - Centralized Language System</title>
+    
+    <!-- Path Manager System -->
+    <script src="/services/path-manager.js"></script>
+    
+    <!-- Centralized Language System - Core -->
+    <script type="module" src="/cls/lang-core.js"></script>
+    
+    <!-- Language Switcher -->
+    <script src="/cls/lang-switcher.js"></script>
+    <script src="/components/translation-plugin.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin-bottom: 10px;
+        }
+        
+        .lang-switcher-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .demo-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .translation-example {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .translation-example strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .translation-example .key {
+            color: #666;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        
+        .status-box {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .status-box.error {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Centralized Language System (CLS)</h1>
+            <p>Demo & Testing Page</p>
+        </div>
+
+        <!-- Language Switcher -->
+        <div class="lang-switcher-container">
+            <div id="lang-switcher"></div>
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="status-box">
+            <strong>Status:</strong> Initializing CLS...
+        </div>
+
+        <!-- Demo Sections -->
+        <div class="demo-section">
+            <h2>Common Translations</h2>
+            <div id="common-translations"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Navigation Translations</h2>
+            <div id="nav-translations"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Homepage Translations</h2>
+            <div id="home-translations"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Translation with Parameters</h2>
+            <div id="param-translations"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>CLS Information</h2>
+            <div id="cls-info"></div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for CLS to be ready
+        function waitForCLS() {
+            return new Promise((resolve) => {
+                if (window.CLS) {
+                    // Wait for initialization
+                    if (window.CLS.initialized) {
+                        resolve();
+                    } else {
+                        window.CLS.onLanguageChange(() => {
+                            if (window.CLS.initialized) {
+                                resolve();
+                            }
+                        });
+                    }
+                } else {
+                    // Check every 100ms
+                    const interval = setInterval(() => {
+                        if (window.CLS && window.CLS.initialized) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        // Initialize demo
+        async function initDemo() {
+            try {
+                await waitForCLS();
+
+                // Update status
+                const statusDiv = document.getElementById('status');
+                statusDiv.className = 'status-box';
+                statusDiv.innerHTML = `
+                    <strong>✅ Status:</strong> CLS initialized successfully!<br>
+                    <strong>Current Language:</strong> ${window.CLS.getCurrentLanguage().toUpperCase()}<br>
+                    <strong>Available Languages:</strong> ${window.CLS.getAvailableLanguages().join(', ').toUpperCase()}
+                `;
+
+                // Initialize language switcher
+                const switcher = new LanguageSwitcher('lang-switcher');
+                await switcher.initialize();
+
+                // Load translations
+                loadTranslations();
+
+                // Listen for language changes
+                window.CLS.onLanguageChange(() => {
+                    loadTranslations();
+                });
+
+            } catch (error) {
+                const statusDiv = document.getElementById('status');
+                statusDiv.className = 'status-box error';
+                statusDiv.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+                console.error('CLS initialization error:', error);
+            }
+        }
+
+        // Load and display translations
+        function loadTranslations() {
+            const CLS = window.CLS;
+
+            // Common translations
+            const commonDiv = document.getElementById('common-translations');
+            commonDiv.innerHTML = `
+                <div class="translation-example">
+                    <strong>${CLS.translate('common.welcome')}</strong>
+                    <span class="key">common.welcome</span>
+                </div>
+                <div class="translation-example">
+                    <strong>${CLS.translate('common.hello')}</strong>
+                    <span class="key">common.hello</span>
+                </div>
+                <div class="translation-example">
+                    <strong>${CLS.translate('common.loading')}</strong>
+                    <span class="key">common.loading</span>
+                </div>
+            `;
+
+            // Navigation translations
+            const navDiv = document.getElementById('nav-translations');
+            navDiv.innerHTML = `
+                <div class="translation-example">
+                    <strong>${CLS.translate('nav.home')}</strong>
+                    <span class="key">nav.home</span>
+                </div>
+                <div class="translation-example">
+                    <strong>${CLS.translate('nav.about')}</strong>
+                    <span class="key">nav.about</span>
+                </div>
+                <div class="translation-example">
+                    <strong>${CLS.translate('nav.services')}</strong>
+                    <span class="key">nav.services</span>
+                </div>
+                <div class="translation-example">
+                    <strong>${CLS.translate('nav.contact')}</strong>
+                    <span class="key">nav.contact</span>
+                </div>
+            `;
+
+            // Homepage translations
+            const homeDiv = document.getElementById('home-translations');
+            homeDiv.innerHTML = `
+                <div class="translation-example">
+                    <strong>${CLS.translate('home.title')}</strong>
+                    <span class="key">home.title</span>
+                </div>
+                <div class="translation-example">
+                    <strong>${CLS.translate('home.subtitle')}</strong>
+                    <span class="key">home.subtitle</span>
+                </div>
+                <div class="translation-example">
+                    <strong>${CLS.translate('home.description')}</strong>
+                    <span class="key">home.description</span>
+                </div>
+            `;
+
+            // Parameter translations
+            const paramDiv = document.getElementById('param-translations');
+            const currentYear = new Date().getFullYear();
+            paramDiv.innerHTML = `
+                <div class="translation-example">
+                    <strong>${CLS.translate('footer.copyright', { year: currentYear })}</strong>
+                    <span class="key">footer.copyright with year=${currentYear}</span>
+                </div>
+            `;
+
+            // CLS Info
+            const infoDiv = document.getElementById('cls-info');
+            infoDiv.innerHTML = `
+                <div class="code-block">
+Current Language: ${CLS.getCurrentLanguage()}<br>
+Available Languages: ${CLS.getAvailableLanguages().join(', ')}<br>
+Translations Loaded: ${Object.keys(CLS.translations).join(', ')}<br>
+<br>
+<strong>Usage Example:</strong><br>
+CLS.translate('home.title')<br>
+CLS.setLanguage('fr')<br>
+CLS.getCurrentLanguage()
+                </div>
+            `;
+        }
+
+        // Start demo when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDemo);
+        } else {
+            initDemo();
+        }
+    </script>
+</body>
+</html>
+

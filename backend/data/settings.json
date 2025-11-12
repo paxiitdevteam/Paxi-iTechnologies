@@ -1,0 +1,27 @@
+{
+    "site": {
+        "name": "Paxi iTechnologies",
+        "domain": "paxiit.com",
+        "email": "contact@paxiit.com",
+        "phone": "+33782391311",
+        "address": "49 AVE LUCIE AUBRAC BONNEUIL-SUR-MARNE, VAL DE MARNE 94380 FRANCE"
+    },
+    "seo": {
+        "defaultTitle": "Paxi iTechnologies - Smart IT Management | Clear Results",
+        "defaultDescription": "We build clear, modern, and smart IT systems — with real-world results.",
+        "defaultKeywords": "IT consulting, IT management, cloud solutions, infrastructure, technology"
+    },
+    "social": {
+        "facebook": "",
+        "twitter": "",
+        "linkedin": "",
+        "instagram": ""
+    },
+    "features": {
+        "maintenanceMode": false,
+        "allowRegistration": false,
+        "enableComments": false
+    },
+    "updated": "2025-01-01T00:00:00.000Z"
+}
+

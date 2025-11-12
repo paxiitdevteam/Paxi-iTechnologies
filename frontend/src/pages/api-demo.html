@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Path Manager Demo</title>
+    
+    <!-- Path Manager System -->
+    <script src="/services/path-manager.js"></script>
+    
+    <!-- API Path Manager -->
+    <script src="/services/api-path-manager.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .demo-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .endpoint-example {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .endpoint-example strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .endpoint-example .url {
+            color: #666;
+            font-size: 12px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        .response {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status-box {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>API Path Manager System</h1>
+            <p>Standardized API Endpoint Management</p>
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="status-box">
+            <strong>Status:</strong> Initializing API Path Manager...
+        </div>
+
+        <!-- Demo Sections -->
+        <div class="demo-section">
+            <h2>API Endpoints</h2>
+            <div id="endpoints-list"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Test API Calls</h2>
+            <button onclick="testGetUsers()">GET Users</button>
+            <button onclick="testGetUser()">GET User (ID: 1)</button>
+            <button onclick="testCreateUser()">POST Create User</button>
+            <button onclick="testContact()">POST Contact</button>
+            <div id="api-response" class="response" style="display: none;"></div>
+        </div>
+
+        <div class="demo-section">
+            <h2>API Information</h2>
+            <div id="api-info"></div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for APIM to be ready
+        function waitForAPIM() {
+            return new Promise((resolve) => {
+                if (window.APIM) {
+                    resolve();
+                } else {
+                    const interval = setInterval(() => {
+                        if (window.APIM) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                }
+            });
+        }
+
+        // Initialize demo
+        async function initDemo() {
+            try {
+                await waitForAPIM();
+
+                // Update status
+                const statusDiv = document.getElementById('status');
+                statusDiv.innerHTML = `
+                    <strong>✅ Status:</strong> API Path Manager initialized successfully!<br>
+                    <strong>Base URL:</strong> ${window.APIM.getBaseURL()}<br>
+                    <strong>API Version:</strong> ${window.APIM.apiVersion}
+                `;
+
+                // Display endpoints
+                displayEndpoints();
+
+                // Display API info
+                displayAPIInfo();
+
+            } catch (error) {
+                const statusDiv = document.getElementById('status');
+                statusDiv.className = 'status-box';
+                statusDiv.style.background = '#ffebee';
+                statusDiv.style.borderColor = '#f44336';
+                statusDiv.innerHTML = `<strong>❌ Error:</strong> ${error.message}`;
+                console.error('APIM initialization error:', error);
+            }
+        }
+
+        // Display endpoints
+        function displayEndpoints() {
+            const endpointsDiv = document.getElementById('endpoints-list');
+            const APIM = window.APIM;
+
+            const categories = ['auth', 'users', 'projects', 'services', 'contact'];
+            let html = '';
+
+            categories.forEach(category => {
+                html += `<h3 style="margin-top: 20px; color: #667eea;">${category.toUpperCase()}</h3>`;
+                
+                Object.keys(APIM.endpoints[category] || {}).forEach(endpoint => {
+                    const endpointPath = APIM.endpoints[category][endpoint];
+                    const fullURL = typeof endpointPath === 'function' 
+                        ? `${APIM.getBaseURL()}${endpointPath(1)}` 
+                        : `${APIM.getBaseURL()}${endpointPath}`;
+                    
+                    html += `
+                        <div class="endpoint-example">
+                            <strong>${category}.${endpoint}</strong>
+                            <div class="url">${fullURL}</div>
+                        </div>
+                    `;
+                });
+            });
+
+            endpointsDiv.innerHTML = html;
+        }
+
+        // Display API info
+        function displayAPIInfo() {
+            const infoDiv = document.getElementById('api-info');
+            const APIM = window.APIM;
+
+            infoDiv.innerHTML = `
+                <div class="endpoint-example">
+                    <strong>Usage Examples:</strong>
+                    <div class="url" style="margin-top: 10px;">
+                        // GET request<br>
+                        APIM.get('users', 'list')<br><br>
+                        
+                        // GET with ID<br>
+                        APIM.get('users', 'get', { id: 1 })<br><br>
+                        
+                        // POST request<br>
+                        APIM.post('users', 'create', { name: 'John', email: 'john@example.com' })<br><br>
+                        
+                        // Custom request<br>
+                        APIM.request('contact', 'send', {<br>
+                        &nbsp;&nbsp;method: 'POST',<br>
+                        &nbsp;&nbsp;data: { name: 'John', message: 'Hello' }<br>
+                        })
+                    </div>
+                </div>
+            `;
+        }
+
+        // Test API calls
+        async function testGetUsers() {
+            try {
+                const response = await window.APIM.get('users', 'list');
+                showResponse(response);
+            } catch (error) {
+                showResponse({ error: error.message, status: error.status }, true);
+            }
+        }
+
+        async function testGetUser() {
+            try {
+                const response = await window.APIM.get('users', 'get', { id: 1 });
+                showResponse(response);
+            } catch (error) {
+                showResponse({ error: error.message, status: error.status }, true);
+            }
+        }
+
+        async function testCreateUser() {
+            try {
+                const response = await window.APIM.post('users', 'create', {
+                    name: 'Test User',
+                    email: 'test@example.com'
+                });
+                showResponse(response);
+            } catch (error) {
+                showResponse({ error: error.message, status: error.status }, true);
+            }
+        }
+
+        async function testContact() {
+            try {
+                const response = await window.APIM.post('contact', 'send', {
+                    name: 'John Doe',
+                    email: 'john@example.com',
+                    message: 'This is a test message'
+                });
+                showResponse(response);
+            } catch (error) {
+                showResponse({ error: error.message, status: error.status }, true);
+            }
+        }
+
+        function showResponse(data, isError = false) {
+            const responseDiv = document.getElementById('api-response');
+            responseDiv.style.display = 'block';
+            responseDiv.style.color = isError ? '#ff6b6b' : '#f8f8f2';
+            responseDiv.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Start demo when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDemo);
+        } else {
+            initDemo();
+        }
+    </script>
+</body>
+</html>
+

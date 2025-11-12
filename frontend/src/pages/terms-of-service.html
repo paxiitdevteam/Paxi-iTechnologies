@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms of Service - Paxi iTechnologies. Read our terms and conditions for using our services.">
+    <title>Terms of Service - Paxi iTechnologies</title>
+    
+    <!-- Systems - Load in order -->
+    <script src="/services/path-manager.js"></script>
+    <script src="/services/port-manager.js"></script>
+    <script src="/services/api-path-manager.js"></script>
+    <script type="module" src="/cls/lang-core.js"></script>
+    <script src="/cls/lang-switcher.js"></script>
+    <script src="/components/translation-plugin.js"></script>
+    <script src="/services/cookie-manager.js"></script>
+    
+    <!-- Simple initialization -->
+    <script>
+        (function() {
+            'use strict';
+            if (window.__PAGE_INIT__) return;
+            window.__PAGE_INIT__ = true;
+            
+            function init() {
+                // Initialize language system
+                if (typeof window.CLS !== 'undefined' && !window.CLS.initialized) {
+                    window.CLS.initialize();
+                }
+                
+                // Initialize language switcher
+                if (typeof window.LanguageSwitcher !== 'undefined') {
+                    const container = document.getElementById('lang-switcher');
+                    if (container) {
+                        const switcher = new window.LanguageSwitcher('lang-switcher');
+                        switcher.initialize();
+                    }
+                }
+                
+                // Initialize translation plugin
+                if (typeof window.TranslationPlugin !== 'undefined') {
+                    window.translationPlugin = new window.TranslationPlugin({
+                        googleTranslateEnabled: true,
+                        clsEnabled: true,
+                        position: 'bottom-right',
+                        showWidget: true
+                    });
+                    window.translationPlugin.initialize();
+                }
+                
+                // Update footer year
+                const yearSpan = document.getElementById('current-year');
+                if (yearSpan) {
+                    yearSpan.textContent = new Date().getFullYear();
+                }
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init, { once: true });
+            } else {
+                init();
+            }
+        })();
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #006d77;
+            --secondary-color: #83c5be;
+            --accent-color: #ffddd2;
+            --accent-2: #e29578;
+            --bg-light: #edf6f9;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--bg-white, #ffffff);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color, #2563eb);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .logo:hover {
+            color: var(--secondary-color, #1e40af);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .lang-switcher-container {
+            margin-left: 1rem;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #006d77 0%, #83c5be 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: 1.125rem;
+            opacity: 0.95;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .legal-content {
+            padding: 4rem 2rem;
+            background: var(--bg-white);
+        }
+        
+        .legal-section {
+            margin-bottom: 3rem;
+        }
+        
+        .legal-section h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .legal-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .legal-section p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+        
+        .legal-section ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .legal-section li {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+        
+        .last-updated {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background: var(--text-dark, #1f2937);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .legal-content {
+                padding: 2rem 1rem;
+            }
+            
+            .legal-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Component -->
+    <header>
+        <nav>
+            <a href="/" class="logo">Paxi iTechnologies</a>
+            <ul class="nav-links">
+                <li><a href="/" data-translate="nav.home">Home</a></li>
+                <li><a href="/about.html" data-translate="nav.about">About</a></li>
+                <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+                <li><a href="/consulting.html">Consulting</a></li>
+                <li><a href="/support.html">Support</a></li>
+                <li><a href="/governance.html">Governance</a></li>
+                <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                <li class="lang-switcher-container">
+                    <div id="lang-switcher"></div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 data-translate="terms.title">Terms of Service</h1>
+            <p data-translate="terms.subtitle">Please read these terms carefully before using our services</p>
+        </div>
+    </section>
+
+    <!-- Legal Content -->
+    <section class="legal-content">
+        <div class="container">
+            <p class="last-updated"><span data-translate="terms.lastUpdated">Last Updated:</span> <span id="last-updated-date">January 2025</span></p>
+            
+            <div class="legal-section">
+                <h2 data-translate="terms.section1Title">1. Acceptance of Terms</h2>
+                <p data-translate="terms.section1Para1">
+                    By accessing and using the website and services of Paxi iTechnologies ("we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section2Title">2. Description of Services</h2>
+                <p data-translate="terms.section2Para1">
+                    Paxi iTechnologies provides IT project management, infrastructure solutions, consulting services, and related technology services. We reserve the right to modify, suspend, or discontinue any aspect of our services at any time without prior notice.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section3Title">3. Use of Services</h2>
+                
+                <h3 data-translate="terms.section3Subtitle1">3.1 Permitted Use</h3>
+                <p data-translate="terms.section3Para1">You may use our services only for lawful purposes and in accordance with these Terms of Service. You agree not to:</p>
+                <ul>
+                    <li data-translate="terms.section3Item1">Use our services in any way that violates any applicable law or regulation</li>
+                    <li data-translate="terms.section3Item2">Transmit any malicious code, viruses, or harmful data</li>
+                    <li data-translate="terms.section3Item3">Attempt to gain unauthorized access to our systems or networks</li>
+                    <li data-translate="terms.section3Item4">Interfere with or disrupt the integrity or performance of our services</li>
+                    <li data-translate="terms.section3Item5">Use our services to infringe upon the rights of others</li>
+                    <li data-translate="terms.section3Item6">Use automated systems to access our services without permission</li>
+                </ul>
+
+                <h3 data-translate="terms.section3Subtitle2">3.2 Account Responsibility</h3>
+                <p data-translate="terms.section3Para2">
+                    If you create an account with us, you are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You agree to notify us immediately of any unauthorized use of your account.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section4Title">4. Intellectual Property Rights</h2>
+                <p data-translate="terms.section4Para1">
+                    All content, features, and functionality of our website and services, including but not limited to text, graphics, logos, images, and software, are the exclusive property of Paxi iTechnologies and are protected by international copyright, trademark, and other intellectual property laws.
+                </p>
+                <p data-translate="terms.section4Para2">
+                    You may not reproduce, distribute, modify, create derivative works of, publicly display, or otherwise exploit any of our content without our express written permission.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section5Title">5. Service Agreements</h2>
+                <p data-translate="terms.section5Para1">
+                    Specific IT services provided by Paxi iTechnologies are subject to separate service agreements or contracts. These Terms of Service govern your use of our website and general interactions with us, while specific service terms will be detailed in individual service agreements.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section6Title">6. Payment Terms</h2>
+                <p data-translate="terms.section6Para1">
+                    For paid services, payment terms will be specified in your service agreement. Generally:
+                </p>
+                <ul>
+                    <li data-translate="terms.section6Item1">Payment is due according to the terms specified in your service agreement</li>
+                    <li data-translate="terms.section6Item2">We reserve the right to suspend or terminate services for non-payment</li>
+                    <li data-translate="terms.section6Item3">All fees are non-refundable unless otherwise specified in your agreement</li>
+                    <li data-translate="terms.section6Item4">Prices are subject to change with notice</li>
+                </ul>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section7Title">7. Limitation of Liability</h2>
+                <p data-translate="terms.section7Para1">
+                    To the maximum extent permitted by law, Paxi iTechnologies shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from:
+                </p>
+                <ul>
+                    <li data-translate="terms.section7Item1">Your use or inability to use our services</li>
+                    <li data-translate="terms.section7Item2">Any unauthorized access to or use of our servers and/or any personal information stored therein</li>
+                    <li data-translate="terms.section7Item3">Any interruption or cessation of transmission to or from our services</li>
+                    <li data-translate="terms.section7Item4">Any bugs, viruses, trojan horses, or the like that may be transmitted to or through our services</li>
+                </ul>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section8Title">8. Indemnification</h2>
+                <p data-translate="terms.section8Para1">
+                    You agree to defend, indemnify, and hold harmless Paxi iTechnologies and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses, including reasonable attorneys' fees, arising out of or in any way connected with your use of our services or violation of these Terms of Service.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section9Title">9. Disclaimer of Warranties</h2>
+                <p data-translate="terms.section9Para1">
+                    Our services are provided "as is" and "as available" without warranties of any kind, either express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, or non-infringement.
+                </p>
+                <p data-translate="terms.section9Para2">
+                    We do not warrant that our services will be uninterrupted, secure, or error-free, or that defects will be corrected.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section10Title">10. Termination</h2>
+                <p data-translate="terms.section10Para1">
+                    We reserve the right to terminate or suspend your access to our services immediately, without prior notice or liability, for any reason, including if you breach these Terms of Service.
+                </p>
+                <p data-translate="terms.section10Para2">
+                    Upon termination, your right to use our services will cease immediately. All provisions of these Terms that by their nature should survive termination shall survive termination.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section11Title">11. Governing Law</h2>
+                <p data-translate="terms.section11Para1">
+                    These Terms of Service shall be governed by and construed in accordance with the laws of France, without regard to its conflict of law provisions. Any disputes arising from these terms shall be subject to the exclusive jurisdiction of the courts of France.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section12Title">12. Changes to Terms</h2>
+                <p data-translate="terms.section12Para1">
+                    We reserve the right to modify or replace these Terms of Service at any time. If a revision is material, we will provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+                </p>
+                <p data-translate="terms.section12Para2">
+                    By continuing to access or use our services after those revisions become effective, you agree to be bound by the revised terms.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section13Title">13. Severability</h2>
+                <p data-translate="terms.section13Para1">
+                    If any provision of these Terms of Service is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.
+                </p>
+            </div>
+
+            <div class="legal-section">
+                <h2 data-translate="terms.section14Title">14. Contact Information</h2>
+                <p data-translate="terms.section14Para1">If you have any questions about these Terms of Service, please contact us:</p>
+                <p>
+                    <strong>Paxi iTechnologies</strong><br>
+                    <span data-translate="terms.section14Address">49 AVE LUCIE AUBRAC</span><br>
+                    <span data-translate="terms.section14City">BONNEUIL-SUR-MARNE, VAL DE MARNE 94380</span><br>
+                    <span data-translate="terms.section14Country">FRANCE</span><br>
+                    <span data-translate="terms.section14Email">Email:</span> <a href="mailto:contact@paxiit.com" style="color: var(--primary-color);">contact@paxiit.com</a><br>
+                    <span data-translate="terms.section14Phone">Phone:</span> <a href="tel:+33782391311" style="color: var(--primary-color);">+33 7 82 39 13 11</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Paxi iTechnologies</h3>
+                <p>Smart IT Management. Clear Results.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="/services.html">Services</a></li>
+                    <li><a href="/governance.html">Governance</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="/terms-of-service.html">Terms of Service</a></li>
+                    <li><a href="/cookies-disclaimer.html">Cookie Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="mailto:contact@paxiit.com">Email</a></li>
+                    <li><a href="tel:+33782391311">+33 7 82 39 13 11</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-translate="footer.copyright" data-translate-params='{"year": "2025"}'><span id="current-year">2025</span></p>
+        </div>
+    </footer>
+</body>
+</html>
+

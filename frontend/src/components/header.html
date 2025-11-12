@@ -1,0 +1,110 @@
+<!-- Header Component -->
+<!-- Reusable header with navigation and language switcher -->
+<!-- Uses PMS for paths and CLS for translations -->
+
+<header>
+    <nav>
+        <a href="/" class="logo">Paxi iTechnologies</a>
+        <ul class="nav-links">
+            <li><a href="/" data-translate="nav.home">Home</a></li>
+            <li><a href="/about.html" data-translate="nav.about">About</a></li>
+            <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+            <li><a href="/press.html">Press</a></li>
+            <li><a href="/media.html">Media</a></li>
+            <li><a href="/career.html">Careers</a></li>
+            <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+            <li class="lang-switcher-container">
+                <div id="lang-switcher"></div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<style>
+    /* Header Styles */
+    header {
+        background: var(--bg-white, #ffffff);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color, #2563eb);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .logo:hover {
+        color: var(--secondary-color, #1e40af);
+    }
+    
+    .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: var(--text-dark, #1f2937);
+        font-weight: 500;
+        transition: color 0.3s;
+        font-size: 1rem;
+    }
+    
+    .nav-links a:hover {
+        color: var(--primary-color, #2563eb);
+    }
+    
+    .lang-switcher-container {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    /* Mobile Menu Toggle (for future mobile menu) */
+    .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--text-dark, #1f2937);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        nav {
+            padding: 1rem;
+        }
+        
+        .nav-links {
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .mobile-menu-toggle {
+            display: block;
+        }
+        
+        /* Mobile menu can be added later */
+    }
+</style>
+
+

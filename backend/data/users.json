@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@paxiit.com",
+    "role": "super_admin",
+    "status": "active",
+    "created": "2025-01-01T00:00:00.000Z",
+    "modified": "2025-01-01T00:00:00.000Z",
+    "lastLogin": "2025-11-12T19:45:17.258Z",
+    "passwordHash": "$2b$10$u/2rmC1hpGHeJ8AfYCvRpu5kd1s8MAVbybs65l994JZSswcU4q0tG"
+  }
+]

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Business IT Support Services - Paxi iTechnologies. 24/7 remote support, onsite support, managed IT services, and expert IT support for your business.">
+    <title>Business IT Support Services - Paxi iTechnologies</title>
+    
+    <!-- Systems - Load in order -->
+    <script src="/services/path-manager.js"></script>
+    <script src="/services/port-manager.js"></script>
+    <script src="/services/api-path-manager.js"></script>
+    <script type="module" src="/cls/lang-core.js"></script>
+    <script src="/cls/lang-switcher.js"></script>
+    <script src="/components/translation-plugin.js"></script>
+    <script src="/services/cookie-manager.js"></script>
+    
+    <!-- Simple initialization -->
+    <script>
+        (function() {
+            'use strict';
+            if (window.__PAGE_INIT__) return;
+            window.__PAGE_INIT__ = true;
+            
+            function init() {
+                // Initialize language system
+                if (typeof window.CLS !== 'undefined' && !window.CLS.initialized) {
+                    window.CLS.initialize();
+                }
+                
+                // Initialize language switcher
+                if (typeof window.LanguageSwitcher !== 'undefined') {
+                    const container = document.getElementById('lang-switcher');
+                    if (container) {
+                        const switcher = new window.LanguageSwitcher('lang-switcher');
+                        switcher.initialize();
+                    }
+                }
+                
+                // Initialize translation plugin
+                if (typeof window.TranslationPlugin !== 'undefined') {
+                    window.translationPlugin = new window.TranslationPlugin({
+                        googleTranslateEnabled: true,
+                        clsEnabled: true,
+                        position: 'bottom-right',
+                        showWidget: true
+                    });
+                    window.translationPlugin.initialize();
+                }
+                
+                // Update footer year
+                const yearSpan = document.getElementById('current-year');
+                if (yearSpan) {
+                    yearSpan.textContent = new Date().getFullYear();
+                }
+                
+                // Mark active nav link
+                const navLinks = document.querySelectorAll('.nav-links a');
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === '/support.html' || link.getAttribute('href') === '/support') {
+                        link.style.color = 'var(--primary-color)';
+                        link.style.fontWeight = '600';
+                    }
+                });
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init, { once: true });
+            } else {
+                init();
+            }
+        })();
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #006d77;
+            --secondary-color: #83c5be;
+            --accent-color: #ffddd2;
+            --accent-2: #e29578;
+            --bg-light: #edf6f9;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--bg-white, #ffffff);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color, #2563eb);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .logo:hover {
+            color: var(--secondary-color, #1e40af);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark, #1f2937);
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 1rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color, #2563eb);
+        }
+        
+        .lang-switcher-container {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            gap: 0.25rem;
+            background: none;
+            border: none;
+        }
+        
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-dark);
+            transition: all 0.3s;
+            border-radius: 2px;
+        }
+        
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+        
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, rgba(0, 109, 119, 0.85) 0%, rgba(131, 197, 190, 0.85) 100%), url('/assets/images/optimized/supervision.png') center/cover no-repeat;
+            color: white;
+            padding: 8rem 2rem 6rem;
+            text-align: center;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Section Styles */
+        .section {
+            padding: 5rem 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Hero Features */
+        .hero-features {
+            background: var(--bg-light);
+            padding: 3rem 2rem;
+        }
+        
+        .hero-features h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .feature-item {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-item h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .feature-item p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 4rem;
+        }
+        
+        .content-section h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+        
+        .content-section h3 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .content-section p {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-section ul {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+        
+        .content-section ul li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-light);
+            font-size: 1.05rem;
+        }
+        
+        .content-section ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .benefit-card {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--primary-color);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            color: inherit;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .benefit-card h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        
+        .benefit-card p {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+        
+        /* Services List */
+        .services-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .service-tag {
+            background: var(--bg-light);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            background: var(--bg-light);
+        }
+        
+        .faq-item {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .faq-item h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        
+        .faq-item p {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--primary-color);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+        
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background: var(--text-dark, #1f2937);
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: auto;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+                padding: 1rem;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0;
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: 1px solid var(--border-color);
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                width: 100%;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border-color);
+            }
+            
+            .nav-links a {
+                display: block;
+                padding: 0.5rem 0;
+                font-size: 1rem;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+            
+            .lang-switcher-container {
+                width: 100%;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid var(--border-color);
+                margin-left: 0;
+            }
+            
+            .page-header {
+                padding: 6rem 1.5rem 4rem;
+                min-height: 50vh;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .content-section h2 {
+                font-size: 1.75rem;
+            }
+            
+            .content-section h3 {
+                font-size: 1.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header-cta {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                min-height: 44px;
+            }
+            
+            .section {
+                padding: 3rem 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 5rem 1rem 3rem;
+                min-height: 40vh;
+            }
+            
+            .page-header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .logo {
+                font-size: 1.25rem;
+            }
+            
+            .btn {
+                min-height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Component -->
+    <header>
+        <nav>
+            <a href="/" class="logo">Paxi iTechnologies</a>
+            <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="/" data-translate="nav.home">Home</a></li>
+                <li><a href="/about.html" data-translate="nav.about">About</a></li>
+                <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+                <li><a href="/consulting.html">Consulting</a></li>
+                <li><a href="/support.html">Support</a></li>
+                <li><a href="/governance.html">Governance</a></li>
+                <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                <li class="lang-switcher-container">
+                    <div id="lang-switcher"></div>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    
+    <script>
+        // Mobile menu toggle
+        (function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    const isActive = navLinks.classList.toggle('active');
+                    menuToggle.classList.toggle('active');
+                    menuToggle.setAttribute('aria-expanded', isActive);
+                });
+                
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        navLinks.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+            }
+        })();
+    </script>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 data-translate="support.title">Business IT Support Services</h1>
+            <p data-translate="support.subtitle">Support your staff and technology infrastructure with expert IT support services.</p>
+            <p style="font-size: 1rem; opacity: 0.9;" data-translate="support.subtitle2">Dependable IT Support Services for SMEs and corporate businesses.</p>
+            <div class="page-header-cta">
+                <a href="/contact.html" class="btn btn-primary" data-translate="support.cta1">Talk to an Expert</a>
+                <a href="/contact.html" class="btn btn-secondary" data-translate="support.cta2">Get a Quote</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hero Features -->
+    <section class="hero-features">
+        <div class="container">
+            <h2 data-translate="support.heroTitle">Boost your efficiency with IT support that works for you</h2>
+            <div class="features-grid">
+                <a href="/contact.html" class="feature-item">
+                    <div class="feature-icon">🕐</div>
+                    <h3 data-translate="support.features.remote24.title">24/7 Responsive Remote Support</h3>
+                    <p data-translate="support.features.remote24.description">Round-the-clock remote support desks to handle your IT issues anytime, anywhere.</p>
+                </a>
+                <a href="/contact.html" class="feature-item">
+                    <div class="feature-icon">👨‍💻</div>
+                    <h3 data-translate="support.features.onsite.title">Onsite Tech Support</h3>
+                    <p data-translate="support.features.onsite.description">Expert onsite technical support when remote assistance isn't enough.</p>
+                </a>
+                <a href="/contact.html" class="feature-item">
+                    <div class="feature-icon">👥</div>
+                    <h3 data-translate="support.features.team.title">Reliable Team of Seasoned Engineers</h3>
+                    <p data-translate="support.features.team.description">Diverse experience across industries and technologies to solve any IT challenge.</p>
+                </a>
+                <a href="/contact.html" class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <h3 data-translate="support.features.fast.title">Fast Response Times</h3>
+                    <p data-translate="support.features.fast.description">Quick response and problem resolution to minimize downtime and maximize productivity.</p>
+                </a>
+                <a href="/contact.html" class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <h3 data-translate="support.features.cost.title">Cost-Effective Solutions</h3>
+                    <p data-translate="support.features.cost.description">Predictable costs with fixed-rate contracts and no hidden fees.</p>
+                </a>
+                <a href="/contact.html" class="feature-item">
+                    <div class="feature-icon">🔒</div>
+                    <h3 data-translate="support.features.proactive.title">Proactive Monitoring</h3>
+                    <p data-translate="support.features.proactive.description">Continuous monitoring to prevent issues before they impact your business.</p>
+                </a>
+            </div>
+            <div style="text-align: center;">
+                <a href="/contact.html" class="btn btn-primary" data-translate="support.heroButton">Find IT Support</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section 1 -->
+    <section class="section">
+        <div class="container">
+            <div class="content-section">
+                <h2 data-translate="support.section1.title">Reach your business goals with scalable support at a predictable cost</h2>
+                <p data-translate="support.section1.p1">Our IT support offerings are specially designed for small businesses and enterprises. Our team of certified IT professionals can remotely monitor and manage your IT environment, dealing with over 90% of your IT tasks without causing any disruption to your regular day-to-day operations.</p>
+                <p data-translate="support.section1.p2">We are there for you when you need us, with reliable 24/7 response on call, and fixed rate contracts with no hidden costs. We look after your technology and keep it secure, with expert advice and regular maintenance. Business IT support was never so easy.</p>
+                <p data-translate="support.section1.p3">We keep an eye on your IT environment, looking out for threats or potential problems likely to cause you downtime in the future. By addressing these issues before they develop, you can rest assured that your systems are secure and optimized full time. We also provide advice on how you can improve the performance of your current systems with the right upgrades and maintenance. With our help, you'll keep your business computer and technology systems up and running for the long term.</p>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/contact.html" class="btn btn-primary" data-translate="support.section1.button">Speak to the Experts</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section 2 -->
+    <section class="section" style="background: var(--bg-light);">
+        <div class="container">
+            <div class="content-section">
+                <h2 data-translate="support.section2.title">Here's how our managed IT support services can optimize your security and productivity</h2>
+                <p data-translate="support.section2.p1">In today's world, IT support services are becoming increasingly common for businesses of all sizes. Instead of dealing with different firms for different issues, you have the choice of partnering with Paxi iTechnologies, a firm that offers business technology services to support your company with any IT problem you encounter.</p>
+                <p data-translate="support.section2.p2">We understand that your business needs to focus on your core activities, which is why you can rely on us to provide ongoing support and maintenance of your network, hardware, and other critical systems. With our help, you can minimize downtime and keep your business up and running whenever you need it.</p>
+                <p data-translate="support.section2.p3">Our approach is to focus on more than just your technology – your business comes first and providing first-class customer service is everything.</p>
+                
+                <div class="benefits-grid">
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="support.section2.benefits.reduceRisk.title">Reduce Risk</h4>
+                        <p data-translate="support.section2.benefits.reduceRisk.description">Our proven methodology supports change management and reduces the threat of business disruption.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="support.section2.benefits.standardize.title">Standardize Support</h4>
+                        <p data-translate="support.section2.benefits.standardize.description">Standardize levels of response, technical support, and technical capabilities across your locations.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="support.section2.benefits.experts.title">Access to Experts</h4>
+                        <p data-translate="support.section2.benefits.experts.description">Access to a team of professionals capable of replacing or supporting your existing IT team.</p>
+                    </a>
+                    <a href="/contact.html" class="benefit-card">
+                        <h4 data-translate="support.section2.benefits.costs.title">Predictable Costs</h4>
+                        <p data-translate="support.section2.benefits.costs.description">Better support with streamlined services at a fixed, predictable cost.</p>
+                    </a>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/contact.html" class="btn btn-primary" data-translate="support.section2.button">Talk to Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section 3 -->
+    <section class="section">
+        <div class="container">
+            <div class="content-section">
+                <h2 data-translate="support.section3.title">Why choose Paxi iTechnologies for your remote IT management?</h2>
+                <p data-translate="support.section3.p1">We focus on taking a personalized approach to all our client's remote support needs and can offer flexible support plans customized to fit your specific business needs. Our customer support plans are flexible yet broad enough to handle the outsourcing of your entire remote IT stack, or just particular functions on an ad-hoc basis.</p>
+                <p data-translate="support.section3.p2">Your business will benefit from the advanced expertise and combined decades of experience that our team brings to the table. With a locally-based IT support team, we can offer greater service level agreements and rapid response times so that your team's productivity levels never suffer.</p>
+                
+                <h3 data-translate="support.section3.servicesTitle">Our business IT services include:</h3>
+                <div class="services-list">
+                    <div class="service-tag" data-translate="support.section3.services.0">Disaster Recovery</div>
+                    <div class="service-tag" data-translate="support.section3.services.1">Cloud Services</div>
+                    <div class="service-tag" data-translate="support.section3.services.2">Computer Support</div>
+                    <div class="service-tag" data-translate="support.section3.services.3">Data Loss & Management</div>
+                    <div class="service-tag" data-translate="support.section3.services.4">Software Updates</div>
+                    <div class="service-tag" data-translate="support.section3.services.5">Network Maintenance</div>
+                    <div class="service-tag" data-translate="support.section3.services.6">Security Monitoring</div>
+                    <div class="service-tag" data-translate="support.section3.services.7">Hardware Support</div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/contact.html" class="btn btn-primary" data-translate="support.section3.button">Get IT Support</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section faq-section">
+        <div class="container">
+            <div class="content-section">
+                <h2 style="text-align: center; margin-bottom: 3rem;" data-translate="support.faq.title">Remote IT Support Services – Frequently Asked Questions (FAQs)</h2>
+                
+                <div class="faq-item">
+                    <h4 data-translate="support.faq.q1.question">What are remote IT support services?</h4>
+                    <p data-translate="support.faq.q1.answer">Remote IT support services refers to technical, comprehensive support that is provided by technology companies from remote locations. These services can include system support, network maintenance, disaster recovery, and more. Remote IT support services can assist any business wanting quality IT management.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4 data-translate="support.faq.q2.question">What does a remote tech support service provider do?</h4>
+                    <p data-translate="support.faq.q2.answer">Organizations that provide remote IT support services analyze their clients' companies to understand their technical systems and needs better. Afterwards, they offer customizable support to ensure that all technologies and programs work efficiently. Remote IT support service providers are essentially off-site IT departments.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4 data-translate="support.faq.q3.question">Can IT support be remote?</h4>
+                    <p data-translate="support.faq.q3.answer">Thanks to today's technology and the Internet, IT support services are fully capable of being remote. IT workers in this space use their own hardware and software to support clients. Remote IT support is cost-efficient and flexible, allowing businesses to get expert help without the overhead of an in-house IT team.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 data-translate="support.cta.title">World-class IT support services</h2>
+            <p data-translate="support.cta.p1">Get world-class IT support services from our team of certified support engineers. Our team is always available to help all your onsite and remote technical needs, with support services tailored to your business.</p>
+            <p data-translate="support.cta.p2">If you're looking for an IT partner who is passionate about delivering top-notch services and who will show up when you need help, drop us a line, and our IT support consultants would be happy to chat about your options.</p>
+            <a href="/contact.html" class="btn btn-primary" data-translate="support.cta.button">Contact Us Today</a>
+        </div>
+    </section>
+
+    <!-- Footer Component -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Paxi iTechnologies</h3>
+                <p data-translate="home.subtitle">Smart IT Management. Clear Results.</p>
+            </div>
+            <div class="footer-section">
+                <h3 data-translate="nav.home">Quick Links</h3>
+                <ul>
+                    <li><a href="/" data-translate="nav.home">Home</a></li>
+                    <li><a href="/about.html" data-translate="nav.about">About</a></li>
+                    <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+                    <li><a href="/consulting.html">Consulting</a></li>
+                    <li><a href="/support.html">Support</a></li>
+                    <li><a href="/governance.html">Governance</a></li>
+                <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3 data-translate="support.footerServices">Support Services</h3>
+                <ul>
+                    <li><a href="/support.html" data-translate="support.footerRemote">Remote Support</a></li>
+                    <li><a href="/support.html" data-translate="support.footerOnsite">Onsite Support</a></li>
+                    <li><a href="/support.html" data-translate="support.footerManaged">Managed IT Services</a></li>
+                    <li><a href="/support.html" data-translate="support.footer247">24/7 Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="/terms-of-service.html">Terms of Service</a></li>
+                    <li><a href="/cookies-disclaimer.html">Cookie Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <ul>
+                    <li><a href="mailto:contact@paxiit.com">Email</a></li>
+                    <li><a href="tel:+33782391311">+33 7 82 39 13 11</a></li>
+                </ul>
+                <div class="social-media-icons" style="margin-top: 1.5rem;">
+                    <a href="https://www.linkedin.com/company/paxi-itechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-linkedin.svg" alt="LinkedIn" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.facebook.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-facebook.svg" alt="Facebook" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://twitter.com/paxiitech" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-twitter.svg" alt="Twitter" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.instagram.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-right: 1rem;">
+                        <img src="/assets/images/optimized/icons8-instagram.svg" alt="Instagram" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                    <a href="https://www.youtube.com/@paxiitechnologies" target="_blank" rel="noopener noreferrer" style="display: inline-block;">
+                        <img src="/assets/images/optimized/icons8-youtube.svg" alt="YouTube" style="width: 36px; height: 36px; opacity: 1; transition: all 0.3s;">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-translate="footer.copyright" data-translate-params='{"year": "2025"}'><span id="current-year">2025</span></p>
+        </div>
+    </footer>
+</body>
+</html>
+
