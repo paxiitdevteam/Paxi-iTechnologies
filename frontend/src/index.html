@@ -329,6 +329,16 @@
                 }
                 
                 const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(`Expected JSON but got ${contentType}`);
+                }
+                
                 const result = await response.json();
                 
                 if (result.success && result.data && result.data.services) {
@@ -336,6 +346,7 @@
                 }
             } catch (error) {
                 console.error('Error loading services preview:', error);
+                // Silently fail - don't show error to user
             }
         }
         
