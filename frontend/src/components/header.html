@@ -209,10 +209,17 @@
         nav {
             flex-wrap: wrap;
             padding: 1rem;
+            position: relative;
         }
         
         .mobile-menu-toggle {
-            display: flex;
+            display: flex !important;
+            order: 2;
+        }
+        
+        .logo {
+            order: 1;
+            flex: 1;
         }
         
         .nav-links {
