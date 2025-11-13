@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Banner - Convert to PNG</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #006d77;
+            margin-bottom: 20px;
+        }
+        .banner-container {
+            background: white;
+            border: 2px solid #ddd;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        .instructions {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+        }
+        button {
+            background: #006d77;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #005a63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LinkedIn Banner - PNG Export</h1>
+        
+        <div class="instructions">
+            <h3>How to Save as PNG:</h3>
+            <ol>
+                <li><strong>Right-click</strong> on the banner below</li>
+                <li>Select <strong>"Save image as"</strong> or <strong>"Copy image"</strong></li>
+                <li>Save as PNG format</li>
+                <li>Or use the button below to download</li>
+            </ol>
+        </div>
+
+        <div class="banner-container" id="bannerContainer">
+            <svg width="1192" height="220" xmlns="http://www.w3.org/2000/svg" id="bannerSvg">
+                <!-- Background Gradient -->
+                <defs>
+                    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#006d77;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#83c5be;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect width="1192" height="220" fill="url(#bgGradient)"/>
+                
+                <!-- Logo Text: Paxi iTechnologies -->
+                <text x="596" y="100" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">
+                    Paxi iTechnologies
+                </text>
+                
+                <!-- Tagline -->
+                <text x="596" y="150" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" opacity="0.95">
+                    Smart IT Management. Clear Results.
+                </text>
+            </svg>
+        </div>
+
+        <div>
+            <button onclick="downloadPNG()">Download as PNG</button>
+            <button onclick="downloadSimplePNG()">Download Simple Version (Solid Background)</button>
+        </div>
+    </div>
+
+    <script>
+        function svgToPng(svgElement, filename) {
+            const svgData = new XMLSerializer().serializeToString(svgElement);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            canvas.width = 1192;
+            canvas.height = 220;
+            
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+            };
+            
+            img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+        }
+
+        function downloadPNG() {
+            const svg = document.getElementById('bannerSvg');
+            svgToPng(svg, 'linkedin-banner.png');
+        }
+
+        function downloadSimplePNG() {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '1192');
+            svg.setAttribute('height', '220');
+            svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            
+            // Solid background
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('width', '1192');
+            rect.setAttribute('height', '220');
+            rect.setAttribute('fill', '#006d77');
+            svg.appendChild(rect);
+            
+            // Logo text
+            const text1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text1.setAttribute('x', '596');
+            text1.setAttribute('y', '100');
+            text1.setAttribute('font-family', 'Arial, Helvetica, sans-serif');
+            text1.setAttribute('font-size', '48');
+            text1.setAttribute('font-weight', 'bold');
+            text1.setAttribute('fill', '#ffffff');
+            text1.setAttribute('text-anchor', 'middle');
+            text1.setAttribute('dominant-baseline', 'middle');
+            text1.textContent = 'Paxi iTechnologies';
+            svg.appendChild(text1);
+            
+            // Tagline
+            const text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text2.setAttribute('x', '596');
+            text2.setAttribute('y', '150');
+            text2.setAttribute('font-family', 'Arial, Helvetica, sans-serif');
+            text2.setAttribute('font-size', '20');
+            text2.setAttribute('fill', '#ffffff');
+            text2.setAttribute('text-anchor', 'middle');
+            text2.setAttribute('dominant-baseline', 'middle');
+            text2.setAttribute('opacity', '0.95');
+            text2.textContent = 'Smart IT Management. Clear Results.';
+            svg.appendChild(text2);
+            
+            svgToPng(svg, 'linkedin-banner-simple.png');
+        }
+    </script>
+</body>
+</html>
+
