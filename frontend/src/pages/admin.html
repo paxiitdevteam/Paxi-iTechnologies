@@ -495,6 +495,25 @@
         </div>
     </div>
     
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Reset Password</h2>
+                <button class="modal-close" onclick="closeForgotPasswordModal()">&times;</button>
+            </div>
+            <div id="forgot-password-alert"></div>
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="reset-email">Email Address</label>
+                    <input type="email" id="reset-email" name="email" placeholder="Enter your email address" required>
+                </div>
+                <button type="submit" class="btn" id="reset-btn">Send Reset Link</button>
+                <button type="button" class="btn btn-secondary" onclick="closeForgotPasswordModal()" style="margin-top: 0.5rem;">Cancel</button>
+            </form>
+        </div>
+    </div>
+    
     <!-- Dashboard -->
     <div id="dashboard" class="dashboard">
         <div class="dashboard-header">
