@@ -43,6 +43,21 @@ export const translations = {
         cta: "Comenzar",
         learnMore: "Saber Más"
     },
+    
+    // Homepage Hero Section
+    homepage: {
+        hero: {
+            title: "Gestión IT Inteligente. Resultados Claros.",
+            subtitle: "Construimos sistemas IT claros, modernos e inteligentes con resultados reales.",
+            cta: {
+                services: "Nuestros Servicios",
+                contact: "Contáctenos"
+            }
+        },
+        services: {
+            title: "Nuestros Servicios"
+        }
+    },
 
     // About
     about: {

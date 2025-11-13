@@ -43,6 +43,21 @@ export const translations = {
         cta: "Loslegen",
         learnMore: "Mehr erfahren"
     },
+    
+    // Homepage Hero Section
+    homepage: {
+        hero: {
+            title: "Intelligentes IT-Management. Klare Ergebnisse.",
+            subtitle: "Wir bauen klare, moderne und intelligente IT-Systeme mit echten Ergebnissen.",
+            cta: {
+                services: "Unsere Dienstleistungen",
+                contact: "Kontaktieren Sie uns"
+            }
+        },
+        services: {
+            title: "Unsere Dienstleistungen"
+        }
+    },
 
     // About
     about: {

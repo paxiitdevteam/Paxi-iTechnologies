@@ -43,6 +43,21 @@ export const translations = {
         cta: "ابدأ الآن",
         learnMore: "اعرف المزيد"
     },
+    
+    // Homepage Hero Section
+    homepage: {
+        hero: {
+            title: "إدارة IT ذكية. نتائج واضحة.",
+            subtitle: "نبني أنظمة IT واضحة وحديثة وذكية مع نتائج حقيقية.",
+            cta: {
+                services: "خدماتنا",
+                contact: "اتصل بنا"
+            }
+        },
+        services: {
+            title: "خدماتنا"
+        }
+    },
 
     // About
     about: {
