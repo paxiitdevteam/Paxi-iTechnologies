@@ -265,6 +265,14 @@ class PathManager {
         if (typeof window !== 'undefined') {
             const protocol = window.location.protocol; // Detects http: or https:
             const hostname = window.location.hostname;
+            
+            // If HTTPS, use relative URLs (goes through Nginx reverse proxy)
+            // If HTTP, use direct port access
+            if (protocol === 'https:') {
+                // Return empty string for relative URLs when using HTTPS
+                return '';
+            }
+            
             return `${protocol}//${hostname}:${port}`;
         }
         return `http://localhost:${port}`;

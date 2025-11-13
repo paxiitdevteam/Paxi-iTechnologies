@@ -89,9 +89,10 @@
                     
                     // Use PMS if available (CORRECT WAY)
                     if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
-                        const baseURL = window.PMS.getBaseURL('api'); // Gets protocol + hostname + port
+                        const baseURL = window.PMS.getBaseURL('api'); // Returns '' for HTTPS (relative), or full URL for HTTP
                         const apiPath = window.PMS.api('/services'); // Gets /api/services
-                        apiUrl = `${baseURL}${apiPath}`; // Full URL: https://paxiit.com:8000/api/services
+                        // If baseURL is empty (HTTPS), use relative path; otherwise use full URL
+                        apiUrl = baseURL ? `${baseURL}${apiPath}` : apiPath;
                     } 
                     // Try APIM if PMS not available
                     else if (window.APIM && typeof window.APIM.getURL === 'function') {
