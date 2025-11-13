@@ -450,6 +450,29 @@ function requestHandler(req, res) {
         return;
     }
 
+    // Handle favicon requests - browsers auto-request /favicon.ico
+    if (pathname === '/favicon.ico' || pathname === '/favicon.svg') {
+        const faviconFile = pathname === '/favicon.ico' ? 'favicon.ico' : 'favicon.svg';
+        const faviconPath = PMS.frontend('src', 'assets', 'images', faviconFile);
+        
+        if (fs.existsSync(faviconPath)) {
+            try {
+                const data = fs.readFileSync(faviconPath);
+                const mimeType = pathname === '/favicon.ico' ? 'image/x-icon' : 'image/svg+xml';
+                res.writeHead(200, { 'Content-Type': mimeType, 'Cache-Control': 'public, max-age=31536000' });
+                res.end(data);
+                return;
+            } catch (e) {
+                console.error('Error reading favicon:', e.message);
+            }
+        } else {
+            console.error(`Favicon not found: ${faviconPath}`);
+        }
+        res.writeHead(404);
+        res.end();
+        return;
+    }
+
     // Handle API requests - after root check
     if (pathname.startsWith('/api/')) {
         handleAPI(req, res);

@@ -69,8 +69,10 @@
         text-decoration: none;
         color: var(--text-dark, #1f2937);
         font-weight: 500;
-        transition: color 0.3s;
+        transition: color 0.2s ease;
         font-size: 1rem;
+        display: inline-block;
+        -webkit-tap-highlight-color: transparent;
     }
     
     .nav-links a:hover {
@@ -184,12 +186,14 @@
                     menuToggle.setAttribute('aria-expanded', isActive);
                 });
                 
-                // Close menu when clicking on a link
+                // Close menu when clicking on a link (only if menu is open)
                 navLinks.querySelectorAll('a').forEach(link => {
                     link.addEventListener('click', function() {
-                        navLinks.classList.remove('active');
-                        menuToggle.classList.remove('active');
-                        menuToggle.setAttribute('aria-expanded', 'false');
+                        if (navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                            menuToggle.classList.remove('active');
+                            menuToggle.setAttribute('aria-expanded', 'false');
+                        }
                     });
                 });
                 
