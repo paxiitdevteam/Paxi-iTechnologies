@@ -382,15 +382,18 @@ function resolveFilePath(requestPath) {
         }
     } else {
         // For HTML pages, try pages directory FIRST - USE PMS
+        // First try the path as-is (in case it already has .html)
         let filePath = PMS.frontend('pages', relativePath);
         if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             return filePath;
         }
 
-        // Try with .html extension in pages - USE PMS
-        filePath = PMS.frontend('pages', relativePath + '.html');
-        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-            return filePath;
+        // Try with .html extension ONLY if it doesn't already have it - USE PMS
+        if (!relativePath.endsWith('.html')) {
+            filePath = PMS.frontend('pages', relativePath + '.html');
+            if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+                return filePath;
+            }
         }
     }
     
