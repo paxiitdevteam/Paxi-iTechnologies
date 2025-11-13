@@ -279,6 +279,70 @@
     
     <!-- Load Header and Footer - Simple approach like other pages -->
     <script>
+        // Mobile menu initialization function (extracted from header.html)
+        function initMobileMenu() {
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle && navLinks) {
+                // Remove existing listeners to prevent duplicates
+                const newToggle = menuToggle.cloneNode(true);
+                menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+                
+                const newNavLinks = navLinks.cloneNode(true);
+                navLinks.parentNode.replaceChild(newNavLinks, navLinks);
+                
+                // Re-query after clone
+                const freshToggle = document.querySelector('.mobile-menu-toggle');
+                const freshNavLinks = document.querySelector('.nav-links');
+                
+                if (freshToggle && freshNavLinks) {
+                    freshToggle.addEventListener('click', function() {
+                        const isActive = freshNavLinks.classList.toggle('active');
+                        freshToggle.classList.toggle('active');
+                        freshToggle.setAttribute('aria-expanded', isActive);
+                    });
+                    
+                    // Handle dropdown toggle on mobile
+                    const dropdowns = freshNavLinks.querySelectorAll('.dropdown');
+                    dropdowns.forEach(dropdown => {
+                        const toggle = dropdown.querySelector('.dropdown-toggle');
+                        if (toggle) {
+                            toggle.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                dropdown.classList.toggle('active');
+                            });
+                        }
+                    });
+                    
+                    // Close menu when clicking on a link
+                    freshNavLinks.querySelectorAll('a:not(.dropdown-toggle)').forEach(link => {
+                        link.addEventListener('click', function() {
+                            if (freshNavLinks.classList.contains('active')) {
+                                freshNavLinks.classList.remove('active');
+                                freshToggle.classList.remove('active');
+                                freshToggle.setAttribute('aria-expanded', 'false');
+                                dropdowns.forEach(d => d.classList.remove('active'));
+                            }
+                        });
+                    });
+                    
+                    // Close menu when clicking outside
+                    document.addEventListener('click', function(event) {
+                        const isClickInsideNav = freshNavLinks.contains(event.target);
+                        const isClickOnToggle = freshToggle.contains(event.target);
+                        
+                        if (!isClickInsideNav && !isClickOnToggle && freshNavLinks.classList.contains('active')) {
+                            freshNavLinks.classList.remove('active');
+                            freshToggle.classList.remove('active');
+                            freshToggle.setAttribute('aria-expanded', 'false');
+                            dropdowns.forEach(d => d.classList.remove('active'));
+                        }
+                    });
+                }
+            }
+        }
+        
         // Load header and footer - Simple fetch approach (same as other working pages)
         document.addEventListener('DOMContentLoaded', function() {
             // Load header
@@ -287,7 +351,21 @@
                 .then(html => {
                     const container = document.getElementById('header-container');
                     if (container) {
-                        container.innerHTML = html;
+                        // Extract and insert HTML (scripts won't run from innerHTML)
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        
+                        // Remove script tags (we'll initialize manually)
+                        const scripts = tempDiv.querySelectorAll('script');
+                        scripts.forEach(script => script.remove());
+                        
+                        container.innerHTML = tempDiv.innerHTML;
+                        
+                        // Initialize mobile menu after header is inserted
+                        setTimeout(() => {
+                            initMobileMenu();
+                        }, 100);
+                        
                         // Set active nav link
                         const navLinks = container.querySelectorAll('.nav-links a');
                         navLinks.forEach(link => {
