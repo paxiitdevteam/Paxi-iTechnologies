@@ -1121,26 +1121,22 @@
             return `http://${hostname}:${port}${cleanPath}`;
         }
         
-        // Test backend connection - Use PMS directly like other pages
+        // Test backend connection - Use getAPIUrl() helper for HTTPS compatibility
         async function testConnection() {
             const alertDiv = document.getElementById('login-alert');
             alertDiv.innerHTML = '<div class="alert" style="background: #fff3cd; color: #856404;">Testing backend connection...</div>';
             
             try {
-                // Use PMS exactly as designed - same as PMS.testBackendConnection()
-                if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
-                    const baseURL = window.PMS.getBaseURL('api');
-                    const testEndpoint = window.PMS.api('/admin/status');
-                    const apiUrl = `${baseURL}${testEndpoint}`;
-                    console.log('🔗 Testing API URL via PMS:', apiUrl);
-                    const response = await fetch(apiUrl);
-                    const data = await response.json();
-                    
-                    if (response.ok) {
-                        alertDiv.innerHTML = '<div class="alert success">✅ Backend is reachable!</div>';
-                    } else {
-                        alertDiv.innerHTML = '<div class="alert error">⚠️ Backend responded but authentication required</div>';
-                    }
+                // Use getAPIUrl() helper which handles HTTPS correctly
+                const apiUrl = getAPIUrl('/api/admin/status');
+                console.log('🔗 Testing API URL:', apiUrl);
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ Backend is reachable!</div>';
+                } else {
+                    alertDiv.innerHTML = '<div class="alert error">⚠️ Backend responded but authentication required</div>';
                 }
             } catch (error) {
                 alertDiv.innerHTML = `<div class="alert error">❌ Cannot connect to backend: ${error.message}<br><small>Make sure the server is running: ./start.sh or node server.js</small></div>`;
