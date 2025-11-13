@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const dbConfig = require('../config/database-config.js');
+const PMS = require('../utils/pms'); // Path Manager System - SINGLE SOURCE OF TRUTH
 
 class Database {
     constructor() {
@@ -49,13 +50,14 @@ class Database {
      */
     async connectSQLite() {
         try {
-            // Create data directory if it doesn't exist
-            const dbPath = path.resolve(__dirname, '..', '..', 'data');
+            // Create data directory if it doesn't exist - USING PMS (NO HARDCODED PATHS)
+            const dbPath = PMS.backend('data');
             if (!fs.existsSync(dbPath)) {
                 fs.mkdirSync(dbPath, { recursive: true });
             }
 
-            const dbFile = path.join(dbPath, 'database.sqlite');
+            // Use PMS for database file path - SINGLE SOURCE OF TRUTH
+            const dbFile = PMS.backend('data', 'database.sqlite');
             
             // For now, we'll use a simple file-based approach
             // In production, you'd use better-sqlite3 or sqlite3 package

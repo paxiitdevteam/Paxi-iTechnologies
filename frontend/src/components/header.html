@@ -5,6 +5,11 @@
 <header>
     <nav>
         <a href="/" class="logo">Paxi iTechnologies</a>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <ul class="nav-links">
             <li><a href="/" data-translate="nav.home">Home</a></li>
             <li><a href="/about.html" data-translate="nav.about">About</a></li>
@@ -78,33 +83,134 @@
         align-items: center;
     }
     
-    /* Mobile Menu Toggle (for future mobile menu) */
+    /* Mobile Menu Toggle */
     .mobile-menu-toggle {
         display: none;
+        flex-direction: column;
         background: none;
         border: none;
-        font-size: 1.5rem;
         cursor: pointer;
-        color: var(--text-dark, #1f2937);
+        padding: 0.5rem;
+        gap: 4px;
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .mobile-menu-toggle span {
+        display: block;
+        width: 24px;
+        height: 3px;
+        background: var(--text-dark, #1f2937);
+        border-radius: 2px;
+        transition: all 0.3s;
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
     }
     
     /* Responsive */
     @media (max-width: 768px) {
         nav {
+            flex-wrap: wrap;
             padding: 1rem;
         }
         
-        .nav-links {
-            gap: 1rem;
-            font-size: 0.9rem;
-        }
-        
         .mobile-menu-toggle {
-            display: block;
+            display: flex;
         }
         
-        /* Mobile menu can be added later */
+        .nav-links {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            gap: 0;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-links.active {
+            display: flex;
+        }
+        
+        .nav-links li {
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-links a {
+            display: block;
+            padding: 0.5rem 0;
+            font-size: 1rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .lang-switcher-container {
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-left: 0;
+        }
     }
 </style>
+
+<script>
+    // Mobile menu toggle functionality
+    (function() {
+        'use strict';
+        
+        function initMobileMenu() {
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    const isActive = navLinks.classList.toggle('active');
+                    menuToggle.classList.toggle('active');
+                    menuToggle.setAttribute('aria-expanded', isActive);
+                });
+                
+                // Close menu when clicking on a link
+                navLinks.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', function() {
+                        navLinks.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    });
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!navLinks.contains(event.target) && !menuToggle.contains(event.target)) {
+                        navLinks.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobileMenu);
+        } else {
+            initMobileMenu();
+        }
+    })();
+</script>
 
 

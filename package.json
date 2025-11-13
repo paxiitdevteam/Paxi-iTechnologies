@@ -4,9 +4,7 @@
   "description": "Paxiit Website - Smart IT Management",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "server": "node server.js"
+    "start": "node server.js"
   },
   "keywords": [
     "paxiit",

@@ -85,23 +85,14 @@ class ServerPathManager {
 // Create PMS instance for server - SINGLE SOURCE OF TRUTH
 const PMS = new ServerPathManager();
 
-// Load Port Configuration - FIXED PORTS FOR ALL RESOURCES
-const portsConfig = require(PMS.backend('config', 'ports-config.js'));
-
-// Configuration - ALL PATHS USE PMS (NO HARDCODED PATHS)
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const isProduction = NODE_ENV === 'production';
-
 const config = {
-    port: process.env.PORT || portsConfig.getPort('server', isProduction ? 'production' : 'development'),
-    host: process.env.HOST || (isProduction ? '0.0.0.0' : 'localhost'),
+    port: process.env.PORT || 8000,
+    host: process.env.HOST || '0.0.0.0',
     frontendPath: PMS.frontend('src'),
     backendPath: PMS.backend(),
-    enableCORS: process.env.DISABLE_CORS !== 'true', // Enable CORS unless explicitly disabled
-    corsOrigin: process.env.CORS_ORIGIN || (isProduction ? 'https://yourdomain.com' : '*'),
-    enableLogging: process.env.ENABLE_LOGGING === 'true' || (!isProduction && process.env.ENABLE_LOGGING !== 'false'),
-    ports: portsConfig.PortsConfig,
-    nodeEnv: NODE_ENV
+    enableCORS: true,
+    corsOrigin: '*',
+    enableLogging: true
 };
 
 // Verify PMS paths on startup
@@ -113,7 +104,6 @@ console.log(`📁 Frontend root: ${PMS.frontend('root') || PMS.get('frontend', '
 console.log(`📁 Frontend src: ${PMS.frontend('src')}`);
 console.log(`📁 Backend root: ${PMS.backend('root') || PMS.get('backend', 'root')}`);
 console.log(`📁 Backend routes: ${PMS.backend('routes')}`);
-console.log(`📁 Test route exists: ${fs.existsSync(PMS.backend('routes', 'test.js'))}`);
 console.log('='.repeat(50));
 
 // MIME types
@@ -121,6 +111,7 @@ const mimeTypes = {
     '.html': 'text/html',
     '.js': 'application/javascript',
     '.json': 'application/json',
+    '.webmanifest': 'application/manifest+json',
     '.css': 'text/css',
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
@@ -153,16 +144,24 @@ function getMimeType(filePath) {
  * Serve static file
  */
 function serveFile(filePath, res) {
+    if (res.headersSent) {
+        return;
+    }
+    
     fs.readFile(filePath, (err, data) => {
         if (err) {
-            res.writeHead(404, { 'Content-Type': 'text/plain' });
-            res.end('File not found');
+            if (!res.headersSent) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('File not found');
+            }
             return;
         }
 
-        const mimeType = getMimeType(filePath);
-        res.writeHead(200, { 'Content-Type': mimeType });
-        res.end(data);
+        if (!res.headersSent) {
+            const mimeType = getMimeType(filePath);
+            res.writeHead(200, { 'Content-Type': mimeType });
+            res.end(data);
+        }
     });
 }
 
@@ -353,36 +352,65 @@ function handleSimpleAPI(req, res, parsedUrl, pathname) {
  * Resolve file path - ALL PATHS USE PMS
  */
 function resolveFilePath(requestPath) {
-    // Remove query string
     const cleanPath = requestPath.split('?')[0];
     
-    // Default to index.html for root - USE PMS
     if (cleanPath === '/' || cleanPath === '') {
-        return PMS.frontend('pages', 'index.html');
+        return null;
     }
 
-    // Remove leading slash
-    const relativePath = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
+    let relativePath = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
     
-    // Try pages directory first - USE PMS
-    let filePath = PMS.frontend('pages', relativePath);
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-        return filePath;
+    // Handle /pages/ prefix - strip it since pages are in frontend/src/pages/
+    if (relativePath.startsWith('pages/')) {
+        relativePath = relativePath.replace(/^pages\//, '');
+    }
+    
+    // Determine if this is a static asset request (services, components, assets, cls)
+    const isStaticAsset = relativePath.startsWith('services/') || 
+                          relativePath.startsWith('components/') || 
+                          relativePath.startsWith('assets/') || 
+                          relativePath.startsWith('cls/');
+    
+    // For static assets, check frontend/src FIRST
+    // For HTML pages, check pages directory FIRST
+    if (isStaticAsset) {
+        // CRITICAL: Try frontend/src directory FIRST for static assets
+        // This handles /services/, /components/, /assets/, /cls/ paths
+        let filePath = PMS.frontend('src', relativePath);
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            return filePath;
+        }
+    } else {
+        // For HTML pages, try pages directory FIRST - USE PMS
+        let filePath = PMS.frontend('pages', relativePath);
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            return filePath;
+        }
+
+        // Try with .html extension in pages - USE PMS
+        filePath = PMS.frontend('pages', relativePath + '.html');
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            return filePath;
+        }
+    }
+    
+    // If not found in priority location, try the other location
+    let filePath;
+    if (!isStaticAsset) {
+        // Try frontend/src directory for non-HTML files
+        filePath = PMS.frontend('src', relativePath);
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            return filePath;
+        }
+    } else {
+        // Try pages directory as fallback for static assets (unlikely but possible)
+        filePath = PMS.frontend('pages', relativePath);
+        if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+            return filePath;
+        }
     }
 
-    // Try with .html extension - USE PMS
-    filePath = PMS.frontend('pages', relativePath + '.html');
-    if (fs.existsSync(filePath)) {
-        return filePath;
-    }
-
-    // Try frontend/src directory - USE PMS
-    filePath = PMS.frontend('src', relativePath);
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-        return filePath;
-    }
-
-    // Try root directory - USE PMS
+    // Try root directory as last resort - USE PMS
     filePath = PMS.resolve(relativePath);
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
         return filePath;
@@ -403,7 +431,26 @@ function requestHandler(req, res) {
         console.log(`${new Date().toISOString()} - ${req.method} ${pathname}`);
     }
 
-    // Handle API requests FIRST - before static files
+    if (pathname === '/' || pathname === '') {
+        const srcIndexPath = PMS.frontend('src', 'index.html');
+        
+        if (fs.existsSync(srcIndexPath)) {
+            try {
+                const data = fs.readFileSync(srcIndexPath);
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(data);
+                return;
+            } catch (e) {
+                console.error('Error reading index:', e.message);
+            }
+        }
+        
+        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.end('<!DOCTYPE html><html><head><title>404</title></head><body><h1>404 - Homepage Not Found</h1></body></html>');
+        return;
+    }
+
+    // Handle API requests - after root check
     if (pathname.startsWith('/api/')) {
         handleAPI(req, res);
         return;
@@ -412,33 +459,34 @@ function requestHandler(req, res) {
     // Serve static files
     const filePath = resolveFilePath(pathname);
     
+    if (config.enableLogging && pathname !== '/favicon.ico') {
+        console.log(`[RESOLVE] Pathname: ${pathname} -> Resolved: ${filePath || 'NULL'}`);
+    }
+    
     if (filePath && fs.existsSync(filePath)) {
-        serveFile(filePath, res);
-    } else {
-        // 404 - try index.html - USE PMS
-        const indexPath = PMS.frontend('pages', 'index.html');
-        if (fs.existsSync(indexPath)) {
-            serveFile(indexPath, res);
-        } else {
-            res.writeHead(404, { 'Content-Type': 'text/html' });
-            res.end(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>404 - Not Found</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-                        h1 { color: #e74c3c; }
-                    </style>
-                </head>
-                <body>
-                    <h1>404 - File Not Found</h1>
-                    <p>The requested file could not be found.</p>
-                    <p><a href="/">Go to Homepage</a></p>
-                </body>
-                </html>
-            `);
+        try {
+            const stats = fs.statSync(filePath);
+            if (stats.isFile()) {
+                if (config.enableLogging && pathname !== '/favicon.ico') {
+                    console.log(`[SERVE] ✅ Serving file: ${filePath}`);
+                }
+                serveFile(filePath, res);
+                return;
+            } else {
+                if (config.enableLogging) {
+                    console.error(`[SERVE] ❌ Path exists but is not a file: ${filePath}`);
+                }
+            }
+        } catch (e) {
+            if (config.enableLogging) {
+                console.error(`[SERVE] ❌ Error accessing file: ${filePath}`, e.message);
+            }
         }
+    }
+    
+    if (!res.headersSent) {
+        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.end(`<!DOCTYPE html><html><head><title>404</title></head><body><h1>404 - Not Found</h1><p>${pathname}</p><p><a href="/">Home</a></p></body></html>`);
     }
 }
 
@@ -459,13 +507,6 @@ function startServer() {
         console.log(`📝 Logging: ${config.enableLogging ? 'Enabled' : 'Disabled'}`);
         console.log(`✅ Path Manager System (PMS): Active`);
         console.log('='.repeat(50));
-        console.log('🔌 Fixed Port Configuration:');
-        console.log(`   Server: ${config.port}`);
-        console.log(`   API: ${config.ports.api.base}`);
-        console.log(`   Frontend: ${config.ports.frontend.pages}`);
-        console.log(`   Backend: ${config.ports.backend.routes}`);
-        console.log(`   Reserved ports: ${config.ports.reserved.websocket}, ${config.ports.reserved.database}, ${config.ports.reserved.redis}`);
-        console.log('='.repeat(50));
         console.log('Press Ctrl+C to stop the server');
         console.log('='.repeat(50));
     });
@@ -473,7 +514,7 @@ function startServer() {
     server.on('error', (err) => {
         if (err.code === 'EADDRINUSE') {
             console.error(`❌ Port ${config.port} is already in use.`);
-            console.error(`   Try using a different port: PORT=8001 node server.js`);
+            console.error(`   Stop the other process or use: PORT=8001 npm start`);
         } else {
             console.error('❌ Server error:', err);
         }

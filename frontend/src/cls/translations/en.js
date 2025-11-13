@@ -43,6 +43,21 @@ export const translations = {
         cta: "Get Started",
         learnMore: "Learn More"
     },
+    
+    // Homepage Hero Section
+    homepage: {
+        hero: {
+            title: "Smart IT Management. Clear Results.",
+            subtitle: "We build clear, modern, and smart IT systems with real-world results.",
+            cta: {
+                services: "Our Services",
+                contact: "Get in Touch"
+            }
+        },
+        services: {
+            title: "Our Services"
+        }
+    },
 
     // About
     about: {

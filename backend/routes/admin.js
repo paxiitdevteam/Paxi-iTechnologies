@@ -477,12 +477,13 @@ function handleGetPages(req, res) {
             if (file.endsWith('.html')) {
                 const filePath = PMS.frontend('pages', file);
                 const stats = fs.statSync(filePath);
+                
                 pages.push({
                     name: file,
-                    path: `/frontend/src/pages/${file}`,
+                    path: `/pages/${file}`, // URL path (not filesystem path)
                     size: stats.size,
                     modified: stats.mtime.toISOString(),
-                    url: `/${file}`
+                    url: `/${file}` // Public URL
                 });
             }
         });

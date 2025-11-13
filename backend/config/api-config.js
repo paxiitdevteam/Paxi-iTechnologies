@@ -110,16 +110,6 @@ module.exports = {
         credentials: false
     },
 
-    // Rate limiting
-    rateLimit: {
-        enabled: true,
-        windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100 // limit each IP to 100 requests per windowMs
-    },
-
-    // Request timeout
-    timeout: 30000, // 30 seconds
-
     // Response format
     responseFormat: {
         success: (data, message = 'Success') => ({

@@ -31,41 +31,26 @@ paxiit_website/
 │       └── services/    # Frontend services (PMS, API manager)
 ├── shared/              # Shared utilities and constants
 ├── server.js            # Node.js development server
-├── server.py            # Python development server (alternative)
 └── package.json         # Node.js dependencies
 ```
 
 ## 🛠️ Setup & Installation
 
 ### Prerequisites
-- Node.js (v14 or higher) OR Python 3.7+
+- Node.js (v14 or higher)
 - Git
 
 ### Quick Start
 
-**Using Node.js:**
 ```bash
-# Install dependencies
+# Install dependencies (first time only)
 npm install
 
-# Start server
-node server.js
-# or
+# Start the server
 npm start
 ```
 
-**Using Python:**
-```bash
-# Start server
-python3 server.py
-# or
-python server.py
-```
-
-**Using Startup Scripts:**
-- **Linux/Mac**: `./start.sh`
-- **Windows (CMD.exe)**: `start.bat` (PowerShell is NOT supported)
-
+The server will start on http://localhost:8000
 ### Configuration
 
 - **Port**: 8000 (default)

@@ -27,18 +27,56 @@
             </ul>
         </div>
         <div class="footer-section">
+            <h3>Legal</h3>
+            <ul>
+                <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                <li><a href="/terms-of-service.html">Terms of Service</a></li>
+                <li><a href="/cookies-disclaimer.html">Cookie Policy</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
             <h3>Connect</h3>
             <ul>
                 <li><a href="mailto:contact@paxiit.com">Email: contact@paxiit.com</a></li>
                 <li><a href="tel:+33782391311">+33 7 82 39 13 11</a></li>
                 <li><a href="/contact.html" data-translate="nav.contact">Contact Us</a></li>
             </ul>
+            <div class="social-media-icons">
+                <a href="https://www.linkedin.com/company/paxi-itechnologies" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn">
+                    <img src="/assets/images/optimized/icons8-linkedin.svg" alt="LinkedIn">
+                </a>
+                <a href="https://www.facebook.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Facebook">
+                    <img src="/assets/images/optimized/icons8-facebook.svg" alt="Facebook">
+                </a>
+                <a href="https://twitter.com/paxiitech" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Twitter">
+                    <img src="/assets/images/optimized/icons8-twitter.svg" alt="Twitter">
+                </a>
+                <a href="https://www.instagram.com/paxiitechnologies" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+                    <img src="/assets/images/optimized/icons8-instagram.svg" alt="Instagram">
+                </a>
+                <a href="https://www.youtube.com/@paxiitechnologies" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="YouTube">
+                    <img src="/assets/images/optimized/icons8-youtube.svg" alt="YouTube">
+                </a>
+            </div>
         </div>
     </div>
     <div class="footer-bottom">
-        <p data-translate="footer.copyright" data-translate-params='{"year": "2025"}'><span id="current-year">2025</span></p>
+        <p>
+            <span data-translate="footer.copyright">© <span id="current-year">2025</span> Paxi iTechnologies. All rights reserved.</span>
+        </p>
     </div>
 </footer>
+
+<script>
+    // Update copyright year dynamically
+    (function() {
+        const yearElement = document.getElementById('current-year');
+        if (yearElement) {
+            const currentYear = new Date().getFullYear();
+            yearElement.textContent = currentYear;
+        }
+    })();
+</script>
 
 <style>
     /* Footer Styles */
@@ -88,6 +126,30 @@
     
     .footer-section a:hover {
         color: white;
+    }
+    
+    .social-media-icons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .social-icon {
+        display: inline-block;
+        transition: transform 0.3s, opacity 0.3s;
+        opacity: 0.8;
+    }
+    
+    .social-icon:hover {
+        transform: translateY(-3px);
+        opacity: 1;
+    }
+    
+    .social-icon img {
+        width: 36px;
+        height: 36px;
+        display: block;
     }
     
     .footer-bottom {
