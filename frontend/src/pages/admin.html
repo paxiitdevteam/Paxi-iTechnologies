@@ -1270,8 +1270,111 @@
             }
         }
         
+        // Password visibility toggle
+        function initPasswordToggle() {
+            const passwordInput = document.getElementById('password');
+            const passwordToggle = document.getElementById('password-toggle');
+            const passwordToggleIcon = document.getElementById('password-toggle-icon');
+            
+            if (passwordToggle && passwordInput && passwordToggleIcon) {
+                passwordToggle.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    passwordToggleIcon.textContent = type === 'password' ? '👁️' : '🙈';
+                });
+            }
+        }
+        
+        // Forgot Password Modal Functions
+        function showForgotPasswordModal() {
+            const modal = document.getElementById('forgot-password-modal');
+            if (modal) {
+                modal.classList.add('active');
+                setTimeout(() => {
+                    const emailInput = document.getElementById('reset-email');
+                    if (emailInput) emailInput.focus();
+                }, 100);
+            }
+        }
+        
+        function closeForgotPasswordModal() {
+            const modal = document.getElementById('forgot-password-modal');
+            if (modal) {
+                modal.classList.remove('active');
+                const form = document.getElementById('forgot-password-form');
+                const alertDiv = document.getElementById('forgot-password-alert');
+                if (form) form.reset();
+                if (alertDiv) alertDiv.innerHTML = '';
+            }
+        }
+        
+        // Forgot Password Form Handler
+        function initForgotPasswordForm() {
+            const forgotPasswordForm = document.getElementById('forgot-password-form');
+            if (forgotPasswordForm) {
+                forgotPasswordForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('reset-email').value.trim();
+                    const alertDiv = document.getElementById('forgot-password-alert');
+                    const resetBtn = document.getElementById('reset-btn');
+                    
+                    if (!email) {
+                        if (alertDiv) alertDiv.innerHTML = '<div class="alert error">❌ Please enter your email address</div>';
+                        return;
+                    }
+                    
+                    resetBtn.disabled = true;
+                    resetBtn.textContent = 'Sending...';
+                    if (alertDiv) alertDiv.innerHTML = '<div class="alert" style="background: #fff3cd; color: #856404;">Sending reset request...</div>';
+                    
+                    try {
+                        const apiUrl = getAPIUrl('/api/admin/password-reset-request');
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ email })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            if (alertDiv) alertDiv.innerHTML = '<div class="alert success">✅ ' + (data.message || 'If the email exists, a password reset link has been sent.') + '</div>';
+                            setTimeout(() => {
+                                closeForgotPasswordModal();
+                            }, 3000);
+                        } else {
+                            if (alertDiv) alertDiv.innerHTML = '<div class="alert error">❌ ' + (data.message || 'Failed to send reset request') + '</div>';
+                        }
+                    } catch (error) {
+                        if (alertDiv) alertDiv.innerHTML = '<div class="alert error">❌ Error: ' + error.message + '</div>';
+                    } finally {
+                        resetBtn.disabled = false;
+                        resetBtn.textContent = 'Send Reset Link';
+                    }
+                });
+            }
+            
+            // Close modal when clicking outside
+            const forgotPasswordModal = document.getElementById('forgot-password-modal');
+            if (forgotPasswordModal) {
+                forgotPasswordModal.addEventListener('click', function(e) {
+                    if (e.target === forgotPasswordModal) {
+                        closeForgotPasswordModal();
+                    }
+                });
+            }
+        }
+        
         // Check if already logged in
         window.addEventListener('DOMContentLoaded', () => {
+            // Initialize password toggle
+            initPasswordToggle();
+            
+            // Initialize forgot password form
+            initForgotPasswordForm();
+            
             // Test connection on load
             testConnection();
             
