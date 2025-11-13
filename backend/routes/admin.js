@@ -233,11 +233,14 @@ async function handleLogin(req, res) {
     });
     req.on('end', async () => {
         try {
+            console.log(`[ADMIN] Login request body: ${body}`);
             const credentials = JSON.parse(body);
             
             // Trim whitespace from credentials (common issue with form inputs)
             const receivedUsername = (credentials.username || '').trim();
             const receivedPassword = (credentials.password || '').trim();
+            
+            console.log(`[ADMIN] Received credentials - Username: "${receivedUsername}", Password length: ${receivedPassword.length}`);
             
             // Load users from file
             const users = loadUsers();
@@ -246,10 +249,14 @@ async function handleLogin(req, res) {
                 u.status === 'active'
             );
             
+            if (!user) {
+                console.log(`[ADMIN] User not found or inactive: ${receivedUsername}`);
+            }
+            
             // Check credentials with password verification
             if (user) {
                 // Verify password using bcrypt (handles legacy plain text passwords)
-                console.log(`[ADMIN] Verifying password for user: ${user.username}`);
+                console.log(`[ADMIN] Verifying password for user: ${user.username}, hash length: ${user.passwordHash ? user.passwordHash.length : 0}`);
                 const passwordValid = await passwordUtils.verifyPassword(receivedPassword, user.passwordHash);
                 console.log(`[ADMIN] Password valid: ${passwordValid}`);
                 
