@@ -1,13 +1,9 @@
 <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="1200" height="630" fill="#006d77"/>
+  <!-- White Background -->
+  <rect width="1200" height="630" fill="#ffffff"/>
   
-  <!-- Logo/Text -->
-  <text x="600" y="315" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">
+  <!-- Logo Text: Paxi iTechnologies -->
+  <text x="600" y="315" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="bold" fill="#006d77" text-anchor="middle" dominant-baseline="middle">
     Paxi iTechnologies
   </text>
-  <text x="600" y="380" font-family="Arial, sans-serif" font-size="36" fill="#83c5be" text-anchor="middle" dominant-baseline="middle">
-    Smart IT Management. Clear Results.
-  </text>
 </svg>
-
