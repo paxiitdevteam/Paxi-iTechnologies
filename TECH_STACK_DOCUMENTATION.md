@@ -12,6 +12,10 @@
 9. [Server Management](#server-management)
 10. [Deployment Process](#deployment-process)
 11. [Standard Development Procedures](#standard-development-procedures)
+12. [International Standards & Best Practices](#international-standards--best-practices)
+13. [Project Management Standards](#project-management-standards)
+14. [Information Security Management (ISM) Model](#information-security-management-ism-model)
+15. [Quality Management & ISO Standards](#quality-management--iso-standards)
 
 ---
 
@@ -1130,10 +1134,961 @@ export const translations = {
 
 ---
 
+## International Standards & Best Practices
+
+### Overview
+
+Paxi iTechnologies adheres to international standards and best practices to ensure quality, security, and consistency across all projects and SaaS platforms. This section outlines the standards we follow and how they are implemented.
+
+### Standards Framework
+
+Our development and operations follow these international standards:
+
+1. **ISO/IEC 27001** - Information Security Management System (ISMS)
+2. **ISO/IEC 9001** - Quality Management System
+3. **ISO/IEC 20000** - IT Service Management
+4. **PMI PMP** - Project Management Professional standards
+5. **ITIL** - IT Infrastructure Library framework
+6. **Agile/Scrum** - Agile project management methodologies
+7. **GDPR** - General Data Protection Regulation compliance
+8. **OSI Model** - Network architecture standards
+
+### Implementation Strategy
+
+All standards are integrated into our development lifecycle:
+
+- **Planning Phase**: Standards compliance requirements defined
+- **Development Phase**: Standards applied during coding and testing
+- **Deployment Phase**: Standards verification before production
+- **Operations Phase**: Continuous monitoring and compliance
+
+---
+
+## Project Management Standards
+
+### PMI PMP (Project Management Professional)
+
+#### Overview
+
+Paxi iTechnologies follows PMI PMP methodologies for project management, ensuring structured, predictable, and successful project delivery.
+
+#### PMP Process Groups
+
+**1. Initiating**
+- Project charter development
+- Stakeholder identification
+- Project kickoff meetings
+- Scope definition
+
+**2. Planning**
+- Project management plan creation
+- Scope, schedule, and budget planning
+- Risk identification and planning
+- Resource allocation
+- Quality planning
+
+**3. Executing**
+- Team management
+- Communication management
+- Quality assurance
+- Stakeholder engagement
+- Procurement management
+
+**4. Monitoring & Controlling**
+- Performance monitoring
+- Change management
+- Risk monitoring
+- Quality control
+- Schedule and budget tracking
+
+**5. Closing**
+- Project closure documentation
+- Lessons learned
+- Final deliverables
+- Resource release
+- Project archive
+
+#### PMP Knowledge Areas
+
+1. **Project Integration Management**
+   - Project charter
+   - Project management plan
+   - Direct and manage project work
+   - Monitor and control project work
+   - Perform integrated change control
+   - Close project or phase
+
+2. **Project Scope Management**
+   - Plan scope management
+   - Collect requirements
+   - Define scope
+   - Create WBS (Work Breakdown Structure)
+   - Validate scope
+   - Control scope
+
+3. **Project Schedule Management**
+   - Plan schedule management
+   - Define activities
+   - Sequence activities
+   - Estimate activity durations
+   - Develop schedule
+   - Control schedule
+
+4. **Project Cost Management**
+   - Plan cost management
+   - Estimate costs
+   - Determine budget
+   - Control costs
+
+5. **Project Quality Management**
+   - Plan quality management
+   - Manage quality
+   - Control quality
+
+6. **Project Resource Management**
+   - Plan resource management
+   - Estimate activity resources
+   - Acquire resources
+   - Develop team
+   - Manage team
+   - Control resources
+
+7. **Project Communications Management**
+   - Plan communications management
+   - Manage communications
+   - Monitor communications
+
+8. **Project Risk Management**
+   - Plan risk management
+   - Identify risks
+   - Perform qualitative risk analysis
+   - Perform quantitative risk analysis
+   - Plan risk responses
+   - Implement risk responses
+   - Monitor risks
+
+9. **Project Procurement Management**
+   - Plan procurement management
+   - Conduct procurements
+   - Control procurements
+
+10. **Project Stakeholder Management**
+    - Identify stakeholders
+    - Plan stakeholder engagement
+    - Manage stakeholder engagement
+    - Monitor stakeholder engagement
+
+#### PMP Best Practices in Our Projects
+
+**Documentation Standards:**
+- All projects maintain a project charter
+- WBS created for all projects
+- Risk register maintained and updated
+- Change requests documented and approved
+- Lessons learned captured
+
+**Communication:**
+- Weekly status reports
+- Stakeholder meetings scheduled
+- Issue escalation procedures defined
+- Communication plan documented
+
+**Quality:**
+- Quality metrics defined
+- Quality assurance reviews
+- Testing procedures documented
+- Acceptance criteria defined
+
+### Agile/Scrum Framework
+
+#### Overview
+
+For software development projects, we use Agile/Scrum methodologies for iterative, incremental delivery.
+
+#### Scrum Roles
+
+**1. Product Owner**
+- Defines product backlog
+- Prioritizes features
+- Accepts/rejects deliverables
+- Represents stakeholders
+
+**2. Scrum Master**
+- Facilitates Scrum process
+- Removes impediments
+- Protects team from distractions
+- Ensures Scrum ceremonies
+
+**3. Development Team**
+- Self-organizing and cross-functional
+- Commits to sprint goals
+- Delivers working software
+- Participates in all Scrum ceremonies
+
+#### Scrum Ceremonies
+
+**1. Sprint Planning**
+- Duration: 2-4 hours for 2-week sprint
+- Product Owner presents backlog
+- Team estimates and commits to sprint goal
+- Sprint backlog created
+
+**2. Daily Standup**
+- Duration: 15 minutes
+- What did I do yesterday?
+- What will I do today?
+- Are there any impediments?
+
+**3. Sprint Review**
+- Duration: 2-4 hours
+- Demonstrate completed work
+- Stakeholder feedback
+- Product backlog refinement
+
+**4. Sprint Retrospective**
+- Duration: 1-2 hours
+- What went well?
+- What could be improved?
+- Action items for next sprint
+
+#### Scrum Artifacts
+
+**1. Product Backlog**
+- Prioritized list of features
+- User stories with acceptance criteria
+- Estimated effort (story points)
+- Continuously refined
+
+**2. Sprint Backlog**
+- Items selected for current sprint
+- Tasks broken down
+- Team commits to completion
+- Updated daily
+
+**3. Increment**
+- Working software delivered
+- Potentially shippable
+- Meets definition of done
+- Integrated and tested
+
+#### Agile Best Practices
+
+**User Stories Format:**
+```
+As a [user type]
+I want [functionality]
+So that [benefit]
+
+Acceptance Criteria:
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+```
+
+**Definition of Done:**
+- Code written and reviewed
+- Unit tests written and passing
+- Integration tests passing
+- Documentation updated
+- Deployed to staging
+- Product Owner acceptance
+
+**Sprint Planning:**
+- Velocity-based planning
+- Capacity consideration
+- Risk assessment
+- Dependencies identified
+
+### ITIL Framework
+
+#### Overview
+
+ITIL (IT Infrastructure Library) provides best practices for IT service management, ensuring alignment between IT services and business needs.
+
+#### ITIL Service Lifecycle
+
+**1. Service Strategy**
+- Service portfolio management
+- Financial management
+- Demand management
+- Business relationship management
+
+**2. Service Design**
+- Service catalog management
+- Service level management
+- Capacity management
+- Availability management
+- IT service continuity management
+- Information security management
+- Supplier management
+
+**3. Service Transition**
+- Change management
+- Service asset and configuration management
+- Release and deployment management
+- Knowledge management
+
+**4. Service Operation**
+- Event management
+- Incident management
+- Request fulfillment
+- Problem management
+- Access management
+
+**5. Continual Service Improvement**
+- Service measurement
+- Service reporting
+- Service improvement
+
+#### ITIL Processes in Our Operations
+
+**Change Management:**
+- All changes require approval
+- Change advisory board (CAB) for major changes
+- Change documentation
+- Rollback procedures
+
+**Incident Management:**
+- Incident logging and categorization
+- Priority assignment
+- Escalation procedures
+- Resolution and closure
+
+**Problem Management:**
+- Root cause analysis
+- Known error database
+- Problem resolution
+- Prevention measures
+
+**Service Level Management:**
+- SLA definition
+- Service level monitoring
+- Performance reporting
+- Service improvement
+
+---
+
+## Information Security Management (ISM) Model
+
+### Overview
+
+Paxi iTechnologies implements a comprehensive Information Security Management System (ISMS) based on ISO/IEC 27001 standards to protect information assets and ensure data security.
+
+### ISO/IEC 27001 ISMS Framework
+
+#### ISMS Structure
+
+**1. Context of the Organization**
+- Understanding organization and context
+- Understanding needs and expectations of interested parties
+- Determining scope of ISMS
+- ISMS and its processes
+
+**2. Leadership**
+- Leadership and commitment
+- Policy
+- Organizational roles, responsibilities, and authorities
+
+**3. Planning**
+- Actions to address risks and opportunities
+- Information security objectives and planning
+- Planning of changes
+
+**4. Support**
+- Resources
+- Competence
+- Awareness
+- Communication
+- Documented information
+
+**5. Operation**
+- Operational planning and control
+- Information security risk assessment
+- Information security risk treatment
+
+**6. Performance Evaluation**
+- Monitoring, measurement, analysis, and evaluation
+- Internal audit
+- Management review
+
+**7. Improvement**
+- Nonconformity and corrective action
+- Continual improvement
+
+### ISO 27001 Control Domains
+
+#### A.5 Information Security Policies
+- **A.5.1** Management direction for information security
+- Policies reviewed at planned intervals
+- Policies communicated to all personnel
+
+#### A.6 Organization of Information Security
+- **A.6.1** Internal organization
+- Roles and responsibilities defined
+- Segregation of duties
+- Contact with authorities and special interest groups
+
+#### A.7 Human Resource Security
+- **A.7.1** Prior to employment
+- Background verification
+- Terms and conditions of employment
+
+- **A.7.2** During employment
+- Management responsibilities
+- Information security awareness, education, and training
+- Disciplinary process
+
+- **A.7.3** Termination and change of employment
+- Termination responsibilities
+- Return of assets
+- Removal of access rights
+
+#### A.8 Asset Management
+- **A.8.1** Responsibility for assets
+- Inventory of assets
+- Ownership of assets
+- Acceptable use of assets
+- Return of assets
+
+- **A.8.2** Information classification
+- Classification of information
+- Labeling of information
+- Handling of assets
+
+- **A.8.3** Media handling
+- Management of removable media
+- Disposal of media
+- Physical media transfer
+
+#### A.9 Access Control
+- **A.9.1** Business requirements of access control
+- Access control policy
+- Access to networks and network services
+
+- **A.9.2** User access management
+- User registration and de-registration
+- User access provisioning
+- Management of privileged access rights
+- Management of secret authentication information
+- Review of user access rights
+- Removal or adjustment of access rights
+
+- **A.9.3** User responsibilities
+- Use of secret authentication information
+
+- **A.9.4** System and application access control
+- Information access restriction
+- Secure log-on procedures
+- Password management system
+- Use of privileged utility programs
+- Access control to program source code
+
+#### A.10 Cryptography
+- **A.10.1** Cryptographic controls
+- Cryptographic policy
+- Key management
+
+#### A.11 Physical and Environmental Security
+- **A.11.1** Secure areas
+- Physical security perimeter
+- Physical entry controls
+- Securing offices, rooms, and facilities
+- Protecting against external and environmental threats
+- Working in secure areas
+- Delivery and loading areas
+
+- **A.11.2** Equipment
+- Equipment siting and protection
+- Supporting utilities
+- Cabling security
+- Equipment maintenance
+- Removal of assets
+- Security of equipment and assets off-premises
+- Secure disposal or re-use of equipment
+- Unattended user equipment
+- Clear desk and clear screen policy
+
+#### A.12 Operations Security
+- **A.12.1** Operational procedures and responsibilities
+- Documented operating procedures
+- Change management
+- Capacity management
+- Separation of development, testing, and operational environments
+
+- **A.12.2** Protection from malware
+- Controls against malware
+
+- **A.12.3** Backup
+- Information backup
+
+- **A.12.4** Logging and monitoring
+- Event logging
+- Protection of log information
+- Administrator and operator logs
+- Clock synchronization
+
+- **A.12.5** Control of operational software
+- Installation of software on operational systems
+
+- **A.12.6** Technical vulnerability management
+- Management of technical vulnerabilities
+- Restrictions on software installation
+
+- **A.12.7** Information systems audit considerations
+- Information systems audit controls
+
+#### A.13 Communications Security
+- **A.13.1** Network security management
+- Network controls
+- Security of network services
+- Segregation in networks
+
+- **A.13.2** Information transfer
+- Information transfer policies and procedures
+- Agreements on information transfer
+- Electronic messaging
+- Confidentiality or non-disclosure agreements
+
+#### A.14 System Acquisition, Development, and Maintenance
+- **A.14.1** Security requirements of information systems
+- Information security requirements analysis and specification
+- Securing application services on public networks
+- Protecting application services transactions
+
+- **A.14.2** Security in development and support processes
+- Secure development policy
+- System change control procedures
+- Technical review of applications after operating platform changes
+- Restrictions on changes to software packages
+- Secure system engineering principles
+- Secure development environment
+- Outsourced development
+- System security testing
+- System acceptance testing
+
+- **A.14.3** Test data
+- Protection of test data
+
+#### A.15 Supplier Relationships
+- **A.15.1** Information security in supplier relationships
+- Information security policy for supplier relationships
+- Addressing security within supplier agreements
+- Information and communication technology supply chain
+
+- **A.15.2** Supplier service delivery management
+- Monitoring and review of supplier services
+- Managing changes to supplier services
+
+#### A.16 Information Security Incident Management
+- **A.16.1** Management of information security incidents and improvements
+- Responsibilities and procedures
+- Reporting information security events
+- Reporting information security weaknesses
+- Assessment of and decision on information security events
+- Response to information security incidents
+- Learning from information security incidents
+- Collection of evidence
+
+#### A.17 Information Security Aspects of Business Continuity Management
+- **A.17.1** Information security continuity
+- Planning information security continuity
+- Implementing information security continuity
+- Verify, review, and evaluate information security continuity
+
+- **A.17.2** Redundancies
+- Availability of information processing facilities
+
+#### A.18 Compliance
+- **A.18.1** Compliance with legal and contractual requirements
+- Identification of applicable legislation and contractual requirements
+- Intellectual property rights
+- Protection of records
+- Privacy and protection of personally identifiable information
+- Regulation of cryptographic controls
+
+- **A.18.2** Information security reviews
+- Independent review of information security
+- Compliance with security policies and standards
+- Technical compliance review
+
+### ISMS Implementation in Our Systems
+
+#### Security Controls Applied
+
+**Access Control:**
+- Role-based access control (RBAC)
+- Multi-factor authentication (MFA) where applicable
+- Regular access reviews
+- Principle of least privilege
+
+**Data Protection:**
+- Encryption at rest and in transit
+- Data classification (Public, Internal, Confidential, Restricted)
+- Secure data disposal procedures
+- Backup and recovery procedures
+
+**Network Security:**
+- Firewall configuration
+- Network segmentation
+- Intrusion detection/prevention
+- Secure communication protocols (HTTPS, TLS)
+
+**Application Security:**
+- Input validation and sanitization
+- XSS prevention (as implemented in contact form)
+- SQL injection prevention
+- Secure session management
+- Error handling without information disclosure
+
+**Incident Management:**
+- Incident response procedures
+- Security event logging
+- Forensic capabilities
+- Communication plans
+
+**Change Management:**
+- Security impact assessment for changes
+- Change approval process
+- Testing before production
+- Rollback procedures
+
+#### Security Monitoring
+
+**Logging:**
+- All security events logged
+- Log retention policies
+- Log analysis and review
+- Alert mechanisms
+
+**Vulnerability Management:**
+- Regular vulnerability assessments
+- Patch management procedures
+- Security updates
+- Penetration testing
+
+**Compliance:**
+- Regular security audits
+- Compliance reviews
+- Gap analysis
+- Corrective actions
+
+---
+
+## Quality Management & ISO Standards
+
+### ISO/IEC 9001 Quality Management System
+
+#### Overview
+
+Paxi iTechnologies implements ISO 9001 quality management principles to ensure consistent quality in all deliverables and processes.
+
+#### Quality Management Principles
+
+**1. Customer Focus**
+- Understand customer needs
+- Meet customer requirements
+- Exceed customer expectations
+- Enhance customer satisfaction
+
+**2. Leadership**
+- Establish unity of purpose
+- Create conditions for engagement
+- Set clear direction
+- Lead by example
+
+**3. Engagement of People**
+- Competent, empowered, and engaged people
+- Recognition and reward
+- Open communication
+- Continuous improvement culture
+
+**4. Process Approach**
+- Understand processes
+- Manage processes as a system
+- Optimize process performance
+- Consistent and predictable results
+
+**5. Improvement**
+- Continuous improvement
+- Learning culture
+- Innovation
+- Change management
+
+**6. Evidence-Based Decision Making**
+- Data and information analysis
+- Fact-based decisions
+- Performance evaluation
+- Risk assessment
+
+**7. Relationship Management**
+- Supplier relationships
+- Partner collaboration
+- Stakeholder engagement
+- Mutual benefit
+
+#### Quality Management System Structure
+
+**1. Context of the Organization**
+- Understanding organization and context
+- Understanding needs and expectations
+- Determining scope of QMS
+- QMS and its processes
+
+**2. Leadership**
+- Leadership and commitment
+- Policy
+- Organizational roles, responsibilities, and authorities
+
+**3. Planning**
+- Actions to address risks and opportunities
+- Quality objectives and planning
+- Planning of changes
+
+**4. Support**
+- Resources
+- Competence
+- Awareness
+- Communication
+- Documented information
+
+**5. Operation**
+- Operational planning and control
+- Requirements for products and services
+- Design and development of products and services
+- Control of externally provided processes, products, and services
+- Production and service provision
+- Release of products and services
+- Control of nonconforming outputs
+
+**6. Performance Evaluation**
+- Monitoring, measurement, analysis, and evaluation
+- Internal audit
+- Management review
+
+**7. Improvement**
+- Nonconformity and corrective action
+- Continual improvement
+
+### Quality Assurance in Development
+
+#### Code Quality Standards
+
+**1. Code Review Process**
+- All code reviewed before merge
+- Review checklist
+- Automated code analysis
+- Security review
+
+**2. Testing Standards**
+- Unit testing
+- Integration testing
+- System testing
+- User acceptance testing
+- Test coverage requirements
+
+**3. Documentation Standards**
+- Code documentation
+- API documentation
+- User documentation
+- Technical documentation
+
+**4. Version Control**
+- Git workflow
+- Branching strategy
+- Commit message standards
+- Tagging and releases
+
+#### Quality Metrics
+
+**Code Quality:**
+- Code complexity metrics
+- Code duplication
+- Test coverage percentage
+- Technical debt
+
+**Process Quality:**
+- Defect density
+- Defect removal efficiency
+- Mean time to resolution
+- Customer satisfaction
+
+**Performance Quality:**
+- Response time
+- Throughput
+- Availability
+- Reliability
+
+### ISO/IEC 20000 IT Service Management
+
+#### Overview
+
+ISO 20000 provides standards for IT service management, ensuring effective and efficient IT services.
+
+#### Service Management Processes
+
+**1. Service Delivery Processes**
+- Service level management
+- Service reporting
+- Service continuity and availability management
+- Budgeting and accounting for IT services
+- Capacity management
+- Information security management
+
+**2. Relationship Processes**
+- Business relationship management
+- Supplier management
+
+**3. Resolution Processes**
+- Incident management
+- Problem management
+
+**4. Control Processes**
+- Configuration management
+- Change management
+- Release and deployment management
+
+**5. Process Groups**
+- Service portfolio management
+- Financial management for IT services
+- Demand management
+
+### GDPR Compliance
+
+#### Overview
+
+General Data Protection Regulation (GDPR) compliance ensures protection of personal data and privacy rights.
+
+#### GDPR Principles
+
+**1. Lawfulness, Fairness, and Transparency**
+- Legal basis for processing
+- Transparent processing
+- Clear privacy notices
+
+**2. Purpose Limitation**
+- Specific, explicit, and legitimate purposes
+- Not further processed incompatibly
+
+**3. Data Minimization**
+- Adequate, relevant, and limited to what is necessary
+- No excessive data collection
+
+**4. Accuracy**
+- Accurate and kept up to date
+- Inaccurate data erased or rectified
+
+**5. Storage Limitation**
+- Kept in identifiable form no longer than necessary
+- Retention policies
+
+**6. Integrity and Confidentiality**
+- Appropriate security measures
+- Protection against unauthorized access
+- Protection against loss or destruction
+
+**7. Accountability**
+- Responsibility and compliance demonstration
+- Documentation of processing activities
+
+#### GDPR Implementation
+
+**Data Protection Measures:**
+- Encryption of personal data
+- Access controls
+- Data breach procedures
+- Data subject rights implementation
+
+**Privacy by Design:**
+- Privacy considerations in system design
+- Data minimization
+- Purpose limitation
+- Security measures
+
+**Data Subject Rights:**
+- Right to access
+- Right to rectification
+- Right to erasure
+- Right to restrict processing
+- Right to data portability
+- Right to object
+- Rights related to automated decision making
+
+**Data Processing Records:**
+- Processing activities documented
+- Legal basis recorded
+- Retention periods defined
+- Security measures documented
+
+### OSI Model Standards
+
+#### Overview
+
+Our structured delivery approach follows the OSI (Open Systems Interconnection) Model for network architecture and service delivery.
+
+#### OSI Model Layers
+
+**1. Physical Layer**
+- Physical transmission of data
+- Cabling, connectors, signals
+- Hardware specifications
+
+**2. Data Link Layer**
+- Error detection and correction
+- Frame synchronization
+- Flow control
+- MAC addressing
+
+**3. Network Layer**
+- Routing
+- Logical addressing (IP)
+- Path determination
+- Packet forwarding
+
+**4. Transport Layer**
+- End-to-end communication
+- Error recovery
+- Flow control
+- Segmentation and reassembly
+
+**5. Session Layer**
+- Session establishment
+- Session maintenance
+- Session termination
+- Dialog control
+
+**6. Presentation Layer**
+- Data translation
+- Encryption/decryption
+- Data compression
+- Character encoding
+
+**7. Application Layer**
+- User interface
+- Application services
+- Network services
+- Protocols (HTTP, SMTP, FTP)
+
+#### OSI Model in Our Services
+
+**Layer-by-Layer Transparency:**
+- Each layer documented
+- Layer-specific monitoring
+- Layer-specific troubleshooting
+- End-to-end traceability
+
+**Structured Delivery:**
+- Services structured by OSI layers
+- Clear layer boundaries
+- Layer-specific expertise
+- Comprehensive documentation
+
+---
+
 ## Summary
 
 This documentation outlines the complete technical stack and development procedures for Paxi iTechnologies. Key principles:
 
+### Technical Architecture
 1. **PMS**: Single source of truth for all paths
 2. **CLS**: Centralized language management
 3. **APIM**: Standardized API endpoint management
@@ -1142,7 +2097,24 @@ This documentation outlines the complete technical stack and development procedu
 6. **Git Workflow**: Feature branches with clear commit messages
 7. **Server Management**: Systemd service with auto-restart
 
-All systems work together to provide a robust, maintainable, and scalable development and deployment process.
+### International Standards & Best Practices
+1. **ISO/IEC 27001**: Complete ISMS (Information Security Management System) with all 18 control domains
+2. **ISO/IEC 9001**: Quality Management System with 7 quality principles
+3. **ISO/IEC 20000**: IT Service Management standards
+4. **PMI PMP**: Project Management Professional standards (10 knowledge areas, 5 process groups)
+5. **Agile/Scrum**: Iterative development with Scrum ceremonies and artifacts
+6. **ITIL**: IT Infrastructure Library framework for service lifecycle management
+7. **GDPR**: General Data Protection Regulation compliance
+8. **OSI Model**: Network architecture standards for structured delivery
+
+### Implementation Approach
+- **Standards Integration**: All standards integrated into development lifecycle
+- **Security First**: ISO 27001 controls applied across all systems
+- **Quality Assurance**: ISO 9001 principles in all deliverables
+- **Structured Project Management**: PMP and Agile methodologies for predictable delivery
+- **Continuous Improvement**: Regular audits, reviews, and improvements
+
+All systems work together to provide a robust, maintainable, scalable, secure, and standards-compliant development and deployment process that meets international best practices.
 
 ---
 
