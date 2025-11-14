@@ -43,7 +43,7 @@ export const translations = {
         cta: "Loslegen",
         learnMore: "Mehr erfahren"
     },
-    
+
     // Homepage Hero Section
     homepage: {
         hero: {

@@ -178,6 +178,13 @@
                 const form = document.getElementById('contact-form');
                 if (!form) return;
                 
+                // Prevent duplicate event listeners
+                if (form.dataset.contactFormSetup === 'true') {
+                    console.warn('Contact form already initialized - skipping duplicate setup');
+                    return;
+                }
+                form.dataset.contactFormSetup = 'true';
+                
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     
@@ -218,72 +225,55 @@
                     }
                     
                     try {
-                        // Prepare email content for mailto
-                        const emailSubject = encodeURIComponent(formData.subject || 'Contact Form Inquiry');
-                        const emailBody = encodeURIComponent(
-                            `Name: ${formData.name}\n` +
-                            `Email: ${formData.email}\n` +
-                            (formData.phone ? `Phone: ${formData.phone}\n` : '') +
-                            `Subject: ${formData.subject || 'General Inquiry'}\n\n` +
-                            `Message:\n${formData.message}`
-                        );
+                        // Send directly to API - API will send email to Roundcube webmail
+                        let apiUrl = '/api/contact';
+                        if (window.APIM) {
+                            if (window.APIM.endpoints && window.APIM.endpoints.contact && window.APIM.endpoints.contact.send) {
+                                apiUrl = window.APIM.endpoints.contact.send;
+                            } else if (typeof window.APIM.getURL === 'function') {
+                                apiUrl = window.APIM.getURL('contact', 'send') || apiUrl;
+                            }
+                        }
                         
-                        // Create mailto link to send directly to NAS mail server
-                        const mailtoLink = `mailto:contact@paxiit.com?subject=${emailSubject}&body=${emailBody}`;
+                        // Send to API - API sends email to Roundcube inbox
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
                         
-                        // Open mailto link (this will open user's default email client)
-                        window.location.href = mailtoLink;
+                        const result = await response.json();
                         
-                        // Also send to API for logging/backup
-                        try {
-                            let apiUrl = '/api/contact';
-                            if (window.APIM) {
-                                if (window.APIM.endpoints && window.APIM.endpoints.contact && window.APIM.endpoints.contact.send) {
-                                    apiUrl = window.APIM.endpoints.contact.send;
-                                } else if (typeof window.APIM.getURL === 'function') {
-                                    apiUrl = window.APIM.getURL('contact', 'send') || apiUrl;
-                                }
+                        if (response.ok && result.success) {
+                            // Success - email sent to Roundcube
+                            if (successDiv) {
+                                successDiv.style.display = 'block';
+                                const successMsg = window.CLS && typeof window.CLS.translate === 'function' 
+                                    ? window.CLS.translate('contact.successMessage') 
+                                    : 'Your message has been sent successfully! We will respond via email soon.';
+                                successDiv.textContent = successMsg;
                             }
                             
-                            // Send to API in background (don't wait for response)
-                            fetch(apiUrl, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(formData)
-                            }).catch(err => {
-                                // Silently fail - mailto is primary method
-                                console.log('API backup submission failed, but mailto was successful');
-                            });
-                        } catch (apiError) {
-                            // API call failed but mailto succeeded, so continue
-                            console.log('API backup submission failed, but mailto was successful');
-                        }
-                        
-                        // Show success message
-                        if (successDiv) {
-                            successDiv.style.display = 'block';
-                            const successMsg = window.CLS && typeof window.CLS.translate === 'function' 
-                                ? window.CLS.translate('contact.successMessage') 
-                                : 'Your email client is opening. Please send the message to contact@paxiit.com';
-                            successDiv.textContent = successMsg;
-                        }
-                        
-                        // Reset form
-                        form.reset();
-                        // Reset subject dropdown to first option
-                        const subjectSelect = document.getElementById('subject');
-                        if (subjectSelect && subjectSelect.options.length > 0) {
-                            subjectSelect.selectedIndex = 0;
+                            // Reset form
+                            form.reset();
+                            // Reset subject dropdown to first option
+                            const subjectSelect = document.getElementById('subject');
+                            if (subjectSelect && subjectSelect.options.length > 0) {
+                                subjectSelect.selectedIndex = 0;
+                            }
+                        } else {
+                            // API returned error
+                            throw new Error(result.message || 'Failed to send message');
                         }
                     } catch (error) {
-                        console.error('Error opening email client:', error);
+                        console.error('Error sending contact form:', error);
                         if (errorDiv) {
                             errorDiv.style.display = 'block';
                             const errorMsg = window.CLS && typeof window.CLS.translate === 'function' 
                                 ? window.CLS.translate('contact.connectionError') 
-                                : 'Failed to open email client. Please email contact@paxiit.com directly.';
+                                : 'Failed to send message. Please try again or email contact@paxiit.com directly.';
                             errorDiv.textContent = errorMsg;
                         }
                     } finally {

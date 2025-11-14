@@ -49,19 +49,67 @@
     },
     {
         "id": 4,
-        "name": "AI-Driven Automation",
+        "name": "AI Solutions & Integration",
         "icon": "🤖",
-        "category": "automation",
-        "description": "Business operations automation using AI technologies. Transform operational challenges into digital performance with measurable KPIs.",
+        "category": "ai",
+        "description": "Practical AI solutions and platform integration. We focus on AI applications, tools, and integrations - not machine learning model development. Transform your business with ready-to-use AI technologies.",
         "details": [
+            "AI platform integration (OpenAI, Anthropic, Google AI)",
             "AI-powered workflow automation",
-            "Business process optimization",
-            "KPI tracking and analytics",
-            "Predictive maintenance systems",
-            "Intelligent data processing",
-            "Custom AI solution development"
+            "Custom AI application development",
+            "AI chatbot and conversational AI solutions",
+            "Prompt engineering and optimization",
+            "AI content generation and processing"
         ],
-        "technologies": ["Machine Learning", "Natural Language Processing", "RPA"]
+        "technologies": ["OpenAI API", "Anthropic Claude", "Google AI", "RPA", "AI APIs"]
+    },
+    {
+        "id": 9,
+        "name": "AI Learning & Training Programs",
+        "icon": "🎓",
+        "category": "ai",
+        "description": "Comprehensive AI training programs for teams and organizations. High demand from companies seeking AI expertise and practical training on AI tools and applications.",
+        "details": [
+            "AI Fundamentals for Business Professionals",
+            "Advanced AI Development & Integration",
+            "AI for Business Leaders & Executives",
+            "Custom Corporate AI Training Programs",
+            "Prompt Engineering Workshops",
+            "Hands-on AI tool implementation"
+        ],
+        "certifications": ["AI Training", "Prompt Engineering", "AI Integration"]
+    },
+    {
+        "id": 10,
+        "name": "AI Consulting & Strategy",
+        "icon": "💡",
+        "category": "ai",
+        "description": "Strategic AI consulting to help businesses identify opportunities, develop AI roadmaps, and implement AI solutions that drive real business value.",
+        "details": [
+            "AI opportunity assessment and analysis",
+            "AI strategy and roadmap development",
+            "AI platform selection and evaluation",
+            "AI implementation planning",
+            "ROI analysis for AI investments",
+            "AI governance and best practices"
+        ],
+        "certifications": ["AI Strategy", "Business Consulting"]
+    },
+    {
+        "id": 11,
+        "name": "AI-Powered Business Intelligence",
+        "icon": "📊",
+        "category": "ai",
+        "description": "Transform data into actionable insights using AI analytics tools. AI-enhanced reporting, data analysis, and decision-making support systems.",
+        "details": [
+            "AI-powered data analytics and reporting",
+            "Intelligent business intelligence dashboards",
+            "AI-enhanced data visualization",
+            "Automated report generation",
+            "Predictive analytics using AI tools",
+            "Data-driven decision support systems"
+        ],
+        "technologies": ["AI Analytics", "Business Intelligence", "Data Visualization"]
     },
     {
         "id": 5,

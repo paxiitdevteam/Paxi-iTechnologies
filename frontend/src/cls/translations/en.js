@@ -56,6 +56,107 @@ export const translations = {
         },
         services: {
             title: "Our Services"
+        },
+        aiTraining: {
+            title: "AI Learning & Training Programs",
+            subtitle: "Empower your team with cutting-edge AI knowledge. High demand from companies seeking AI expertise and practical training.",
+            why: {
+                title: "Why AI Training Matters",
+                description: "Companies across industries are seeking AI expertise to stay competitive. Our comprehensive training programs bridge the gap between AI potential and practical implementation.",
+                benefit1: "Hands-on experience with real-world AI projects",
+                benefit2: "Industry-relevant curriculum designed by AI practitioners",
+                benefit3: "Customized training programs for your organization",
+                benefit4: "Ongoing support and mentorship"
+            },
+            examples: {
+                title: "AI in Action: Our Real-World Examples",
+                intro: "See how we're leveraging AI to drive innovation and deliver results:",
+                example1: {
+                    title: "AI Consulting & Strategy",
+                    description: "Strategic AI implementation consulting helping businesses identify opportunities and develop AI roadmaps."
+                },
+                example2: {
+                    title: "AI-Powered Process Automation",
+                    description: "Intelligent automation solutions that streamline workflows and reduce manual effort by up to 80%."
+                },
+                example3: {
+                    title: "AI-Driven Analytics",
+                    description: "Advanced analytics platforms using machine learning to extract actionable insights from complex data."
+                },
+                example4: {
+                    title: "AI System Integration",
+                    description: "Seamless integration of AI capabilities into existing business systems and workflows."
+                },
+                example5: {
+                    title: "Custom AI Applications",
+                    description: "Building tailored AI applications that solve specific business challenges and drive growth."
+                },
+                example6: {
+                    title: "AI API Development & Deployment",
+                    description: "Production-ready AI APIs and deployment strategies for scalable AI solutions."
+                }
+            },
+            programs: {
+                title: "Our Training Programs",
+                program1: {
+                    title: "AI Fundamentals",
+                    description: "Introduction to AI concepts, machine learning basics, and practical applications for business professionals."
+                },
+                program2: {
+                    title: "Advanced AI Development",
+                    description: "Deep dive into AI model development, training, and deployment for technical teams."
+                },
+                program3: {
+                    title: "AI for Business Leaders",
+                    description: "Strategic AI implementation, ROI analysis, and organizational transformation for executives."
+                },
+                program4: {
+                    title: "Custom Corporate Training",
+                    description: "Tailored training programs designed specifically for your organization's needs and goals."
+                }
+            },
+            services: {
+                title: "AI Services & Solutions We Offer",
+                intro: "Practical AI solutions that drive real business value. We focus on AI applications, tools, and integrations - not machine learning model development.",
+                service1: {
+                    title: "AI Chatbots & Conversational AI",
+                    description: "Intelligent chatbots and virtual assistants using AI platforms like ChatGPT, Claude, and custom conversational AI solutions."
+                },
+                service2: {
+                    title: "Prompt Engineering & Optimization",
+                    description: "Expert prompt engineering to maximize AI tool effectiveness. Training teams on best practices for AI interactions."
+                },
+                service3: {
+                    title: "AI Workflow Automation",
+                    description: "Automate business processes using AI tools. Integrate AI into existing workflows for enhanced productivity."
+                },
+                service4: {
+                    title: "AI-Powered Business Intelligence",
+                    description: "Transform data into insights using AI analytics tools. AI-enhanced reporting and decision-making support."
+                },
+                service5: {
+                    title: "AI Platform Integration",
+                    description: "Seamlessly integrate AI platforms (OpenAI, Anthropic, Google AI) into your business systems and applications."
+                },
+                service6: {
+                    title: "AI Content Generation Solutions",
+                    description: "Leverage AI for content creation, document generation, and automated content workflows."
+                },
+                service7: {
+                    title: "Custom AI Application Development",
+                    description: "Build custom AI-powered applications tailored to your specific business needs using existing AI platforms."
+                },
+                service8: {
+                    title: "AI Search & Information Retrieval",
+                    description: "Implement intelligent search solutions and AI-powered information retrieval systems for better data access."
+                }
+            },
+            cta: {
+                title: "Ready to Transform Your Team with AI?",
+                description: "Join the companies already investing in AI education. Let's discuss how we can help your organization.",
+                button1: "Request Training Info",
+                button2: "View All Services"
+            }
         }
     },
 

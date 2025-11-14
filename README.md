@@ -42,6 +42,7 @@ paxiit_website/
 
 ### Quick Start
 
+**Option 1: Using npm (Recommended)**
 ```bash
 # Install dependencies (first time only)
 npm install
@@ -50,7 +51,32 @@ npm install
 npm start
 ```
 
+**Option 2: Using start script (Windows)**
+```bash
+# Double-click start.bat or run:
+start.bat
+```
+
+**Option 3: Using start script (Linux/Mac)**
+```bash
+# Make executable (first time only)
+chmod +x start.sh
+
+# Run the script
+./start.sh
+```
+
+**Option 4: Direct Node.js command**
+```bash
+node server.js
+```
+
 The server will start on http://localhost:8000
+
+**Troubleshooting:**
+- If port 8000 is in use, use: `PORT=8001 npm start` (Linux/Mac) or `set PORT=8001 && npm start` (Windows)
+- Make sure Node.js is installed: `node --version` (should show v14 or higher)
+- Make sure you're in the project directory: `cd paxiit_website`
 ### Configuration
 
 - **Port**: 8000 (default)

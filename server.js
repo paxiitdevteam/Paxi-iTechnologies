@@ -262,7 +262,6 @@ function handleSimpleAPI(req, res, parsedUrl, pathname) {
                 delete require.cache[resolvedPath];
             }
             // Always use require() - it will use cached version if available
-            // For admin.js, cache is never cleared, so sessions persist
             routeHandler = require(routePath);
             
             if (typeof routeHandler === 'function') {
@@ -511,8 +510,9 @@ function requestHandler(req, res) {
     }
     
     if (!res.headersSent) {
+        // General 404 - NO LINKS
         res.writeHead(404, { 'Content-Type': 'text/html' });
-        res.end(`<!DOCTYPE html><html><head><title>404</title></head><body><h1>404 - Not Found</h1><p>${pathname}</p><p><a href="/">Home</a></p></body></html>`);
+        res.end(`<!DOCTYPE html><html><head><title>404</title></head><body><h1>404 - Not Found</h1><p>${pathname}</p></body></html>`);
     }
 }
 

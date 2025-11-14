@@ -257,6 +257,337 @@
             font-weight: 600;
         }
         
+        /* AI Training Section */
+        .ai-training-section {
+            padding: 6rem 2rem;
+            background: var(--bg-white);
+        }
+        
+        .ai-training-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .ai-training-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .ai-training-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Why AI Training Section */
+        .ai-why-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 5rem;
+            padding: 3rem;
+            background: var(--bg-light);
+            border-radius: 1rem;
+        }
+        
+        .ai-why-text h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .ai-why-text p {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .ai-benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .ai-benefits-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .ai-benefits-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .ai-why-image {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .ai-why-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* AI Examples Section */
+        .ai-examples-section {
+            margin-bottom: 5rem;
+        }
+        
+        .ai-examples-section h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .examples-intro {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .ai-examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .ai-example-card {
+            background: var(--bg-white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        
+        .ai-example-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .example-image {
+            width: 100%;
+            height: 180px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: var(--bg-light);
+        }
+        
+        .example-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .ai-example-card h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+        }
+        
+        .ai-example-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        /* Training Programs Section */
+        .training-programs-section {
+            margin-bottom: 5rem;
+            padding: 4rem 2rem;
+            background: var(--bg-light);
+            border-radius: 1rem;
+        }
+        
+        .training-programs-section h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .program-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .program-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .program-card h4 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .program-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
+        /* CTA Section */
+        .ai-training-cta {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 1rem;
+            color: white;
+        }
+        
+        .ai-training-cta h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .ai-training-cta p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .ai-training-cta .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .ai-training-cta .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .ai-training-cta .btn-secondary:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        /* AI Services Section */
+        .ai-services-section {
+            margin-bottom: 5rem;
+            padding: 4rem 2rem;
+            background: var(--bg-white);
+            border-radius: 1rem;
+        }
+        
+        .ai-services-section h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .services-intro {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+        
+        .ai-services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .ai-service-item {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .ai-service-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+        
+        .service-icon-large {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-service-item h4 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .ai-service-item p {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
         @media (max-width: 768px) {
             .hero-section {
                 padding: 6rem 1.5rem 4rem;
@@ -265,6 +596,50 @@
             
             .services-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .ai-training-section {
+                padding: 4rem 1.5rem;
+            }
+            
+            .ai-why-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 1.5rem;
+            }
+            
+            .ai-examples-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .programs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-training-cta {
+                padding: 3rem 1.5rem;
+            }
+            
+            .ai-training-cta h3 {
+                font-size: 1.75rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .cta-buttons .btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .ai-services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-services-section {
+                padding: 3rem 1.5rem;
             }
         }
     </style>
@@ -281,6 +656,187 @@
             <div class="hero-buttons">
                 <a href="/services.html" class="btn btn-primary" data-translate="homepage.hero.cta.services">Our Services</a>
                 <a href="/contact.html" class="btn btn-secondary" data-translate="homepage.hero.cta.contact">Get in Touch</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- AI Learning & Training Section -->
+    <section class="ai-training-section">
+        <div class="container">
+            <div class="ai-training-header">
+                <h2 data-translate="homepage.aiTraining.title">AI Learning & Training Programs</h2>
+                <p class="section-subtitle" data-translate="homepage.aiTraining.subtitle">Empower your team with cutting-edge AI knowledge. High demand from companies seeking AI expertise and practical training.</p>
+            </div>
+            
+            <div class="ai-training-content">
+                <!-- Why AI Training -->
+                <div class="ai-why-section">
+                    <div class="ai-why-text">
+                        <h3 data-translate="homepage.aiTraining.why.title">Why AI Training Matters</h3>
+                        <p data-translate="homepage.aiTraining.why.description">Companies across industries are seeking AI expertise to stay competitive. Our comprehensive training programs bridge the gap between AI potential and practical implementation.</p>
+                        <ul class="ai-benefits-list">
+                            <li data-translate="homepage.aiTraining.why.benefit1">Hands-on experience with real-world AI projects</li>
+                            <li data-translate="homepage.aiTraining.why.benefit2">Industry-relevant curriculum designed by AI practitioners</li>
+                            <li data-translate="homepage.aiTraining.why.benefit3">Customized training programs for your organization</li>
+                            <li data-translate="homepage.aiTraining.why.benefit4">Ongoing support and mentorship</li>
+                        </ul>
+                    </div>
+                    <div class="ai-why-image">
+                        <img src="/assets/images/optimized/ai_program.png" alt="AI Training Program" loading="lazy">
+                    </div>
+                </div>
+                
+                <!-- AI Examples - What We're Doing -->
+                <div class="ai-examples-section">
+                    <h3 data-translate="homepage.aiTraining.examples.title">AI in Action: Our Real-World Examples</h3>
+                    <p class="examples-intro" data-translate="homepage.aiTraining.examples.intro">See how we're leveraging AI to drive innovation and deliver results:</p>
+                    
+                    <div class="ai-examples-grid">
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/optimized/ai_consulting.png" alt="AI Consulting" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example1.title">AI Consulting & Strategy</h4>
+                            <p data-translate="homepage.aiTraining.examples.example1.description">Strategic AI implementation consulting helping businesses identify opportunities and develop AI roadmaps.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/optimized/ai_proce_aut.png" alt="AI Process Automation" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example2.title">AI-Powered Process Automation</h4>
+                            <p data-translate="homepage.aiTraining.examples.example2.description">Intelligent automation solutions that streamline workflows and reduce manual effort by up to 80%.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/optimized/ai_analyt.png" alt="AI Analytics" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example3.title">AI-Driven Analytics</h4>
+                            <p data-translate="homepage.aiTraining.examples.example3.description">Advanced analytics platforms using machine learning to extract actionable insights from complex data.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/optimized/ai_intergration.png" alt="AI Integration" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example4.title">AI System Integration</h4>
+                            <p data-translate="homepage.aiTraining.examples.example4.description">Seamless integration of AI capabilities into existing business systems and workflows.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/optimized/ai_app.png" alt="AI Applications" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example5.title">Custom AI Applications</h4>
+                            <p data-translate="homepage.aiTraining.examples.example5.description">Building tailored AI applications that solve specific business challenges and drive growth.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/optimized/ai_api_deploy.png" alt="AI API Deployment" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example6.title">AI API Development & Deployment</h4>
+                            <p data-translate="homepage.aiTraining.examples.example6.description">Production-ready AI APIs and deployment strategies for scalable AI solutions.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Training Programs -->
+                <div class="training-programs-section">
+                    <h3 data-translate="homepage.aiTraining.programs.title">Our Training Programs</h3>
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-icon">🎓</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program1.title">AI Fundamentals</h4>
+                            <p data-translate="homepage.aiTraining.programs.program1.description">Introduction to AI concepts, machine learning basics, and practical applications for business professionals.</p>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="program-icon">🤖</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program2.title">Advanced AI Development</h4>
+                            <p data-translate="homepage.aiTraining.programs.program2.description">Deep dive into AI model development, training, and deployment for technical teams.</p>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="program-icon">💼</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program3.title">AI for Business Leaders</h4>
+                            <p data-translate="homepage.aiTraining.programs.program3.description">Strategic AI implementation, ROI analysis, and organizational transformation for executives.</p>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="program-icon">🔧</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program4.title">Custom Corporate Training</h4>
+                            <p data-translate="homepage.aiTraining.programs.program4.description">Tailored training programs designed specifically for your organization's needs and goals.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Services & Solutions Section -->
+                <div class="ai-services-section">
+                    <h3 data-translate="homepage.aiTraining.services.title">AI Services & Solutions We Offer</h3>
+                    <p class="services-intro" data-translate="homepage.aiTraining.services.intro">Practical AI solutions that drive real business value. We focus on AI applications, tools, and integrations - not machine learning model development.</p>
+                    
+                    <div class="ai-services-grid">
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">💬</div>
+                            <h4 data-translate="homepage.aiTraining.services.service1.title">AI Chatbots & Conversational AI</h4>
+                            <p data-translate="homepage.aiTraining.services.service1.description">Intelligent chatbots and virtual assistants using AI platforms like ChatGPT, Claude, and custom conversational AI solutions.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">✍️</div>
+                            <h4 data-translate="homepage.aiTraining.services.service2.title">Prompt Engineering & Optimization</h4>
+                            <p data-translate="homepage.aiTraining.services.service2.description">Expert prompt engineering to maximize AI tool effectiveness. Training teams on best practices for AI interactions.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🔄</div>
+                            <h4 data-translate="homepage.aiTraining.services.service3.title">AI Workflow Automation</h4>
+                            <p data-translate="homepage.aiTraining.services.service3.description">Automate business processes using AI tools. Integrate AI into existing workflows for enhanced productivity.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">📊</div>
+                            <h4 data-translate="homepage.aiTraining.services.service4.title">AI-Powered Business Intelligence</h4>
+                            <p data-translate="homepage.aiTraining.services.service4.description">Transform data into insights using AI analytics tools. AI-enhanced reporting and decision-making support.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🔌</div>
+                            <h4 data-translate="homepage.aiTraining.services.service5.title">AI Platform Integration</h4>
+                            <p data-translate="homepage.aiTraining.services.service5.description">Seamlessly integrate AI platforms (OpenAI, Anthropic, Google AI) into your business systems and applications.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">📝</div>
+                            <h4 data-translate="homepage.aiTraining.services.service6.title">AI Content Generation Solutions</h4>
+                            <p data-translate="homepage.aiTraining.services.service6.description">Leverage AI for content creation, document generation, and automated content workflows.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🛠️</div>
+                            <h4 data-translate="homepage.aiTraining.services.service7.title">Custom AI Application Development</h4>
+                            <p data-translate="homepage.aiTraining.services.service7.description">Build custom AI-powered applications tailored to your specific business needs using existing AI platforms.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🔍</div>
+                            <h4 data-translate="homepage.aiTraining.services.service8.title">AI Search & Information Retrieval</h4>
+                            <p data-translate="homepage.aiTraining.services.service8.description">Implement intelligent search solutions and AI-powered information retrieval systems for better data access.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CTA Section -->
+                <div class="ai-training-cta">
+                    <h3 data-translate="homepage.aiTraining.cta.title">Ready to Transform Your Team with AI?</h3>
+                    <p data-translate="homepage.aiTraining.cta.description">Join the companies already investing in AI education. Let's discuss how we can help your organization.</p>
+                    <div class="cta-buttons">
+                        <a href="/contact.html" class="btn btn-primary" data-translate="homepage.aiTraining.cta.button1">Request Training Info</a>
+                        <a href="/services.html" class="btn btn-secondary" data-translate="homepage.aiTraining.cta.button2">View All Services</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

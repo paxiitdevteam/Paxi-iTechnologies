@@ -532,6 +532,7 @@
                     <li><a href="#" class="menu-link" data-section="services">🛠️ Services</a></li>
                     <li><a href="#" class="menu-link" data-section="content">✏️ Content</a></li>
                     <li><a href="#" class="menu-link" data-section="users">👥 Users</a></li>
+                    <li><a href="#" class="menu-link" data-section="messages">📧 Messages</a></li>
                     <li><a href="#" class="menu-link" data-section="media">🎬 Media</a></li>
                     <li><a href="#" class="menu-link" data-section="settings">⚙️ Settings</a></li>
                 </ul>
@@ -584,6 +585,16 @@
                                     <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-users">0</h3>
                                     <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Total Users</p>
                                     <small style="opacity: 0.8;" id="active-users">0 active</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="font-size: 3rem;">📧</div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-contact">0</h3>
+                                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Contact Messages</p>
+                                    <small style="opacity: 0.8;" id="unread-contact"><span id="unread-count">0</span> unread</small>
                                 </div>
                             </div>
                         </div>
@@ -1010,6 +1021,81 @@
                     </div>
                 </div>
                 
+                <!-- Messages Section -->
+                <div id="messages" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Contact Messages</h2>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <button class="btn btn-secondary" onclick="loadContactMessages()">🔄 Refresh</button>
+                            <select id="messages-filter" onchange="filterMessages()" style="padding: 0.5rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                <option value="all">All Messages</option>
+                                <option value="unread">Unread Only</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Status</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                    <th>Email Sent</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="messages-table-body">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem;">Loading messages...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Message View Modal -->
+                <div id="message-view-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 800px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3 id="message-modal-title">Contact Message</h3>
+                            <button class="modal-close" onclick="closeMessageView()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div id="message-view-content">
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>From:</strong> <span id="message-view-name"></span> (<span id="message-view-email"></span>)
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Phone:</strong> <span id="message-view-phone"></span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Subject:</strong> <span id="message-view-subject"></span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Date:</strong> <span id="message-view-date"></span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>IP Address:</strong> <span id="message-view-ip"></span>
+                                </div>
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Email Status:</strong> <span id="message-view-email-status"></span>
+                                </div>
+                                <hr style="margin: 1.5rem 0;">
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Message:</strong>
+                                </div>
+                                <div id="message-view-message" style="background: var(--bg-light); padding: 1rem; border-radius: 0.5rem; white-space: pre-wrap; line-height: 1.6;"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closeMessageView()">Close</button>
+                            <a id="message-reply-link" href="#" target="_blank" class="btn btn-primary">📧 Reply via Email</a>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Settings Section -->
                 <div id="settings" class="content-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -1233,13 +1319,25 @@
                 return cleanPath;
             }
             
-            // HTTP: Use PMS or direct port access (development)
+            // HTTP: Use PMS correctly - RESPECT PMS PATHS
             if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
-                const baseURL = window.PMS.getBaseURL('api');
-                const apiPath = window.PMS.api(path);
-                const fullUrl = `${baseURL}${apiPath}`;
-                console.log('🔗 PMS API URL:', { baseURL, apiPath, fullUrl });
-                return fullUrl;
+                try {
+                    // PMS.getBaseURL('api') returns base URL like "http://localhost:8000"
+                    const baseURL = window.PMS.getBaseURL('api');
+                    // PMS.api() already handles /api prefix correctly
+                    // Pass the path as-is (it already has /api/admin/contact-messages)
+                    const apiPath = window.PMS.api(cleanPath);
+                    // Combine: baseURL + apiPath
+                    // baseURL is "http://localhost:8000", apiPath is "/api/admin/contact-messages"
+                    const fullUrl = baseURL + apiPath;
+                    return fullUrl;
+                } catch (error) {
+                    console.error('⚠️ Error constructing PMS API URL:', error);
+                    // Fallback
+                    const hostname = window.location.hostname;
+                    const port = 8000;
+                    return `http://${hostname}:${port}${cleanPath}`;
+                }
             }
             // Fallback only if PMS not loaded
             console.warn('⚠️ PMS not available, using fallback');
@@ -1650,6 +1748,9 @@
                 console.error('Error loading users:', error);
             }
             
+            // Load contact messages
+            await loadContactMessages();
+            
             // Load settings
             try {
                 const apiUrl = getAPIUrl('/api/admin/settings');
@@ -1711,6 +1812,17 @@
             document.getElementById('content-languages').textContent = `${Object.keys(stats.content?.byLanguage || {}).length} languages`;
             document.getElementById('total-users').textContent = stats.users?.total || 0;
             document.getElementById('active-users').textContent = `${stats.users?.active || 0} active`;
+            
+            // Contact Messages Stats
+            if (stats.contact) {
+                document.getElementById('total-contact').textContent = stats.contact.total || 0;
+                const unreadCount = stats.contact.unread || 0;
+                document.getElementById('unread-count').textContent = unreadCount;
+                if (unreadCount > 0) {
+                    document.getElementById('unread-contact').style.fontWeight = 'bold';
+                    document.getElementById('unread-contact').style.color = '#ffeb3b';
+                }
+            }
             
             // Services by Category Chart
             renderCategoryChart('services-category-chart', stats.services?.byCategory || {});
@@ -1867,14 +1979,16 @@
                 'page': '📄',
                 'user': '👤',
                 'service': '🛠️',
-                'content': '✏️'
+                'content': '✏️',
+                'contact': '📧'
             };
             
             const activityLabels = {
                 'modified': 'Modified',
                 'created': 'Created',
                 'deleted': 'Deleted',
-                'login': 'Logged in'
+                'login': 'Logged in',
+                'submitted': 'Contact form submitted'
             };
             
             let html = '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
@@ -1882,11 +1996,15 @@
             activities.forEach(activity => {
                 const date = new Date(activity.timestamp);
                 const timeAgo = getTimeAgo(date);
+                const isUnread = activity.type === 'contact' && activity.read === false;
                 html += `
-                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--bg-light); border-radius: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: ${isUnread ? '#fff3cd' : 'var(--bg-light)'}; border-radius: 0.5rem; ${isUnread ? 'border-left: 3px solid #ffc107;' : ''}">
                         <div style="font-size: 1.5rem;">${activityIcons[activity.type] || '📌'}</div>
                         <div style="flex: 1;">
-                            <div style="font-weight: 600;">${activityLabels[activity.action] || activity.action} ${activity.item}</div>
+                            <div style="font-weight: ${isUnread ? 'bold' : '600'};">
+                                ${activityLabels[activity.action] || activity.action} ${activity.item}
+                                ${activity.type === 'contact' && activity.email ? `<span style="color: var(--text-light); font-weight: normal;"> (${activity.email})</span>` : ''}
+                            </div>
                             <div style="font-size: 0.875rem; color: var(--text-light);">${timeAgo}</div>
                         </div>
                     </div>
@@ -3516,6 +3634,145 @@
                 alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
             }
         }
+        
+        // ========== CONTACT MESSAGES MANAGEMENT ==========
+        
+        let allMessages = [];
+        let currentMessageView = null;
+        
+        // Load contact messages
+        async function loadContactMessages() {
+            if (!sessionId) {
+                console.warn('loadContactMessages: No sessionId available');
+                return;
+            }
+            
+            try {
+                const filter = document.getElementById('messages-filter')?.value || 'all';
+                const unreadOnly = filter === 'unread';
+                const apiUrl = getAPIUrl(`/api/admin/contact-messages${unreadOnly ? '?unread=true' : ''}`);
+                
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        allMessages = data.data.messages || [];
+                        renderMessagesTable(allMessages);
+                    } else {
+                        document.getElementById('messages-table-body').innerHTML = 
+                            '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">No messages data in response</td></tr>';
+                    }
+                } else {
+                    const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                    document.getElementById('messages-table-body').innerHTML = 
+                        `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Error: ${errorData.message || 'Failed to load messages'}</td></tr>`;
+                }
+            } catch (error) {
+                console.error('Error loading contact messages:', error);
+                document.getElementById('messages-table-body').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Error loading messages</td></tr>';
+            }
+        }
+        
+        // Filter messages
+        function filterMessages() {
+            loadContactMessages();
+        }
+        
+        // Render messages table
+        function renderMessagesTable(messages) {
+            const tbody = document.getElementById('messages-table-body');
+            
+            if (messages.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No messages found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = messages.map(message => {
+                const date = new Date(message.timestamp);
+                const isUnread = !message.read;
+                const emailStatus = message.emailSent ? 
+                    '<span style="color: var(--success);">✅ Sent</span>' : 
+                    '<span style="color: var(--error);">❌ Failed</span>';
+                
+                return `
+                    <tr style="${isUnread ? 'background: #fff3cd; font-weight: bold;' : ''}">
+                        <td style="text-align: center;">
+                            ${isUnread ? '🔴' : '⚪'}
+                        </td>
+                        <td>${message.name || 'N/A'}</td>
+                        <td><a href="mailto:${message.email}" style="color: var(--primary);">${message.email || 'N/A'}</a></td>
+                        <td>${message.subject || 'General Inquiry'}</td>
+                        <td>${date.toLocaleDateString()} ${date.toLocaleTimeString()}</td>
+                        <td>${emailStatus}</td>
+                        <td>
+                            <button class="btn btn-sm" onclick="viewMessage('${message.id}')" style="margin-right: 0.5rem;">👁️ View</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        // View message details
+        function viewMessage(messageId) {
+            const message = allMessages.find(m => m.id === messageId);
+            if (!message) {
+                alert('Message not found');
+                return;
+            }
+            
+            currentMessageView = message;
+            
+            // Populate modal
+            document.getElementById('message-view-name').textContent = message.name || 'N/A';
+            document.getElementById('message-view-email').textContent = message.email || 'N/A';
+            document.getElementById('message-view-phone').textContent = message.phone || 'N/A';
+            document.getElementById('message-view-subject').textContent = message.subject || 'General Inquiry';
+            document.getElementById('message-view-date').textContent = new Date(message.timestamp).toLocaleString();
+            document.getElementById('message-view-ip').textContent = message.ipAddress || 'Unknown';
+            document.getElementById('message-view-email-status').innerHTML = message.emailSent ? 
+                '<span style="color: var(--success);">✅ Email sent successfully</span>' : 
+                `<span style="color: var(--error);">❌ Email failed: ${message.emailError || 'Unknown error'}</span>`;
+            document.getElementById('message-view-message').textContent = message.message || 'No message';
+            
+            // Set reply link
+            const replyLink = document.getElementById('message-reply-link');
+            replyLink.href = `mailto:${message.email}?subject=Re: ${encodeURIComponent(message.subject || 'General Inquiry')}`;
+            
+            // Show modal
+            document.getElementById('message-view-modal').style.display = 'flex';
+            
+            // Mark as read (update locally, could also update on server)
+            if (!message.read) {
+                message.read = true;
+                renderMessagesTable(allMessages);
+            }
+        }
+        
+        // Close message view
+        function closeMessageView() {
+            document.getElementById('message-view-modal').style.display = 'none';
+            currentMessageView = null;
+        }
+        
+        // Load messages when messages section is shown
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add event listener for messages section
+            const messagesLink = document.querySelector('[data-section="messages"]');
+            if (messagesLink) {
+                messagesLink.addEventListener('click', () => {
+                    setTimeout(() => {
+                        loadContactMessages();
+                    }, 100);
+                });
+            }
+        });
     </script>
 </body>
 </html>

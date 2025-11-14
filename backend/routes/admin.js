@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const PMS = require('../utils/pms'); // Path Manager System - SINGLE SOURCE OF TRUTH
 const passwordUtils = require('../utils/password'); // Password hashing utilities
+const { loadContactMessages } = require('./contact'); // Contact messages for admin dashboard
 
 // Session storage - using JSON file for persistence
 let sessions = {};
@@ -147,6 +148,8 @@ function adminHandler(req, res) {
                 handleGetUser(req, res, userId);
             } else if (endpoint === 'permissions') {
                 handleGetPermissions(req, res);
+            } else if (endpoint === 'contact-messages' || endpoint === 'messages') {
+                handleGetContactMessages(req, res);
             } else if (endpoint === 'media') {
                 handleGetMedia(req, res);
             } else if (endpoint.startsWith('media/')) {
@@ -2195,6 +2198,7 @@ function handleGetDashboardStats(req, res) {
         const contentBlocks = loadContentBlocks();
         const users = loadUsers();
         const settings = loadSettings();
+        const contactMessages = loadContactMessages();
         
         // Calculate statistics
         const stats = {
@@ -2245,10 +2249,20 @@ function handleGetDashboardStats(req, res) {
                     return daysSinceLogin <= 7; // Last 7 days
                 }).length
             },
+            contact: {
+                total: contactMessages.length,
+                unread: contactMessages.filter(m => !m.read).length,
+                recent: contactMessages.filter(m => {
+                    const daysSinceMessage = (Date.now() - new Date(m.timestamp).getTime()) / (1000 * 60 * 60 * 24);
+                    return daysSinceMessage <= 7; // Last 7 days
+                }).length,
+                emailSent: contactMessages.filter(m => m.emailSent === true).length,
+                emailFailed: contactMessages.filter(m => m.emailSent === false).length
+            },
             system: {
                 lastUpdated: settings.updated || new Date().toISOString(),
                 maintenanceMode: settings.features?.maintenanceMode || false,
-                totalDataFiles: 5 // pages, services, content, users, settings
+                totalDataFiles: 6 // pages, services, content, users, settings, contact-messages
             },
             recentActivity: getRecentActivity()
         };
@@ -2323,6 +2337,22 @@ function getRecentActivity() {
             }
         });
         
+        // Check recent contact messages
+        const contactMessages = loadContactMessages();
+        contactMessages.slice(0, 10).forEach(message => {
+            const messageTime = new Date(message.timestamp).getTime();
+            if (messageTime > Date.now() - 7 * 24 * 60 * 60 * 1000) {
+                activities.push({
+                    type: 'contact',
+                    action: 'submitted',
+                    item: `${message.name} - ${message.subject || 'General Inquiry'}`,
+                    timestamp: message.timestamp,
+                    email: message.email,
+                    read: message.read || false
+                });
+            }
+        });
+        
         // Sort by timestamp (most recent first)
         activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         
@@ -2331,6 +2361,56 @@ function getRecentActivity() {
     } catch (error) {
         console.error('[ADMIN] Error getting recent activity:', error);
         return [];
+    }
+}
+
+/**
+ * ========== CONTACT MESSAGES MANAGEMENT ==========
+ */
+
+/**
+ * Handle get contact messages
+ */
+function handleGetContactMessages(req, res) {
+    // Verify session - USE CONSISTENT PATTERN (trim whitespace)
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+    
+    try {
+        const messages = loadContactMessages();
+        
+        // Get query parameters for filtering
+        const url = new URL(req.url, `http://${req.headers.host}`);
+        const unreadOnly = url.searchParams.get('unread') === 'true';
+        const limit = parseInt(url.searchParams.get('limit') || '50');
+        
+        let filteredMessages = messages;
+        
+        if (unreadOnly) {
+            filteredMessages = messages.filter(m => !m.read);
+        }
+        
+        // Limit results
+        filteredMessages = filteredMessages.slice(0, limit);
+        
+        apiRouter.sendSuccess(res, {
+            messages: filteredMessages,
+            total: messages.length,
+            unread: messages.filter(m => !m.read).length
+        }, 'Contact messages retrieved successfully');
+    } catch (error) {
+        apiRouter.sendError(res, {
+            message: 'Error retrieving contact messages',
+            error: error.message,
+            statusCode: 500
+        });
     }
 }
 

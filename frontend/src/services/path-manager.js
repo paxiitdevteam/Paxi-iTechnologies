@@ -75,44 +75,22 @@ class PathManager {
 
     /**
      * Detect base path automatically
+     * FIXED: Production and Dev work identically - server.js handles file resolution
+     * Frontend always uses absolute paths (e.g., /about.html, /assets/...)
      */
     detectBasePath() {
-        // In production (Web Station), Document Root is /volume1/web/paxiit_website/frontend/src
-        // So paths should NOT include /frontend/src/ prefix
-        // Detect if we're in production by checking if script is loaded from root
-        if (typeof window !== 'undefined') {
-            const scripts = document.getElementsByTagName('script');
-            for (let script of scripts) {
-                if (script.src && script.src.includes('path-manager')) {
-                    const url = new URL(script.src, window.location.origin);
-                    const pathParts = url.pathname.split('/').filter(p => p);
-                    
-                    // If path-manager is at root level (e.g., /services/path-manager.js), we're in production
-                    // If it's nested (e.g., /frontend/src/services/path-manager.js), we're in development
-                    if (pathParts.length <= 2 && pathParts[pathParts.length - 1] === 'path-manager.js') {
-                        // Production mode: Document Root is already /frontend/src, so basePath is empty
-                        this.basePath = '';
-                        this.isProduction = true;
-                        return;
-                    }
-                    
-                    // Development mode: detect base path
-                    const pmsIndex = pathParts.findIndex(part => part.includes('path-manager'));
-                    if (pmsIndex > 0) {
-                        this.basePath = '/' + pathParts.slice(0, pmsIndex - 2).join('/');
-                        this.isProduction = false;
-                        return;
-                    }
-                }
-            }
-        }
+        // CRITICAL FIX: Remove production detection - dev and production work the same
+        // Server.js serves files identically in both environments
+        // All HTML uses absolute paths (/about.html, /assets/...) which work everywhere
+        // No need to detect or change behavior between environments
         
-        // Default to root if in browser (production mode)
         if (typeof window !== 'undefined') {
+            // Browser environment: always use root-relative paths
+            // Server.js resolves these paths correctly in both dev and production
             this.basePath = '';
-            this.isProduction = true;
+            this.isProduction = false; // Don't treat as "production" - use same logic as dev
         } else {
-            // Node.js environment
+            // Node.js environment (server-side)
             this.basePath = process.cwd();
             this.isProduction = false;
         }
@@ -156,14 +134,14 @@ class PathManager {
 
     /**
      * Get frontend path
+     * FIXED: Always return absolute paths - works identically in dev and production
      */
     frontend(...subPaths) {
-        // In production, Document Root is already /frontend/src, so return paths relative to root
-        if (this.isProduction) {
-            // Join subPaths directly without 'frontend/src' prefix
-            return '/' + subPaths.filter(p => p).join('/');
-        }
-        return this.get('frontend', ...subPaths);
+        // Always use absolute paths - server.js resolves them correctly
+        // No special handling for production - dev and production work the same
+        const path = this.get('frontend', ...subPaths);
+        // Ensure it starts with / for absolute path
+        return path.startsWith('/') ? path : '/' + path;
     }
 
     /**
@@ -182,9 +160,13 @@ class PathManager {
 
     /**
      * Navigate to a page
+     * FIXED: Always use absolute paths - works identically in dev and production
      */
     navigateTo(page, params = {}) {
-        const pagePath = this.get('frontend', 'pages', `${page}.html`);
+        // Always use absolute path - server.js resolves correctly
+        // Remove .html extension if page already has it
+        const pageName = page.endsWith('.html') ? page.replace('.html', '') : page;
+        const pagePath = `/${pageName}.html`;
         
         if (typeof window !== 'undefined') {
             let url = pagePath;
@@ -200,6 +182,7 @@ class PathManager {
 
     /**
      * Get asset path
+     * FIXED: Always return absolute paths - works identically in dev and production
      */
     asset(type, filename) {
         const assetTypes = {
@@ -211,23 +194,17 @@ class PathManager {
         
         const assetPath = assetTypes[type] || 'assets';
         
-        // In production, Document Root is already /frontend/src, so return paths relative to root
-        if (this.isProduction) {
-            return `/assets/${assetPath}/${filename}`;
-        }
-        
-        return this.get('frontend', 'assets', assetPath, filename);
+        // Always return absolute path - server.js resolves correctly in both environments
+        return `/assets/${assetPath}/${filename}`;
     }
 
     /**
      * Get component path
+     * FIXED: Always return absolute paths - works identically in dev and production
      */
     component(name) {
-        // In production, Document Root is already /frontend/src, so return paths relative to root
-        if (this.isProduction) {
-            return `/components/${name}`;
-        }
-        return this.get('frontend', 'components', name);
+        // Always return absolute path - server.js resolves correctly in both environments
+        return `/components/${name}`;
     }
 
     /**
