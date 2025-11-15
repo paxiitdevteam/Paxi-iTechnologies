@@ -137,6 +137,75 @@
                 prefillContactFormFromChat();
             }
             
+            /**
+             * Setup file upload preview for contact form
+             */
+            function setupFileUploadPreview() {
+                const fileInput = document.getElementById('file-upload');
+                const filePreview = document.getElementById('file-preview');
+                
+                if (!fileInput || !filePreview) return;
+                
+                fileInput.addEventListener('change', function(e) {
+                    const files = e.target.files;
+                    if (!files || files.length === 0) {
+                        filePreview.innerHTML = '';
+                        return;
+                    }
+                    
+                    // Clear previous preview
+                    filePreview.innerHTML = '';
+                    
+                    // Display each selected file
+                    Array.from(files).forEach((file, index) => {
+                        const fileItem = document.createElement('div');
+                        fileItem.className = 'file-preview-item';
+                        fileItem.style.cssText = 'display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px; border: 1px solid #e0e0e0;';
+                        
+                        const fileIcon = document.createElement('span');
+                        fileIcon.textContent = '📄';
+                        fileIcon.style.cssText = 'font-size: 24px; flex-shrink: 0;';
+                        
+                        const fileInfo = document.createElement('div');
+                        fileInfo.style.cssText = 'flex: 1; min-width: 0;';
+                        
+                        const fileName = document.createElement('div');
+                        fileName.textContent = file.name;
+                        fileName.style.cssText = 'font-weight: 500; color: #333; margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;';
+                        
+                        const fileSize = document.createElement('div');
+                        fileSize.textContent = (file.size / 1024).toFixed(2) + ' KB';
+                        fileSize.style.cssText = 'font-size: 12px; color: #666;';
+                        
+                        fileInfo.appendChild(fileName);
+                        fileInfo.appendChild(fileSize);
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.textContent = '×';
+                        removeBtn.type = 'button';
+                        removeBtn.style.cssText = 'width: 28px; height: 28px; background: #ff4444; color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 18px; line-height: 1; flex-shrink: 0; transition: background 0.2s;';
+                        removeBtn.onmouseover = function() { this.style.background = '#cc0000'; };
+                        removeBtn.onmouseout = function() { this.style.background = '#ff4444'; };
+                        removeBtn.addEventListener('click', function() {
+                            // Create new FileList without this file
+                            const dt = new DataTransfer();
+                            Array.from(fileInput.files).forEach((f, i) => {
+                                if (i !== index) dt.items.add(f);
+                            });
+                            fileInput.files = dt.files;
+                            fileItem.remove();
+                            // Trigger change event to update preview
+                            fileInput.dispatchEvent(new Event('change'));
+                        });
+                        
+                        fileItem.appendChild(fileIcon);
+                        fileItem.appendChild(fileInfo);
+                        fileItem.appendChild(removeBtn);
+                        filePreview.appendChild(fileItem);
+                    });
+                });
+            }
+            
             async function loadServices() {
                 try {
                     // Get API URL using APIM or fallback
