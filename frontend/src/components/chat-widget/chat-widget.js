@@ -457,7 +457,7 @@ class ChatWidget {
             if (SpeechRecognition) {
                 try {
                     this.recognition = new SpeechRecognition();
-                    this.recognition.continuous = false; // Changed to false for better mobile compatibility
+                    this.recognition.continuous = true; // Keep listening until user stops manually
                     this.recognition.interimResults = true;
                     
                     // Detect language from CLS if available
@@ -519,9 +519,19 @@ class ChatWidget {
                     };
                     
                     this.recognition.onend = () => {
-                        // Don't auto-restart on mobile - let user click again
+                        // Only stop if user explicitly stopped, not on automatic end
+                        // This allows user to review text before sending
                         if (this.isListening) {
-                            this.stopVoiceInput();
+                            // Recognition ended but user might still be speaking
+                            // Don't auto-stop - let user manually stop when done
+                            // Just update the UI to show it's ready
+                            const voiceBtn = document.getElementById('chat-voice-btn');
+                            if (voiceBtn) {
+                                voiceBtn.classList.remove('chat-widget-voice-active');
+                                voiceBtn.textContent = '🎤';
+                            }
+                            this.hideVoiceStatus();
+                            // Keep isListening true so user can continue or stop manually
                         }
                     };
                     
