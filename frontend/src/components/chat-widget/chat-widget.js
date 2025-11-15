@@ -17,6 +17,7 @@ class ChatWidget {
         this.recognition = null; // Speech recognition
         this.isListening = false; // Voice input state
         this.uploadedFiles = []; // Track uploaded files
+        this.voiceBaseText = ''; // Base text before voice input (to prevent duplication)
         this.initialize();
     }
 
@@ -477,6 +478,7 @@ class ChatWidget {
                         let interimTranscript = '';
                         let finalTranscript = '';
                         
+                        // Process all results from the last index
                         for (let i = event.resultIndex; i < event.results.length; i++) {
                             const transcript = event.results[i][0].transcript;
                             if (event.results[i].isFinal) {
@@ -489,11 +491,12 @@ class ChatWidget {
                         const input = document.getElementById('chat-input');
                         if (input) {
                             if (finalTranscript) {
-                                input.value = (input.value + finalTranscript).trim();
-                            } else {
-                                // Show interim results
-                                const currentValue = input.value.replace(interimTranscript, '');
-                                input.value = (currentValue + interimTranscript).trim();
+                                // Add final transcript to base text (no duplication)
+                                this.voiceBaseText += finalTranscript;
+                                input.value = this.voiceBaseText.trim();
+                            } else if (interimTranscript) {
+                                // Show interim results (temporary, will be replaced)
+                                input.value = (this.voiceBaseText + interimTranscript).trim();
                             }
                         }
                     };
@@ -565,6 +568,14 @@ class ChatWidget {
         }
         
         try {
+            // Save current input value as base (to prevent duplication)
+            const input = document.getElementById('chat-input');
+            if (input) {
+                this.voiceBaseText = input.value; // Save existing text
+            } else {
+                this.voiceBaseText = '';
+            }
+            
             this.recognition.start();
             this.isListening = true;
             
@@ -607,6 +618,14 @@ class ChatWidget {
         }
         
         this.isListening = false;
+        
+        // Finalize the text - ensure input has the final value
+        const input = document.getElementById('chat-input');
+        if (input && this.voiceBaseText !== undefined) {
+            input.value = this.voiceBaseText.trim();
+            // Focus input so user can edit or send
+            setTimeout(() => input.focus(), 100);
+        }
         
         const voiceBtn = document.getElementById('chat-voice-btn');
         if (voiceBtn) {
