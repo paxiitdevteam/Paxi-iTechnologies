@@ -193,6 +193,43 @@ class APIPathManager {
         return `${baseURL}${path}`;
     }
 
+    /**
+     * Get API URL from full path (for direct API paths)
+     * This method accepts a full API path like '/api/chat/session' and optional query parameters
+     * @param {string} path - Full API path (e.g., '/api/chat/session')
+     * @param {object} params - Optional query parameters
+     * @returns {string} Full URL
+     */
+    getAPIUrl(path, params = {}) {
+        // Ensure path starts with /
+        if (!path.startsWith('/')) {
+            path = '/' + path;
+        }
+        
+        // Get base URL - use PMS if available
+        const baseURL = (typeof window !== 'undefined' && window.PMS && typeof window.PMS.getBaseURL === 'function')
+            ? window.PMS.getBaseURL('api')
+            : this.baseURL;
+        
+        // Build full URL
+        let fullUrl = `${baseURL}${path}`;
+        
+        // Add query parameters
+        if (params && typeof params === 'object' && Object.keys(params).length > 0) {
+            const queryParams = new URLSearchParams();
+            Object.keys(params).forEach(key => {
+                if (params[key] !== null && params[key] !== undefined) {
+                    queryParams.append(key, params[key]);
+                }
+            });
+            const queryString = queryParams.toString();
+            if (queryString) {
+                fullUrl += `?${queryString}`;
+            }
+        }
+        
+        return fullUrl;
+    }
 
     /**
      * Convenience methods for HTTP verbs

@@ -27,6 +27,61 @@
     <meta name="twitter:image" content="https://paxiit.com/assets/images/logo-og.svg">
     <meta name="twitter:image:alt" content="Paxi iTechnologies Logo">
     
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://paxiit.com/">
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Paxi iTechnologies",
+        "alternateName": "Paxiit",
+        "url": "https://paxiit.com",
+        "logo": "https://paxiit.com/assets/images/logo-og.svg",
+        "description": "Smart IT Management. Clear Results. We build clear, modern, and smart IT systems with real-world results.",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "49 AVE LUCIE AUBRAC",
+            "addressLocality": "BONNEUIL-SUR-MARNE",
+            "addressRegion": "VAL DE MARNE",
+            "postalCode": "94380",
+            "addressCountry": "FR"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+33-7-82-39-13-11",
+            "contactType": "customer service",
+            "email": "contact@paxiit.com",
+            "availableLanguage": ["en", "fr", "ar", "de", "es"]
+        },
+        "sameAs": [
+            "https://www.linkedin.com/company/paxi-itechnologies"
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Paxi iTechnologies",
+        "image": "https://paxiit.com/assets/images/logo-og.svg",
+        "description": "Smart IT Management. Clear Results. We provide IT project management, cloud infrastructure, AI solutions, and training programs.",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "49 AVE LUCIE AUBRAC",
+            "addressLocality": "BONNEUIL-SUR-MARNE",
+            "addressRegion": "VAL DE MARNE",
+            "postalCode": "94380",
+            "addressCountry": "FR"
+        },
+        "telephone": "+33-7-82-39-13-11",
+        "email": "contact@paxiit.com",
+        "priceRange": "$$",
+        "openingHours": "Mo-Fr 09:00-18:00"
+    }
+    </script>
+    
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
     <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
@@ -38,10 +93,12 @@
     <script src="/services/path-manager.js?v=2.0.0"></script>
     <script src="/services/port-manager.js?v=2.0.0"></script>
     <script src="/services/api-path-manager.js?v=2.0.0"></script>
-    <script type="module" src="/cls/lang-core.js?v=2.0.0"></script>
+    <script type="module" src="/cls/lang-core.js?v=2.1.0"></script>
     <script src="/cls/lang-switcher.js?v=2.0.0"></script>
-    <script src="/components/translation-plugin.js?v=2.0.0"></script>
+    <script src="/components/translation-plugin.js?v=2.1.0"></script>
     <script src="/services/cookie-manager.js?v=2.0.0"></script>
+    <!-- Chat Widget - Load after PMS/APIM/CLS -->
+    <script src="/components/chat-widget/chat-widget.js?v=1.0.0"></script>
     
     <!-- Simple initialization -->
     <script>
@@ -69,11 +126,12 @@
                 }
                 
                 // Initialize translation plugin (processes data-translate attributes)
+                // Position: bottom-left (chat widget is bottom-right)
                 if (typeof window.TranslationPlugin !== 'undefined') {
                     window.translationPlugin = new window.TranslationPlugin({
                         googleTranslateEnabled: true,
                         clsEnabled: true,
-                        position: 'bottom-right',
+                        position: 'bottom-left',
                         showWidget: true
                     });
                     window.translationPlugin.initialize();

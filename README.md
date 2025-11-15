@@ -39,6 +39,7 @@ paxiit_website/
 ### Prerequisites
 - Node.js (v14 or higher)
 - Git
+- AI API Key (OpenAI or Anthropic) - See [AI_API_KEYS_SETUP.md](./AI_API_KEYS_SETUP.md)
 
 ### Quick Start
 
@@ -61,6 +62,38 @@ start.bat
 ```bash
 # Make executable (first time only)
 chmod +x start.sh
+```
+
+### AI Chat Agent Setup
+
+The AI Chat Agent requires API keys to function. Follow these steps:
+
+1. **Get API Key** (choose one):
+   - **OpenAI**: Visit [OpenAI Platform](https://platform.openai.com/) → API keys
+   - **Anthropic**: Visit [Anthropic Console](https://console.anthropic.com/) → Get API Key
+   
+   📖 **Detailed instructions**: See [AI_API_KEYS_SETUP.md](./AI_API_KEYS_SETUP.md)
+
+2. **Set Environment Variable** (Git Bash):
+```bash
+# For OpenAI
+export OPENAI_API_KEY="sk-proj-your-key-here"
+
+# OR for Anthropic
+export ANTHROPIC_API_KEY="sk-ant-api03-your-key-here"
+
+# Set platform preference
+export AI_PLATFORM="openai"  # or "anthropic"
+```
+
+3. **Restart Server**:
+```bash
+npm start
+```
+
+4. **Verify**: Check console for `[AI Service] OpenAI client initialized` or similar message.
+
+**Note**: Without API keys, the chat agent will use fallback messages. See [AI_API_KEYS_SETUP.md](./AI_API_KEYS_SETUP.md) for complete setup guide.
 
 # Run the script
 ./start.sh
@@ -104,11 +137,32 @@ The server will start on http://localhost:8000
 
 ## 🌐 Multi-Language Support
 
-Currently supported languages:
-- English (en)
-- French (fr)
+### Supported Languages
+- **English (en)** - Default
+- **French (fr)** - Français
+- **Arabic (ar)** - العربية (RTL support)
+- **German (de)** - Deutsch
+- **Spanish (es)** - Español
 
-More languages can be added via the Centralized Language System (CLS).
+### Translation Widget
+
+The website includes a **Translation Widget** - a powerful development tool for language configuration:
+
+- **Dual Translation Methods**: CLS (manual) + Google Translate (automatic)
+- **Floating Widget**: Always accessible, smart positioning
+- **5 Languages Supported**: Full translation coverage
+- **Easy Integration**: Simple initialization and configuration
+
+📖 **Developer Guide**: See [TRANSLATION_WIDGET_DEVELOPER_GUIDE.md](./TRANSLATION_WIDGET_DEVELOPER_GUIDE.md) for complete documentation.
+
+### Adding New Languages
+
+1. Create translation file in `frontend/src/cls/translations/[lang].js`
+2. Register language in `frontend/src/cls/lang-core.js`
+3. Add translations for all keys
+4. Widget automatically detects new languages
+
+See [TRANSLATION_WIDGET_DEVELOPER_GUIDE.md](./TRANSLATION_WIDGET_DEVELOPER_GUIDE.md) for detailed instructions.
 
 ## 📝 Path Manager System (PMS)
 
@@ -127,7 +181,7 @@ PMS.backend('data', 'services.json')
 ## 🔒 Security
 
 - Session-based authentication
-- Password hashing (TODO: implement proper bcrypt)
+- Password hashing (bcrypt with 10 salt rounds)
 - Role-based permissions
 - File upload validation
 - CORS protection
@@ -141,6 +195,17 @@ PMS.backend('data', 'services.json')
 
 ## 🚧 Development
 
+### ⚠️ CRITICAL: Development Rules
+
+**🔴 MANDATORY RULE: DEV vs LIVE ENVIRONMENT**
+
+- **ALL development work** must be done in the **DEV FOLDER** (`C:\Users\PC-PAXIIT\Desktop\paxiit_website`)
+- **NEVER** modify files in **LIVE/PRODUCTION** folder directly (`/volume1/web/paxiit.com` on NAS)
+- **NEVER** auto-deploy to production - **ALWAYS** wait for explicit user approval
+- **ALWAYS** validate changes in dev folder before any deployment
+
+**See [DEVELOPMENT_RULES.md](DEVELOPMENT_RULES.md) for complete rules and procedures.**
+
 ### Adding New Pages
 1. Create HTML file in `frontend/src/pages/`
 2. Use PMS for all paths
@@ -152,8 +217,12 @@ PMS.backend('data', 'services.json')
 2. Or edit `backend/data/services.json` directly
 
 ### Adding New Languages
-1. Create translation file in `frontend/src/cls/lang/en.js` (copy structure)
-2. Update `frontend/src/cls/lang-core.js` to include new language
+1. Create translation file in `frontend/src/cls/translations/[lang].js` (copy from `en.js`)
+2. Update `frontend/src/cls/lang-core.js` to register new language
+3. Add all translation keys (see existing language files for structure)
+4. Test in browser - widget automatically detects new language
+
+📖 **Complete Guide**: See [TRANSLATION_WIDGET_DEVELOPER_GUIDE.md](./TRANSLATION_WIDGET_DEVELOPER_GUIDE.md)
 
 ## 📄 License
 

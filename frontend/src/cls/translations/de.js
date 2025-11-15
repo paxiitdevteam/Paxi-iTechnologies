@@ -91,7 +91,11 @@ export const translations = {
         send: "Nachricht senden",
         placeholderName: "Geben Sie Ihren Namen ein",
         placeholderEmail: "Geben Sie Ihre E-Mail ein",
-        placeholderMessage: "Geben Sie Ihre Nachricht ein"
+        placeholderMessage: "Geben Sie Ihre Nachricht ein",
+        // File Upload
+        fileUpload: "Projektdateien hochladen (Optional)",
+        fileUploadHelp: "Sie können PDF-, Word-, Excel-, PowerPoint- oder Textdateien hochladen. Maximale Größe: 10 MB pro Datei.",
+        fileUploaded: "Datei erfolgreich hochgeladen"
     },
 
     // Footer
@@ -100,6 +104,51 @@ export const translations = {
         privacy: "Datenschutzerklärung",
         terms: "Nutzungsbedingungen",
         legal: "Rechtliches"
+    },
+
+    // Chat Widget
+    chat: {
+        title: "Chatten Sie mit uns",
+        statusOnline: "● Online",
+        statusOffline: "● Offline",
+        welcome: "👋 Hallo! Ich bin Ihr KI-Assistent. Ich kann Ihnen helfen, mehr über unsere Dienstleistungen zu erfahren, Fragen zu KI-Schulungsprogrammen zu beantworten, Kontaktinformationen bereitzustellen und mehr. Wie kann ich Ihnen heute helfen?",
+        placeholder: "Geben Sie Ihre Nachricht ein...",
+        send: "Senden",
+        close: "Chat schließen",
+        open: "Chat öffnen",
+        typing: "Tippt...",
+        error: "Entschuldigung, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder verwenden Sie das Kontaktformular.",
+        noResponse: "Keine Antwort erhalten. Bitte versuchen Sie es erneut.",
+        sessionExpired: "Ihre Sitzung ist abgelaufen. Bitte aktualisieren Sie die Seite.",
+        messageTooLong: "Die Nachricht ist zu lang. Bitte halten Sie sie unter 1000 Zeichen.",
+        emptyMessage: "Bitte geben Sie eine Nachricht ein.",
+        escalate: "An menschlichen Support eskalieren",
+        feedback: "Diese Unterhaltung bewerten",
+        history: "Unterhaltungsverlauf",
+        clearChat: "Chat löschen",
+        clearChatConfirm: "Sind Sie sicher, dass Sie diese Unterhaltung löschen möchten?",
+        newChat: "Neuer Chat",
+        voiceInput: "Spracheingabe",
+        voiceInputStart: "Beginnen Sie zu sprechen...",
+        voiceInputStop: "Aufnahme beenden",
+        voiceInputListening: "Hört zu...",
+        voiceInputError: "Spracheingabe wird in Ihrem Browser nicht unterstützt",
+        voiceInputPermission: "Bitte erlauben Sie den Mikrofonzugriff",
+        fileUpload: "Datei hochladen",
+        fileUploadSelect: "Datei auswählen",
+        fileUploadRemove: "Datei entfernen",
+        fileUploadError: "Datei-Upload fehlgeschlagen",
+        fileUploadTooLarge: "Die Datei ist zu groß. Maximale Größe: 10 MB",
+        fileUploadInvalid: "Ungültiger Dateityp. Bitte laden Sie PDF- oder Dokumentdateien hoch",
+        fileUploaded: "Datei erfolgreich hochgeladen",
+        fileUploading: "Datei wird hochgeladen...",
+        feedbackTitle: "Bewerten Sie Ihre Erfahrung",
+        feedbackSubmit: "Feedback senden",
+        feedbackThanks: "Vielen Dank für Ihr Feedback!",
+        escalateTitle: "Mit menschlichem Support sprechen",
+        escalateMessage: "Möchten Sie diese Unterhaltung an unser menschliches Support-Team eskalieren?",
+        escalateConfirm: "Ja, verbinden Sie mich",
+        escalateCancel: "Abbrechen"
     }
 };
 

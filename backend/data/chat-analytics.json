@@ -1,0 +1,20 @@
+{
+  "totalConversations": 0,
+  "totalMessages": 9,
+  "totalEscalations": 0,
+  "averageResponseTime": 1,
+  "averageRating": 0,
+  "responseTimes": [
+    1,
+    2,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0,
+    1
+  ],
+  "popularQuestions": [],
+  "satisfactionRatings": []
+}

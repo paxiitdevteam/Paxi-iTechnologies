@@ -116,12 +116,18 @@ else
     sleep 5
 fi
 
-# Check if server started
-if ssh -p $NAS_PORT $NAS_USER@$NAS_HOST "ps aux | grep 'node server.js' | grep -v grep > /dev/null"; then
+# Check if server started (check both systemd service and process)
+sleep 3  # Give server time to start
+if ssh -p $NAS_PORT $NAS_USER@$NAS_HOST "systemctl is-active --quiet paxiit-website.service 2>/dev/null || ps aux | grep -E 'node.*server\.js|paxiit-website' | grep -v grep > /dev/null"; then
     echo -e "${GREEN}✅ Server is running${NC}"
+    # Show server status
+    ssh -p $NAS_PORT $NAS_USER@$NAS_HOST "systemctl status paxiit-website.service --no-pager -l | head -5 || echo 'Server process is running'"
 else
     echo -e "${RED}❌ Server failed to start${NC}"
-    ssh -p $NAS_PORT $NAS_USER@$NAS_HOST "cd $NAS_PATH && tail -20 server.log"
+    # Check systemd logs
+    ssh -p $NAS_PORT $NAS_USER@$NAS_HOST "journalctl -u paxiit-website.service -n 20 --no-pager 2>/dev/null || echo 'No systemd logs available'"
+    # Check for server.log
+    ssh -p $NAS_PORT $NAS_USER@$NAS_HOST "cd $NAS_PATH && [ -f server.log ] && tail -20 server.log || echo 'No server.log found'"
     exit 1
 fi
 echo ""

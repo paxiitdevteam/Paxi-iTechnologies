@@ -138,16 +138,24 @@ function contactHandler(req, res) {
 
     switch (method) {
         case 'POST':
-            // Handle contact form submission
-            let body = '';
-            req.on('data', chunk => {
-                body += chunk.toString();
-            });
-            req.on('end', () => {
-                // Use async IIFE to handle async email sending
-                (async () => {
-                    try {
-                        const contactData = JSON.parse(body);
+            // Handle contact form submission (with or without files)
+            const contentType = req.headers['content-type'] || '';
+            const isMultipart = contentType.includes('multipart/form-data');
+            
+            if (isMultipart) {
+                // Handle multipart/form-data (with files)
+                handleContactFormWithFiles(req, res);
+            } else {
+                // Handle JSON (text-only)
+                let body = '';
+                req.on('data', chunk => {
+                    body += chunk.toString();
+                });
+                req.on('end', () => {
+                    // Use async IIFE to handle async email sending
+                    (async () => {
+                        try {
+                            const contactData = JSON.parse(body);
                         
                         // Validate required fields
                         if (!contactData.name || !contactData.email || !contactData.message) {
@@ -347,6 +355,230 @@ IP Address: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
         default:
             apiRouter.send404(res);
     }
+}
+
+/**
+ * Handle contact form with file uploads
+ */
+function handleContactFormWithFiles(req, res) {
+    const chunks = [];
+    
+    req.on('data', chunk => {
+        chunks.push(chunk);
+    });
+    
+    req.on('end', () => {
+        (async () => {
+            try {
+                const buffer = Buffer.concat(chunks);
+                const body = buffer.toString('binary');
+                
+                // Extract boundary
+                const contentType = req.headers['content-type'] || '';
+                const boundary = contentType.split('boundary=')[1];
+                if (!boundary) {
+                    return apiRouter.sendError(res, {
+                        message: 'Invalid multipart form data',
+                        statusCode: 400
+                    });
+                }
+                
+                // Parse multipart data
+                const parts = body.split('--' + boundary);
+                
+                const contactData = {
+                    name: '',
+                    email: '',
+                    phone: '',
+                    subject: '',
+                    message: '',
+                    files: []
+                };
+                
+                for (const part of parts) {
+                    // Extract form fields
+                    if (part.includes('Content-Disposition') && !part.includes('filename=')) {
+                        const nameMatch = part.match(/name="([^"]+)"/);
+                        if (nameMatch) {
+                            const fieldName = nameMatch[1];
+                            const contentStart = part.indexOf('\r\n\r\n');
+                            if (contentStart !== -1) {
+                                const value = part.substring(contentStart + 4).replace(/--\r\n$/, '').trim();
+                                if (fieldName in contactData) {
+                                    contactData[fieldName] = value;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Extract files
+                    if (part.includes('Content-Disposition') && part.includes('filename=')) {
+                        const filenameMatch = part.match(/filename="([^"]+)"/);
+                        if (filenameMatch) {
+                            const filename = filenameMatch[1];
+                            
+                            const contentTypeMatch = part.match(/Content-Type:\s*([^\r\n]+)/);
+                            const fileType = contentTypeMatch ? contentTypeMatch[1].trim() : 'application/octet-stream';
+                            
+                            const contentStart = part.indexOf('\r\n\r\n');
+                            if (contentStart !== -1) {
+                                const content = part.substring(contentStart + 4);
+                                const cleanContent = content.replace(/--\r\n$/, '').trim();
+                                if (cleanContent) {
+                                    const fileContent = Buffer.from(cleanContent, 'binary');
+                                    
+                                    // Validate file size (10MB max)
+                                    const maxSize = 10 * 1024 * 1024;
+                                    if (fileContent.length > maxSize) {
+                                        return apiRouter.sendError(res, {
+                                            message: `File "${filename}" is too large. Maximum size is 10MB.`,
+                                            statusCode: 400
+                                        });
+                                    }
+                                    
+                                    // Save file
+                                    const uploadsDir = PMS.backend('data', 'uploads');
+                                    if (!fs.existsSync(uploadsDir)) {
+                                        fs.mkdirSync(uploadsDir, { recursive: true });
+                                    }
+                                    
+                                    const fileId = `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                                    const fileExtension = filename.split('.').pop();
+                                    const savedFilename = `${fileId}.${fileExtension}`;
+                                    const filePath = PMS.backend('data', 'uploads', savedFilename);
+                                    
+                                    fs.writeFileSync(filePath, fileContent);
+                                    
+                                    contactData.files.push({
+                                        originalName: filename,
+                                        savedName: savedFilename,
+                                        size: fileContent.length,
+                                        type: fileType,
+                                        path: filePath,
+                                        url: `/api/contact/file/${fileId}`
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Validate required fields
+                if (!contactData.name || !contactData.email || !contactData.message) {
+                    return apiRouter.sendError(res, {
+                        message: 'Missing required fields',
+                        errors: {
+                            name: !contactData.name ? 'Name is required' : null,
+                            email: !contactData.email ? 'Email is required' : null,
+                            message: !contactData.message ? 'Message is required' : null
+                        },
+                        statusCode: 400
+                    });
+                }
+                
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(contactData.email)) {
+                    return apiRouter.sendError(res, {
+                        message: 'Invalid email format',
+                        errors: {
+                            email: 'Please enter a valid email address'
+                        },
+                        statusCode: 400
+                    });
+                }
+                
+                // Prepare email content with file attachments info
+                const emailSubject = `[Website Contact] ${contactData.subject || 'General Inquiry'}`;
+                let emailBody = `
+New contact form submission from website:
+
+Name: ${contactData.name}
+Email: ${contactData.email}
+${contactData.phone ? `Phone: ${contactData.phone}` : ''}
+Subject: ${contactData.subject || 'General Inquiry'}
+
+Message:
+${contactData.message}
+`;
+                
+                if (contactData.files.length > 0) {
+                    emailBody += `\n\nAttached Files (${contactData.files.length}):\n`;
+                    contactData.files.forEach((file, index) => {
+                        emailBody += `${index + 1}. ${file.originalName} (${(file.size / 1024).toFixed(2)} KB)\n`;
+                        emailBody += `   Download: ${req.headers.host}${file.url}\n`;
+                    });
+                }
+                
+                emailBody += `
+---
+Submitted: ${new Date().toLocaleString()}
+IP Address: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Unknown'}
+                `.trim();
+                
+                // Save message to JSON file
+                const messageData = {
+                    name: contactData.name,
+                    email: contactData.email,
+                    phone: contactData.phone || '',
+                    subject: contactData.subject || 'General Inquiry',
+                    message: contactData.message,
+                    files: contactData.files.map(f => ({
+                        originalName: f.originalName,
+                        savedName: f.savedName,
+                        size: f.size,
+                        type: f.type,
+                        url: f.url
+                    }))
+                };
+                const savedMessage = saveContactMessage(messageData);
+                
+                // Send email via SMTP (if in production/NAS)
+                if (isProduction) {
+                    try {
+                        const transporter = nodemailer.createTransport({
+                            host: smtpHost,
+                            port: smtpPort,
+                            secure: false,
+                            tls: {
+                                rejectUnauthorized: false
+                            }
+                        });
+                        
+                        const mailOptions = {
+                            from: `"${contactData.name}" <${contactData.email}>`,
+                            to: 'contact@paxiit.com',
+                            replyTo: contactData.email,
+                            subject: emailSubject,
+                            text: emailBody
+                        };
+                        
+                        await transporter.sendMail(mailOptions);
+                        console.log('[CONTACT] ✅ Email sent successfully via SMTP');
+                    } catch (emailError) {
+                        console.error('[CONTACT] ❌ Error sending email:', emailError);
+                        // Don't fail the request if email fails - message is still saved
+                    }
+                } else {
+                    console.log('[CONTACT] ⚠️  Local dev environment - email not sent (would send in production)');
+                }
+                
+                // Return success
+                apiRouter.sendSuccess(res, {
+                    messageId: savedMessage.id,
+                    filesUploaded: contactData.files.length
+                }, 'Message sent successfully');
+                
+            } catch (error) {
+                console.error('[CONTACT] Error processing contact form with files:', error);
+                apiRouter.sendError(res, {
+                    message: 'Error processing contact form',
+                    error: error.message,
+                    statusCode: 500
+                });
+            }
+        })();
+    });
 }
 
 // Export functions for admin dashboard

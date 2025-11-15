@@ -119,7 +119,11 @@ export const translations = {
         // Contact Info Content
         businessHoursText: "Lundi - Vendredi : 9h00 - 18h00<br>Samedi - Dimanche : Fermé",
         responseTimeText: "Nous répondons généralement dans les 24 heures pendant les jours ouvrables.",
-        viewOnMaps: "📍 Voir sur Google Maps"
+        viewOnMaps: "📍 Voir sur Google Maps",
+        // File Upload
+        fileUpload: "Télécharger des fichiers de projet (Optionnel)",
+        fileUploadHelp: "Vous pouvez télécharger des fichiers PDF, Word, Excel, PowerPoint ou texte. Taille maximale : 10 Mo par fichier.",
+        fileUploaded: "Fichier téléchargé avec succès"
     },
 
     // Footer
@@ -847,6 +851,51 @@ export const translations = {
         functionalityCookiesDesc: "Mémorisent vos préférences et personnalisent votre expérience",
         analyticsCookies: "Cookies d'Analyse",
         analyticsCookiesDesc: "Collectent des données d'utilisation anonymes pour améliorer nos services"
+    },
+
+    // Chat Widget
+    chat: {
+        title: "Discutez avec nous",
+        statusOnline: "● En ligne",
+        statusOffline: "● Hors ligne",
+        welcome: "👋 Bonjour ! Je suis votre assistant IA. Je peux vous aider à en savoir plus sur nos services, répondre aux questions sur nos programmes de formation IA, fournir des informations de contact, et plus encore. Comment puis-je vous aider aujourd'hui ?",
+        placeholder: "Tapez votre message...",
+        send: "Envoyer",
+        close: "Fermer le chat",
+        open: "Ouvrir le chat",
+        typing: "En train d'écrire...",
+        error: "Désolé, une erreur s'est produite. Veuillez réessayer ou utiliser le formulaire de contact.",
+        noResponse: "Aucune réponse reçue. Veuillez réessayer.",
+        sessionExpired: "Votre session a expiré. Veuillez actualiser la page.",
+        messageTooLong: "Le message est trop long. Veuillez le garder sous 1000 caractères.",
+        emptyMessage: "Veuillez entrer un message.",
+        escalate: "Escalader vers le support humain",
+        feedback: "Évaluer cette conversation",
+        history: "Historique de la conversation",
+        clearChat: "Effacer le chat",
+        clearChatConfirm: "Êtes-vous sûr de vouloir effacer cette conversation ?",
+        newChat: "Nouveau chat",
+        voiceInput: "Saisie vocale",
+        voiceInputStart: "Commencez à parler...",
+        voiceInputStop: "Arrêter l'enregistrement",
+        voiceInputListening: "Écoute...",
+        voiceInputError: "La saisie vocale n'est pas prise en charge dans votre navigateur",
+        voiceInputPermission: "Veuillez autoriser l'accès au microphone",
+        fileUpload: "Télécharger un fichier",
+        fileUploadSelect: "Sélectionner un fichier",
+        fileUploadRemove: "Supprimer le fichier",
+        fileUploadError: "Échec du téléchargement du fichier",
+        fileUploadTooLarge: "Le fichier est trop volumineux. Taille maximale : 10 Mo",
+        fileUploadInvalid: "Type de fichier invalide. Veuillez télécharger des fichiers PDF ou de documents",
+        fileUploaded: "Fichier téléchargé avec succès",
+        fileUploading: "Téléchargement du fichier...",
+        feedbackTitle: "Évaluez votre expérience",
+        feedbackSubmit: "Soumettre les commentaires",
+        feedbackThanks: "Merci pour vos commentaires !",
+        escalateTitle: "Parler au support humain",
+        escalateMessage: "Souhaitez-vous escalader cette conversation vers notre équipe de support humain ?",
+        escalateConfirm: "Oui, connectez-moi",
+        escalateCancel: "Annuler"
     }
 };
 

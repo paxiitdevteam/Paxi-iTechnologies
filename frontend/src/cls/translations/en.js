@@ -220,7 +220,11 @@ export const translations = {
         // Contact Info Content
         businessHoursText: "Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday - Sunday: Closed",
         responseTimeText: "We typically respond within 24 hours during business days.",
-        viewOnMaps: "📍 View on Google Maps"
+        viewOnMaps: "📍 View on Google Maps",
+        // File Upload
+        fileUpload: "Upload Project Files (Optional)",
+        fileUploadHelp: "You can upload PDF, Word, Excel, PowerPoint, or text files. Maximum 10MB per file.",
+        fileUploaded: "File uploaded successfully"
     },
 
     // Footer
@@ -948,7 +952,52 @@ export const translations = {
         functionalityCookiesDesc: "Remember your preferences and personalize your experience",
         analyticsCookies: "Analytics Cookies",
         analyticsCookiesDesc: "Collect anonymous usage data to improve our services"
-    }
+    },
+
+        // Chat Widget
+        chat: {
+            title: "Chat with us",
+            statusOnline: "● Online",
+            statusOffline: "● Offline",
+            welcome: "👋 Hello! I'm your AI assistant. I can help you learn about our services, answer questions about AI training programs, provide contact information, and more. How can I assist you today?",
+            placeholder: "Type your message...",
+            send: "Send",
+            close: "Close chat",
+            open: "Open chat",
+            typing: "Typing...",
+            error: "Sorry, I encountered an error. Please try again or use the contact form.",
+            noResponse: "No response received. Please try again.",
+            sessionExpired: "Your session has expired. Please refresh the page.",
+            messageTooLong: "Message is too long. Please keep it under 1000 characters.",
+            emptyMessage: "Please enter a message.",
+            escalate: "Escalate to human support",
+            feedback: "Rate this conversation",
+            history: "Conversation history",
+            clearChat: "Clear chat",
+            clearChatConfirm: "Are you sure you want to clear this conversation?",
+            newChat: "New chat",
+            voiceInput: "Voice input",
+            voiceInputStart: "Start speaking...",
+            voiceInputStop: "Stop recording",
+            voiceInputListening: "Listening...",
+            voiceInputError: "Voice input not supported in your browser",
+            voiceInputPermission: "Please allow microphone access",
+            fileUpload: "Upload file",
+            fileUploadSelect: "Select file",
+            fileUploadRemove: "Remove file",
+            fileUploadError: "File upload failed",
+            fileUploadTooLarge: "File is too large. Maximum size: 10MB",
+            fileUploadInvalid: "Invalid file type. Please upload PDF or document files",
+            fileUploaded: "File uploaded successfully",
+            fileUploading: "Uploading file...",
+            feedbackTitle: "Rate your experience",
+            feedbackSubmit: "Submit feedback",
+            feedbackThanks: "Thank you for your feedback!",
+            escalateTitle: "Talk to Human Support",
+            escalateMessage: "Would you like to escalate this conversation to our human support team?",
+            escalateConfirm: "Yes, connect me",
+            escalateCancel: "Cancel"
+        }
 };
 
 export default translations;

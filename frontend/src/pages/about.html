@@ -3,8 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="About Paxi iTechnologies - Smart IT Management. Learn about our mission, vision, and values.">
-    <title>About Us - Paxi iTechnologies</title>
+    <meta name="description" content="About Paxi iTechnologies - Smart IT Management. Learn about our mission, vision, values, and expertise in IT solutions.">
+    <meta name="keywords" content="Paxi iTechnologies, IT company, IT management, about us, company information">
+    <title>About Us - Paxi iTechnologies | Our Mission & Vision</title>
+    
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://paxiit.com/pages/about.html">
+    <meta property="og:title" content="About Us - Paxi iTechnologies | Our Mission & Vision">
+    <meta property="og:description" content="Learn about our mission, vision, values, and expertise in IT solutions. Smart IT Management. Clear Results.">
+    <meta property="og:image" content="https://paxiit.com/assets/images/logo-og.svg">
+    <meta property="og:site_name" content="Paxi iTechnologies">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://paxiit.com/pages/about.html">
+    <meta name="twitter:title" content="About Us - Paxi iTechnologies | Our Mission & Vision">
+    <meta name="twitter:description" content="Learn about our mission, vision, values, and expertise in IT solutions.">
+    <meta name="twitter:image" content="https://paxiit.com/assets/images/logo-og.svg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://paxiit.com/pages/about.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
@@ -19,6 +39,8 @@
     <script src="/services/api-path-manager.js"></script>
     <script type="module" src="/cls/lang-core.js"></script>
     <script src="/cls/lang-switcher.js"></script>
+    <!-- Chat Widget - Load after PMS/APIM/CLS -->
+    <script src="/components/chat-widget/chat-widget.js?v=1.0.0"></script>
     <script src="/components/translation-plugin.js"></script>
     <script src="/services/cookie-manager.js"></script>
     
@@ -49,7 +71,7 @@
                     window.translationPlugin = new window.TranslationPlugin({
                         googleTranslateEnabled: true,
                         clsEnabled: true,
-                        position: 'bottom-right',
+                        position: 'bottom-left', // Chat widget is bottom-right
                         showWidget: true
                     });
                     window.translationPlugin.initialize();

@@ -301,6 +301,9 @@ class TranslationPlugin {
             .translation-plugin-bottom-left {
                 bottom: 20px;
                 left: 20px;
+                /* Ensure widget stays within viewport */
+                min-width: 0;
+                max-width: calc(100vw - 40px);
             }
             
             .translation-plugin-top-right {
@@ -311,6 +314,9 @@ class TranslationPlugin {
             .translation-plugin-top-left {
                 top: 20px;
                 left: 20px;
+                /* Ensure widget stays within viewport */
+                min-width: 0;
+                max-width: calc(100vw - 40px);
             }
             
             .translation-plugin-toggle {
@@ -324,6 +330,9 @@ class TranslationPlugin {
                 gap: 8px;
                 box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 transition: all 0.3s;
+                white-space: nowrap;
+                /* Ensure toggle button doesn't overflow */
+                max-width: calc(100vw - 40px);
             }
             
             .translation-plugin-toggle:hover {
@@ -352,6 +361,13 @@ class TranslationPlugin {
                 max-width: 400px;
                 display: none;
                 overflow: hidden;
+            }
+            
+            /* Menu positioning for left-side widgets */
+            .translation-plugin-bottom-left .translation-plugin-menu,
+            .translation-plugin-top-left .translation-plugin-menu {
+                right: auto;
+                left: 0;
             }
             
             .translation-plugin-menu.show {
@@ -458,17 +474,34 @@ class TranslationPlugin {
                     max-width: 90vw;
                 }
                 
-                .translation-plugin-bottom-right,
-                .translation-plugin-bottom-left {
-                    bottom: 10px;
-                }
-                
                 .translation-plugin-bottom-right {
+                    bottom: 10px;
                     right: 10px;
                 }
                 
+                /* Translation widget on left, chat widget on right */
+                /* On mobile, position translation widget above chat button to avoid overlap */
                 .translation-plugin-bottom-left {
+                    bottom: 90px; /* Above chat button (60px button + 20px spacing + 10px gap) */
                     left: 10px;
+                    z-index: 9997; /* Below chat widget */
+                    /* Ensure widget and menu stay visible */
+                    max-width: calc(100vw - 20px);
+                }
+                
+                /* Ensure menu doesn't overflow on mobile */
+                .translation-plugin-bottom-left .translation-plugin-menu,
+                .translation-plugin-top-left .translation-plugin-menu {
+                    max-width: calc(100vw - 20px);
+                    left: 0;
+                    right: auto;
+                }
+            }
+            
+            /* Extra small screens - ensure no overlap */
+            @media (max-width: 480px) {
+                .translation-plugin-bottom-left {
+                    bottom: 90px !important; /* Above chat button */
                 }
             }
         `;

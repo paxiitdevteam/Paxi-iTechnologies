@@ -1,0 +1,100 @@
+{
+  "popularQuestions": [
+    {
+      "original": "i would like to know more about your AI training programme",
+      "normalized": "i would like to know more about your ai training programme",
+      "count": 2,
+      "firstAsked": "2025-11-15T11:35:01.521Z",
+      "lastAsked": "2025-11-15T11:41:58.747Z",
+      "sessions": [
+        "chat_1763205794860_is87gqnnv",
+        "chat_1763206896072_h4qxlpo5t"
+      ],
+      "category": "ai_training"
+    },
+    {
+      "original": "can you tell me pore about AI transing",
+      "normalized": "can you tell me pore about ai transing",
+      "count": 1,
+      "firstAsked": "2025-11-15T10:59:34.320Z",
+      "lastAsked": "2025-11-15T10:59:34.320Z",
+      "sessions": [
+        "chat_1763203705064_e4lo5o6cg"
+      ],
+      "category": "about"
+    },
+    {
+      "original": "hello",
+      "normalized": "hello",
+      "count": 1,
+      "firstAsked": "2025-11-15T11:06:54.840Z",
+      "lastAsked": "2025-11-15T11:06:54.840Z",
+      "sessions": [
+        "chat_1763203705064_e4lo5o6cg"
+      ],
+      "category": "general"
+    },
+    {
+      "original": "can you give me more information",
+      "normalized": "can you give me more information",
+      "count": 1,
+      "firstAsked": "2025-11-15T11:22:47.659Z",
+      "lastAsked": "2025-11-15T11:22:47.659Z",
+      "sessions": [
+        "chat_1763203705064_e4lo5o6cg"
+      ],
+      "category": "general"
+    },
+    {
+      "original": "i would like to know more about your AI traing progammes",
+      "normalized": "i would like to know more about your ai traing progammes",
+      "count": 1,
+      "firstAsked": "2025-11-15T11:25:20.206Z",
+      "lastAsked": "2025-11-15T11:25:20.206Z",
+      "sessions": [
+        "chat_1763205794860_is87gqnnv"
+      ],
+      "category": "about"
+    },
+    {
+      "original": "thank you let me verify the page to see wnat you guys offer",
+      "normalized": "thank you let me verify the page to see wnat you guys offer",
+      "count": 1,
+      "firstAsked": "2025-11-15T11:30:58.868Z",
+      "lastAsked": "2025-11-15T11:30:58.868Z",
+      "sessions": [
+        "chat_1763205794860_is87gqnnv"
+      ],
+      "category": "services"
+    },
+    {
+      "original": "thanks",
+      "normalized": "thanks",
+      "count": 1,
+      "firstAsked": "2025-11-15T11:31:21.634Z",
+      "lastAsked": "2025-11-15T11:31:21.634Z",
+      "sessions": [
+        "chat_1763205794860_is87gqnnv"
+      ],
+      "category": "general"
+    },
+    {
+      "original": "hellohello canhello can youhello can you helphello can you help mehello can you help me withhello can you help me with somehello can you help me with some informationhello can you help me with some information",
+      "normalized": "hellohello canhello can youhello can you helphello can you help mehello can you help me withhello can you help me with somehello can you help me with some informationhello can you help me with some in",
+      "count": 1,
+      "firstAsked": "2025-11-15T12:05:16.993Z",
+      "lastAsked": "2025-11-15T12:05:16.993Z",
+      "sessions": [
+        "chat_1763206926298_wjx6o6tsz"
+      ],
+      "category": "contact"
+    }
+  ],
+  "questionPatterns": {},
+  "responseImprovements": [],
+  "lowRatedResponses": [],
+  "highRatedResponses": [],
+  "learnedInsights": [],
+  "lastAnalysis": null,
+  "version": 1
+}

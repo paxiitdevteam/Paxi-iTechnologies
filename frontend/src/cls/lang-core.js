@@ -76,25 +76,34 @@ class LanguageSystem {
      */
     async loadLanguage(langCode) {
         try {
-            // Use absolute path for translation file
-            const translationPath = `/cls/translations/${langCode}.js`;
+            // Use absolute path for translation file with cache-busting
+            // Add timestamp to force browser to reload (bypass cache)
+            const cacheBuster = `?v=2.1.0&t=${Date.now()}`;
+            const translationPath = `/cls/translations/${langCode}.js${cacheBuster}`;
             
             // Dynamic import
             const module = await import(translationPath);
             const translations = module.translations || module.default || {};
             
+            if (!translations || Object.keys(translations).length === 0) {
+                throw new Error(`Empty translations loaded for ${langCode}`);
+            }
+            
             this.translations[langCode] = translations;
+            console.log(`[CLS] ✅ Loaded language: ${langCode} (${Object.keys(translations).length} translation keys)`);
             return translations;
         } catch (error) {
-            console.error(`Failed to load language "${langCode}":`, error);
+            console.error(`[CLS] ❌ Failed to load language "${langCode}":`, error);
+            console.error(`[CLS] Error details:`, error.message, error.stack);
             
             // Fallback to default language if not already loading it
             if (langCode !== this.defaultLanguage) {
-                console.warn(`Falling back to default language: ${this.defaultLanguage}`);
+                console.warn(`[CLS] ⚠️  Falling back to default language: ${this.defaultLanguage}`);
                 return await this.loadLanguage(this.defaultLanguage);
             }
             
             // Return empty translations as last resort
+            console.error(`[CLS] ❌ Could not load default language either!`);
             return {};
         }
     }

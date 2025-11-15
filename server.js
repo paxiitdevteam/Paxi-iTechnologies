@@ -3,6 +3,27 @@
  * Serves frontend files and handles API requests
  */
 
+// Load environment variables from .env file (if exists)
+try {
+    const fs = require('fs');
+    if (fs.existsSync('.env')) {
+        const envContent = fs.readFileSync('.env', 'utf8');
+        envContent.split('\n').forEach(line => {
+            const trimmedLine = line.trim();
+            if (trimmedLine && !trimmedLine.startsWith('#')) {
+                const [key, ...valueParts] = trimmedLine.split('=');
+                if (key && valueParts.length > 0) {
+                    const value = valueParts.join('=').trim().replace(/^["']|["']$/g, '');
+                    process.env[key.trim()] = value;
+                }
+            }
+        });
+        console.log('[Server] ✅ Loaded environment variables from .env file');
+    }
+} catch (error) {
+    console.warn('[Server] ⚠️  Could not load .env file:', error.message);
+}
+
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
@@ -422,6 +443,63 @@ function resolveFilePath(requestPath) {
 }
 
 /**
+ * Generate sitemap.xml dynamically
+ */
+function generateSitemap(req, res) {
+    try {
+        const baseUrl = 'https://paxiit.com';
+        const pagesDir = PMS.frontend('pages');
+        const pages = [];
+        
+        // Add homepage
+        pages.push({
+            url: baseUrl,
+            priority: '1.0',
+            changefreq: 'weekly',
+            lastmod: new Date().toISOString().split('T')[0]
+        });
+        
+        // Scan pages directory for HTML files
+        if (fs.existsSync(pagesDir)) {
+            const files = fs.readdirSync(pagesDir);
+            files.forEach(file => {
+                if (file.endsWith('.html') && file !== 'admin.html') {
+                    const pageName = file.replace('.html', '');
+                    pages.push({
+                        url: `${baseUrl}/pages/${pageName}.html`,
+                        priority: pageName === 'services' || pageName === 'about' ? '0.9' : '0.8',
+                        changefreq: 'monthly',
+                        lastmod: new Date().toISOString().split('T')[0]
+                    });
+                }
+            });
+        }
+        
+        // Generate XML
+        let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+        xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+        
+        pages.forEach(page => {
+            xml += '  <url>\n';
+            xml += `    <loc>${page.url}</loc>\n`;
+            xml += `    <lastmod>${page.lastmod}</lastmod>\n`;
+            xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
+            xml += `    <priority>${page.priority}</priority>\n`;
+            xml += '  </url>\n';
+        });
+        
+        xml += '</urlset>';
+        
+        res.writeHead(200, { 'Content-Type': 'application/xml' });
+        res.end(xml);
+    } catch (error) {
+        console.error('Error generating sitemap:', error);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Error generating sitemap');
+    }
+}
+
+/**
  * Request handler
  */
 function requestHandler(req, res) {
@@ -431,6 +509,30 @@ function requestHandler(req, res) {
     // Logging
     if (config.enableLogging) {
         console.log(`${new Date().toISOString()} - ${req.method} ${pathname}`);
+    }
+
+    // Handle robots.txt
+    if (pathname === '/robots.txt') {
+        const robotsPath = PMS.frontend('src', 'robots.txt');
+        if (fs.existsSync(robotsPath)) {
+            try {
+                const data = fs.readFileSync(robotsPath);
+                res.writeHead(200, { 'Content-Type': 'text/plain' });
+                res.end(data);
+                return;
+            } catch (e) {
+                console.error('Error reading robots.txt:', e.message);
+            }
+        }
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('robots.txt not found');
+        return;
+    }
+
+    // Handle sitemap.xml
+    if (pathname === '/sitemap.xml') {
+        generateSitemap(req, res);
+        return;
     }
 
     if (pathname === '/' || pathname === '') {
