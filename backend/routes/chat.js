@@ -450,7 +450,7 @@ async function handleSendMessage(req, res) {
                     });
                 }
                 
-                const { message, sessionId } = data;
+                const { message, sessionId, files } = data;
                 
                 // Validate input
                 if (!message || typeof message !== 'string') {

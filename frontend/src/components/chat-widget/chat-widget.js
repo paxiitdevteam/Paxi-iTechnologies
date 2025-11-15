@@ -732,16 +732,18 @@ class ChatWidget {
             const data = await response.json();
             
             if (data.success) {
-                this.uploadedFiles.push({
+                const fileData = {
                     name: file.name,
                     size: file.size,
                     type: file.type,
                     url: data.data.url,
-                    id: data.data.fileId
-                });
+                    id: data.data.fileId,
+                    fileId: data.data.fileId
+                };
+                this.uploadedFiles.push(fileData);
                 
-                const successMsg = this.getTranslation('fileUploaded', 'File uploaded successfully');
-                this.addMessage('ai', `${successMsg}: ${file.name}`);
+                // Display file in chat message (with preview for images)
+                this.addMessageWithFile('user', `Uploaded: ${file.name}`, fileData);
                 
                 // Add file info to next message context
                 const input = document.getElementById('chat-input');
@@ -1160,11 +1162,28 @@ class ChatWidget {
         }
         input.disabled = true;
         
-        // Clear input
-        input.value = '';
+        // Add user message to UI (with files if any)
+        if (this.uploadedFiles.length > 0) {
+            this.addMessage('user', message);
+            // Display each uploaded file
+            this.uploadedFiles.forEach(fileData => {
+                this.addMessageWithFile('user', '', fileData);
+            });
+        } else {
+            this.addMessage('user', message);
+        }
         
-        // Add user message to UI
-        this.addMessage('user', message);
+        // Store uploaded files for API call
+        const filesToSend = [...this.uploadedFiles];
+        
+        // Clear input and uploaded files
+        input.value = '';
+        this.uploadedFiles = [];
+        const filePreview = document.getElementById('chat-file-preview');
+        if (filePreview) {
+            filePreview.innerHTML = '';
+            filePreview.style.display = 'none';
+        }
         
         // Show typing indicator
         this.showTyping();
@@ -1179,7 +1198,12 @@ class ChatWidget {
                 },
                 body: JSON.stringify({
                     message,
-                    sessionId: this.sessionId
+                    sessionId: this.sessionId,
+                    files: filesToSend.map(f => ({
+                        fileId: f.fileId || f.id,
+                        name: f.name,
+                        url: f.url
+                    }))
                 })
             });
             
@@ -1272,6 +1296,85 @@ class ChatWidget {
         return formatted;
     }
 
+    /**
+     * Add message with file attachment
+     */
+    addMessageWithFile(type, text, fileData) {
+        const messagesContainer = document.getElementById('chat-messages');
+        if (!messagesContainer) return;
+        
+        // Hide welcome message when first message is added
+        const welcome = messagesContainer.querySelector('.chat-widget-welcome');
+        if (welcome) {
+            welcome.style.display = 'none';
+        }
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-widget-message chat-widget-message-${type}`;
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'chat-widget-message-content';
+        
+        // Add text
+        if (text) {
+            messageContent.innerHTML = `<p>${this.escapeHtml(text)}</p>`;
+        }
+        
+        // Add file display
+        const fileDisplay = document.createElement('div');
+        fileDisplay.className = 'chat-widget-file-attachment';
+        
+        const isImage = fileData.type && fileData.type.startsWith('image/');
+        const fileUrl = window.APIM ? window.APIM.getAPIUrl(fileData.url) : fileData.url;
+        
+        if (isImage) {
+            // Show image preview
+            fileDisplay.innerHTML = `
+                <div class="chat-widget-image-preview">
+                    <img src="${fileUrl}" alt="${this.escapeHtml(fileData.name)}" class="chat-widget-image" />
+                    <div class="chat-widget-image-info">
+                        <span class="chat-widget-file-name">${this.escapeHtml(fileData.name)}</span>
+                        <a href="${fileUrl}" target="_blank" class="chat-widget-file-download" download>Download</a>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Show document link
+            fileDisplay.innerHTML = `
+                <div class="chat-widget-document-attachment">
+                    <div class="chat-widget-file-icon">📄</div>
+                    <div class="chat-widget-file-details">
+                        <span class="chat-widget-file-name">${this.escapeHtml(fileData.name)}</span>
+                        <span class="chat-widget-file-size">${(fileData.size / 1024).toFixed(2)} KB</span>
+                    </div>
+                    <a href="${fileUrl}" target="_blank" class="chat-widget-file-download" download>Download</a>
+                </div>
+            `;
+        }
+        
+        messageContent.appendChild(fileDisplay);
+        
+        const messageTime = document.createElement('div');
+        messageTime.className = 'chat-widget-message-time';
+        messageTime.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
+        messageDiv.appendChild(messageContent);
+        messageDiv.appendChild(messageTime);
+        messagesContainer.appendChild(messageDiv);
+        
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+    
+    /**
+     * Escape HTML to prevent XSS
+     */
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
     /**
      * Add message to chat window with enhanced formatting
      */
