@@ -1111,9 +1111,9 @@ function handleFileUpload(req, res) {
                 
                 // Also check file extension as fallback
                 const allowedExtensions = ['.pdf', '.doc', '.docx', '.txt', '.jpg', '.jpeg', '.png', '.gif', '.webp'];
-                const fileExtension = '.' + filename.split('.').pop().toLowerCase();
+                const fileExtensionWithDot = '.' + filename.split('.').pop().toLowerCase();
                 
-                if (!allowedTypes.includes(fileType) && !allowedExtensions.includes(fileExtension)) {
+                if (!allowedTypes.includes(fileType) && !allowedExtensions.includes(fileExtensionWithDot)) {
                     return apiRouter.sendError(res, {
                         message: 'Invalid file type. Allowed: PDF, DOC, DOCX, TXT, JPG, PNG, GIF, WEBP',
                         statusCode: 400
@@ -1126,9 +1126,9 @@ function handleFileUpload(req, res) {
                     fs.mkdirSync(uploadsDir, { recursive: true });
                 }
                 
-                // Generate unique filename
+                // Generate unique filename (use original extension from filename)
                 const fileId = `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-                const fileExtension = filename.split('.').pop();
+                const fileExtension = filename.split('.').pop(); // Extension without dot
                 const savedFilename = `${fileId}.${fileExtension}`;
                 const filePath = PMS.backend('data', 'uploads', savedFilename);
                 
