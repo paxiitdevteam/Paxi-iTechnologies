@@ -559,8 +559,8 @@ class ChatWidget {
      */
     startVoiceInput() {
         if (!this.recognition) {
-            const errorMsg = this.getTranslation('voiceInputError', 'Voice input not supported in your browser');
-            this.addMessage('ai', errorMsg);
+            // Don't show error message - button should already be hidden if not supported
+            console.warn('[Chat Widget] Voice input not available');
             return;
         }
         
@@ -579,12 +579,17 @@ class ChatWidget {
             
             console.log('[Chat Widget] 🎤 Voice input started');
         } catch (error) {
-            if (error.name === 'not-allowed') {
+            if (error.name === 'not-allowed' || error.name === 'PermissionDeniedError') {
                 const errorMsg = this.getTranslation('voiceInputPermission', 'Please allow microphone access');
-                this.addMessage('ai', errorMsg);
+                this.showVoiceStatus(errorMsg, 'error');
             } else {
-                console.error('[Chat Widget] Error starting voice input:', error);
+                // Hide button on other errors (mobile browsers that don't support it)
+                const voiceBtn = document.getElementById('chat-voice-btn');
+                if (voiceBtn) {
+                    voiceBtn.style.display = 'none';
+                }
             }
+            console.error('[Chat Widget] Error starting voice input:', error);
             this.stopVoiceInput();
         }
     }
