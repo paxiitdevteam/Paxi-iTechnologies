@@ -1239,11 +1239,21 @@ function handleFileDownload(req, res) {
             });
         }
         
-        // Send file
+        // Send file (images inline, documents as download)
         const fileContent = fs.readFileSync(fileMetadata.path);
+        const isImage = fileMetadata.type && fileMetadata.type.startsWith('image/');
+        
         res.setHeader('Content-Type', fileMetadata.type);
-        res.setHeader('Content-Disposition', `attachment; filename="${fileMetadata.originalName}"`);
         res.setHeader('Content-Length', fileContent.length);
+        
+        // For images, display inline; for documents, force download
+        if (isImage) {
+            res.setHeader('Content-Disposition', `inline; filename="${fileMetadata.originalName}"`);
+            res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache images
+        } else {
+            res.setHeader('Content-Disposition', `attachment; filename="${fileMetadata.originalName}"`);
+        }
+        
         res.writeHead(200);
         res.end(fileContent);
         
