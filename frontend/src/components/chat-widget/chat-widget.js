@@ -375,15 +375,25 @@ class ChatWidget {
             const newSendBtn = sendBtn.cloneNode(true);
             sendBtn.parentNode.replaceChild(newSendBtn, sendBtn);
             
+            // Remove any existing listeners and add fresh one
+            newSendBtn.onclick = null; // Clear any existing onclick
             newSendBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log('[Chat Widget] Send button clicked');
+                // Reset isSending flag if stuck
+                if (this.isSending) {
+                    console.warn('[Chat Widget] isSending flag was stuck, resetting...');
+                    this.isSending = false;
+                }
                 this.sendMessage();
             });
-            // Ensure button is enabled
+            // Ensure button is enabled and clickable
             newSendBtn.disabled = false;
             newSendBtn.style.pointerEvents = 'auto';
             newSendBtn.style.cursor = 'pointer';
+            newSendBtn.style.opacity = '1';
+            console.log('[Chat Widget] ✅ Send button event listener attached');
         } else {
             console.error('[Chat Widget] Send button not found!');
         }
@@ -1091,9 +1101,11 @@ class ChatWidget {
      * Send message - USING APIM (NO HARDCODED PATHS)
      */
     async sendMessage() {
+        console.log('[Chat Widget] sendMessage() called, isSending:', this.isSending);
+        
         // Prevent duplicate sends
         if (this.isSending) {
-            console.log('[Chat Widget] Message already being sent, ignoring duplicate call');
+            console.warn('[Chat Widget] ⚠️ Message already being sent, ignoring duplicate call');
             return;
         }
         
