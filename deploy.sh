@@ -125,8 +125,41 @@ PAGE_COUNT_PROD=$(ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking
 echo -e "${GREEN}✅ $PAGE_COUNT_PROD pages deployed${NC}"
 echo ""
 
-# Step 8: Start production server (using systemd if available)
-echo -e "${YELLOW}Step 8: Starting production server...${NC}"
+# Step 8: Configure systemd service for 24/7 operation
+echo -e "${YELLOW}Step 8: Configuring server for 24/7 operation...${NC}"
+# Update systemd service file to ensure it never stops
+ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "echo 'A3\$KU578q' | sudo -S bash -c 'cat > /etc/systemd/system/paxiit-website.service' << 'EOFSERVICE'
+[Unit]
+Description=Paxiit Website Server - 24/7 Operation
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=superpulpax
+WorkingDirectory=$NAS_PATH
+Environment=NODE_ENV=production
+Environment=PORT=8000
+Environment=HOST=0.0.0.0
+Environment=PATH=/var/packages/Node.js_v20/target/usr/local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/var/packages/Node.js_v20/target/usr/local/bin/node $NAS_PATH/server.js
+Restart=always
+RestartSec=10
+StartLimitInterval=0
+StartLimitBurst=0
+StandardOutput=append:$NAS_PATH/server.log
+StandardError=append:$NAS_PATH/server.log
+
+[Install]
+WantedBy=multi-user.target
+EOFSERVICE
+" 2>&1
+echo -e "${GREEN}✅ Service file updated for 24/7 operation${NC}"
+
+# Reload systemd daemon
+ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "echo 'A3\$KU578q' | sudo -S systemctl daemon-reload 2>&1" 2>&1
+echo -e "${GREEN}✅ Systemd daemon reloaded${NC}"
+
 # Ensure service is enabled for auto-start on boot
 ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "echo 'A3\$KU578q' | sudo -S systemctl enable paxiit-website.service 2>&1" 2>&1
 echo -e "${GREEN}✅ Auto-start on boot enabled${NC}"
