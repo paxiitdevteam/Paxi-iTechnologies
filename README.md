@@ -54,8 +54,8 @@ npm start
 
 **Option 2: Using start script (Windows)**
 ```bash
-# Double-click start.bat or run:
-start.bat
+# Run the start script:
+./start.sh
 ```
 
 **Option 3: Using start script (Linux/Mac)**
@@ -205,6 +205,37 @@ PMS.backend('data', 'services.json')
 - **ALWAYS** validate changes in dev folder before any deployment
 
 **See [DEVELOPMENT_RULES.md](DEVELOPMENT_RULES.md) for complete rules and procedures.**
+
+### Production Deployment
+
+**Single Deployment Method**: `deploy.sh`
+
+This is the **ONLY** method for deploying to production. The script handles:
+- ✅ Server stop/start (systemd or manual)
+- ✅ Automatic backup creation
+- ✅ File deployment via SSH
+- ✅ Dependency installation
+- ✅ Deployment verification
+- ✅ Endpoint testing
+
+**Usage:**
+```bash
+# Make executable (first time only)
+chmod +x deploy.sh
+
+# Deploy to production
+./deploy.sh
+```
+
+**Requirements:**
+- SSH access to NAS (192.168.1.3:2222)
+- Production path: `/volume1/web/paxiit.com`
+- Git Bash terminal (not PowerShell/CMD)
+
+**⚠️ Important:**
+- Always test in dev (`http://localhost:8000`) before deploying
+- Wait for explicit user approval before running deploy script
+- The script creates automatic backups before deployment
 
 ### Adding New Pages
 1. Create HTML file in `frontend/src/pages/`
