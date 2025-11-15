@@ -88,6 +88,28 @@
         "chat_1763206926298_wjx6o6tsz"
       ],
       "category": "contact"
+    },
+    {
+      "original": "see this document",
+      "normalized": "see this document",
+      "count": 1,
+      "firstAsked": "2025-11-15T21:19:19.373Z",
+      "lastAsked": "2025-11-15T21:19:19.373Z",
+      "sessions": [
+        "chat_1763236572448_f9qa6r9vc"
+      ],
+      "category": "general"
+    },
+    {
+      "original": "I want to exploit the service page",
+      "normalized": "i want to exploit the service page",
+      "count": 1,
+      "firstAsked": "2025-11-15T21:19:35.480Z",
+      "lastAsked": "2025-11-15T21:19:35.480Z",
+      "sessions": [
+        "chat_1763236572448_f9qa6r9vc"
+      ],
+      "category": "services"
     }
   ],
   "questionPatterns": {},

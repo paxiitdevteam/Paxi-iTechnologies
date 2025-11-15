@@ -275,13 +275,30 @@ class ChatWidget {
         }
         
         // Use PMS to get CSS path - SINGLE SOURCE OF TRUTH
-        const cssPath = window.PMS.frontend('components', 'chat-widget', 'chat-styles.css');
+        // PMS.frontend() returns paths like /components/chat-widget/chat-styles.css
+        let cssPath = window.PMS.frontend('components', 'chat-widget', 'chat-styles.css');
+        
+        // Ensure path is a web URL (starts with /)
+        if (!cssPath.startsWith('/')) {
+            cssPath = '/' + cssPath;
+        }
+        
+        // Remove any double slashes
+        cssPath = cssPath.replace(/\/+/g, '/');
+        
+        console.log('[Chat Widget] Loading CSS from:', cssPath);
         
         // Create link to CSS file
         const link = document.createElement('link');
         link.id = 'chat-widget-styles';
         link.rel = 'stylesheet';
         link.href = cssPath;
+        link.onerror = function() {
+            console.error('[Chat Widget] ❌ Failed to load CSS:', cssPath);
+        };
+        link.onload = function() {
+            console.log('[Chat Widget] ✅ CSS loaded successfully:', cssPath);
+        };
         document.head.appendChild(link);
     }
 

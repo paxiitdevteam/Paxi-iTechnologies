@@ -591,6 +591,10 @@ function requestHandler(req, res) {
     }
     
     if (filePath && fs.existsSync(filePath)) {
+        // Log 502-causing files for debugging
+        if (pathname.includes('fonts.css') || pathname.includes('chat-styles.css') || pathname.includes('site.webmanifest')) {
+            console.log(`[STATIC] Serving: ${pathname} -> ${filePath} (exists: ${fs.existsSync(filePath)})`);
+        }
         try {
             const stats = fs.statSync(filePath);
             if (stats.isFile()) {

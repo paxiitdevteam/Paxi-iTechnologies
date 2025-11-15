@@ -1,8 +1,8 @@
 {
   "totalConversations": 0,
-  "totalMessages": 9,
+  "totalMessages": 11,
   "totalEscalations": 0,
-  "averageResponseTime": 1,
+  "averageResponseTime": 524,
   "averageRating": 0,
   "responseTimes": [
     1,
@@ -13,7 +13,9 @@
     1,
     1,
     0,
-    1
+    1,
+    3170,
+    2590
   ],
   "popularQuestions": [],
   "satisfactionRatings": []
