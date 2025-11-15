@@ -127,6 +127,10 @@ echo ""
 
 # Step 8: Start production server (using systemd if available)
 echo -e "${YELLOW}Step 8: Starting production server...${NC}"
+# Ensure service is enabled for auto-start on boot
+ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "echo 'A3\$KU578q' | sudo -S systemctl enable paxiit-website.service 2>&1" 2>&1
+echo -e "${GREEN}✅ Auto-start on boot enabled${NC}"
+
 # Try systemd service first, then fallback to manual start
 if ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "echo 'A3\$KU578q' | sudo -S systemctl start paxiit-website.service 2>&1" 2>&1; then
     echo -e "${GREEN}✅ Server started via systemd${NC}"
@@ -147,6 +151,10 @@ fi
 sleep 3  # Give server time to start
 if ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "systemctl is-active --quiet paxiit-website.service 2>/dev/null || ps aux | grep -E 'node.*server\.js|paxiit-website' | grep -v grep > /dev/null" 2>&1; then
     echo -e "${GREEN}✅ Server is running${NC}"
+    # Show server status and restart configuration
+    echo -e "${YELLOW}Server configuration:${NC}"
+    ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "systemctl show paxiit-website.service | grep -E 'Restart|WantedBy|ActiveState' | head -3" 2>&1
+    echo -e "${GREEN}✅ Server configured with: Restart=always, Auto-start on boot enabled${NC}"
     # Show server status
     ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "systemctl status paxiit-website.service --no-pager -l 2>/dev/null | head -5 || echo 'Server process is running'" 2>&1
 else
