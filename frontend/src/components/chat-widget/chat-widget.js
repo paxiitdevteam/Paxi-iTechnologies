@@ -1212,6 +1212,9 @@ class ChatWidget {
             // Hide typing indicator
             this.hideTyping();
             
+            // Reset sending flag FIRST (before re-enabling UI)
+            this.isSending = false;
+            
             // Re-enable send button and input
             if (sendBtn) {
                 sendBtn.disabled = false;
