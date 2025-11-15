@@ -236,6 +236,13 @@ chmod +x deploy.sh
 - Always test in dev (`http://localhost:8000`) before deploying
 - Wait for explicit user approval before running deploy script
 - The script creates automatic backups before deployment
+- Server is configured to **never go off** (auto-restart on crash, auto-start on boot)
+
+**Server Reliability:**
+- ✅ **Auto-restart**: Server automatically restarts if it crashes (`Restart=always`)
+- ✅ **Auto-start on boot**: Server starts automatically when NAS reboots
+- ✅ **Restart delay**: 10 seconds between restart attempts
+- ✅ **Monitoring**: Use `ensure-server-running.sh` to verify server status
 
 ### Standardized Tools System
 
