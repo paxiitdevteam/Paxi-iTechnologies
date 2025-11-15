@@ -232,7 +232,7 @@ class ChatWidget {
                 <div class="chat-widget-input-actions">
                     <button id="chat-voice-btn" class="chat-widget-voice" aria-label="${translations.voiceInput}" title="${translations.voiceInput}">🎤</button>
                     <button id="chat-file-btn" class="chat-widget-file" aria-label="${translations.fileUpload}" title="${translations.fileUpload}">📎</button>
-                    <input type="file" id="chat-file-input" accept=".pdf,.doc,.docx,.txt" style="display: none;" />
+                    <input type="file" id="chat-file-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.webp,image/*" style="display: none;" />
                 </div>
                 <div class="chat-widget-input-main">
                     <input 
@@ -443,16 +443,35 @@ class ChatWidget {
     
     /**
      * Initialize speech recognition (Web Speech API)
+     * Enhanced for mobile browser support (Samsung Internet, Chrome Mobile, Safari iOS)
      */
     initializeSpeechRecognition() {
         if (typeof window !== 'undefined') {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            // Try multiple recognition APIs for better mobile support
+            const SpeechRecognition = window.SpeechRecognition || 
+                                     window.webkitSpeechRecognition || 
+                                     window.mozSpeechRecognition || 
+                                     window.msSpeechRecognition;
+            
             if (SpeechRecognition) {
                 try {
                     this.recognition = new SpeechRecognition();
-                    this.recognition.continuous = true;
+                    this.recognition.continuous = false; // Changed to false for better mobile compatibility
                     this.recognition.interimResults = true;
-                    this.recognition.lang = 'en-US'; // Default to English, can be changed based on CLS
+                    
+                    // Detect language from CLS if available
+                    let lang = 'en-US';
+                    if (typeof window.CLS !== 'undefined' && window.CLS.currentLanguage) {
+                        const langMap = {
+                            'en': 'en-US',
+                            'fr': 'fr-FR',
+                            'ar': 'ar-SA',
+                            'de': 'de-DE',
+                            'es': 'es-ES'
+                        };
+                        lang = langMap[window.CLS.currentLanguage] || 'en-US';
+                    }
+                    this.recognition.lang = lang;
                     
                     this.recognition.onresult = (event) => {
                         let interimTranscript = '';
@@ -482,18 +501,24 @@ class ChatWidget {
                     this.recognition.onerror = (event) => {
                         console.error('[Chat Widget] Speech recognition error:', event.error);
                         this.stopVoiceInput();
-                        const errorMsg = this.getTranslation('voiceInputError', 'Voice input not supported in your browser');
-                        this.showVoiceStatus(errorMsg, 'error');
+                        
+                        // Hide error message on mobile - just disable the button
+                        const voiceBtn = document.getElementById('chat-voice-btn');
+                        if (voiceBtn) {
+                            voiceBtn.style.display = 'none'; // Hide button if not supported
+                        }
+                        
+                        // Only show error if it's a permission issue
+                        if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+                            const errorMsg = this.getTranslation('voiceInputPermission', 'Please allow microphone access');
+                            this.showVoiceStatus(errorMsg, 'error');
+                        }
                     };
                     
                     this.recognition.onend = () => {
+                        // Don't auto-restart on mobile - let user click again
                         if (this.isListening) {
-                            // Restart if still listening
-                            try {
-                                this.recognition.start();
-                            } catch (error) {
-                                this.stopVoiceInput();
-                            }
+                            this.stopVoiceInput();
                         }
                     };
                     
@@ -501,9 +526,19 @@ class ChatWidget {
                 } catch (error) {
                     console.warn('[Chat Widget] Speech recognition not available:', error);
                     this.recognition = null;
+                    // Hide voice button if recognition fails
+                    const voiceBtn = document.getElementById('chat-voice-btn');
+                    if (voiceBtn) {
+                        voiceBtn.style.display = 'none';
+                    }
                 }
             } else {
                 console.warn('[Chat Widget] Speech recognition API not supported in this browser');
+                // Hide voice button if API not supported
+                const voiceBtn = document.getElementById('chat-voice-btn');
+                if (voiceBtn) {
+                    voiceBtn.style.display = 'none';
+                }
             }
         }
     }
@@ -608,7 +643,25 @@ class ChatWidget {
         
         const file = files[0];
         const maxSize = 10 * 1024 * 1024; // 10MB
-        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+        
+        // Allowed file types: documents and images
+        const allowedTypes = [
+            // Documents
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'text/plain',
+            // Images
+            'image/jpeg',
+            'image/jpg',
+            'image/png',
+            'image/gif',
+            'image/webp'
+        ];
+        
+        // Also check file extension as fallback (for mobile browsers)
+        const allowedExtensions = ['.pdf', '.doc', '.docx', '.txt', '.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
         
         // Validate file size
         if (file.size > maxSize) {
@@ -617,9 +670,9 @@ class ChatWidget {
             return;
         }
         
-        // Validate file type
-        if (!allowedTypes.includes(file.type)) {
-            const errorMsg = this.getTranslation('fileUploadInvalid', 'Invalid file type. Please upload PDF or document files');
+        // Validate file type (check both MIME type and extension)
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+            const errorMsg = this.getTranslation('fileUploadInvalid', 'Invalid file type. Please upload PDF, document, or image files');
             this.addMessage('ai', errorMsg);
             return;
         }

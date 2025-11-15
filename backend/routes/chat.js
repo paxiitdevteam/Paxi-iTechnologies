@@ -1094,11 +1094,28 @@ function handleFileUpload(req, res) {
                     });
                 }
                 
-                // Validate file type
-                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
-                if (!allowedTypes.includes(fileType)) {
+                // Validate file type (documents and images)
+                const allowedTypes = [
+                    // Documents
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'text/plain',
+                    // Images
+                    'image/jpeg',
+                    'image/jpg',
+                    'image/png',
+                    'image/gif',
+                    'image/webp'
+                ];
+                
+                // Also check file extension as fallback
+                const allowedExtensions = ['.pdf', '.doc', '.docx', '.txt', '.jpg', '.jpeg', '.png', '.gif', '.webp'];
+                const fileExtension = '.' + filename.split('.').pop().toLowerCase();
+                
+                if (!allowedTypes.includes(fileType) && !allowedExtensions.includes(fileExtension)) {
                     return apiRouter.sendError(res, {
-                        message: 'Invalid file type. Allowed: PDF, DOC, DOCX, TXT',
+                        message: 'Invalid file type. Allowed: PDF, DOC, DOCX, TXT, JPG, PNG, GIF, WEBP',
                         statusCode: 400
                     });
                 }
