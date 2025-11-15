@@ -607,16 +607,34 @@ function requestHandler(req, res) {
                 if (config.enableLogging) {
                     console.error(`[SERVE] ❌ Path exists but is not a file: ${filePath}`);
                 }
+                // Return 404 if path exists but is not a file
+                if (!res.headersSent) {
+                    res.writeHead(404, { 'Content-Type': 'text/plain' });
+                    res.end('Not a file');
+                }
+                return;
             }
         } catch (e) {
             if (config.enableLogging) {
                 console.error(`[SERVE] ❌ Error accessing file: ${filePath}`, e.message);
             }
+            // Return 500 on file access error (not 502 - that's a gateway error)
+            if (!res.headersSent) {
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end(`Error accessing file: ${e.message}`);
+            }
+            return;
         }
     }
     
+    // Log missing files that cause 502 errors
+    if (pathname.includes('fonts.css') || pathname.includes('chat-styles.css') || pathname.includes('site.webmanifest')) {
+        console.error(`[STATIC] ❌ File not found: ${pathname} -> ${filePath || 'NULL'}`);
+        console.error(`[STATIC] Tried path: ${filePath || 'NULL'}`);
+    }
+    
     if (!res.headersSent) {
-        // General 404 - NO LINKS
+        // Return 404 for missing files (not 502)
         res.writeHead(404, { 'Content-Type': 'text/html' });
         res.end(`<!DOCTYPE html><html><head><title>404</title></head><body><h1>404 - Not Found</h1><p>${pathname}</p></body></html>`);
     }
