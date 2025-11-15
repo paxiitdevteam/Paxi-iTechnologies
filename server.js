@@ -171,9 +171,11 @@ function serveFile(filePath, res) {
     
     fs.readFile(filePath, (err, data) => {
         if (err) {
+            console.error(`[SERVE] ❌ Error reading file: ${filePath}`, err.message);
             if (!res.headersSent) {
-                res.writeHead(404, { 'Content-Type': 'text/plain' });
-                res.end('File not found');
+                // Return 500 on read error (not 502 - that's a gateway/proxy error)
+                res.writeHead(500, { 'Content-Type': 'text/plain' });
+                res.end(`Error reading file: ${err.message}`);
             }
             return;
         }
