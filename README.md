@@ -238,11 +238,28 @@ chmod +x deploy.sh
 - The script creates automatic backups before deployment
 - Server is configured to **never go off** (auto-restart on crash, auto-start on boot)
 
-**Server Reliability:**
+**Server Reliability (24/7 Operation):**
 - ✅ **Auto-restart**: Server automatically restarts if it crashes (`Restart=always`)
-- ✅ **Auto-start on boot**: Server starts automatically when NAS reboots
-- ✅ **Restart delay**: 10 seconds between restart attempts
+- ✅ **Auto-start on boot**: Server starts automatically when NAS reboots (`WantedBy=multi-user.target`)
+- ✅ **Restart delay**: 10 seconds between restart attempts (`RestartSec=10`)
+- ✅ **Unlimited restarts**: `StartLimitInterval=0` and `StartLimitBurst=0` (no restart limits)
+- ✅ **Network dependency**: Waits for network before starting (`After=network.target`)
 - ✅ **Monitoring**: Use `ensure-server-running.sh` to verify server status
+- ✅ **Service enabled**: Service is enabled for automatic startup on system boot
+
+**24/7 Configuration Details:**
+The production server is configured via systemd service (`/etc/systemd/system/paxiit-website.service`) with:
+- **Restart Policy**: `Restart=always` - Automatically restarts on any failure
+- **Boot Startup**: `WantedBy=multi-user.target` - Starts automatically on system boot
+- **No Limits**: `StartLimitInterval=0` and `StartLimitBurst=0` - Unlimited restart attempts
+- **Network Wait**: `After=network.target` - Ensures network is available before starting
+- **Logging**: All output logged to `/volume1/web/paxiit.com/server.log`
+
+**This ensures the website never goes down:**
+- Server restarts automatically if it crashes
+- Server starts automatically after NAS reboot
+- No restart limits - server will keep trying to stay online
+- Network-aware startup - waits for network connectivity
 
 ### Standardized Tools System
 

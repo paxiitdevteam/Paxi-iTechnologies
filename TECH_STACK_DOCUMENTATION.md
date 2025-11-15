@@ -847,27 +847,42 @@ git config --global color.ui auto
 
 **Service File:** `/etc/systemd/system/paxiit-website.service`
 
+**24/7 Operation Configuration** - Ensures server never goes down:
+
 ```ini
 [Unit]
-Description=Paxiit Website Server
-After=network.target
+Description=Paxiit Website Server - 24/7 Operation
+After=network.target network-online.target
+Wants=network-online.target
 
 [Service]
 Type=simple
 User=superpulpax
 WorkingDirectory=/volume1/web/paxiit.com
-Environment="PATH=/volume1/@appstore/Node.js_v20/usr/local/bin:/usr/local/bin"
-Environment="HOST=0.0.0.0"
-Environment="PORT=8000"
-ExecStart=/volume1/@appstore/Node.js_v20/usr/local/bin/node server.js
+Environment=NODE_ENV=production
+Environment=PORT=8000
+Environment=HOST=0.0.0.0
+Environment=PATH=/var/packages/Node.js_v20/target/usr/local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/var/packages/Node.js_v20/target/usr/local/bin/node /volume1/web/paxiit.com/server.js
 Restart=always
 RestartSec=10
+StartLimitInterval=0
+StartLimitBurst=0
 StandardOutput=append:/volume1/web/paxiit.com/server.log
 StandardError=append:/volume1/web/paxiit.com/server.log
 
 [Install]
 WantedBy=multi-user.target
 ```
+
+**Key 24/7 Configuration Options:**
+- `Restart=always` - Automatically restarts on any failure (crash, exit, etc.)
+- `RestartSec=10` - Waits 10 seconds before restarting
+- `StartLimitInterval=0` - No time limit for restart attempts (unlimited)
+- `StartLimitBurst=0` - No burst limit for restart attempts (unlimited)
+- `WantedBy=multi-user.target` - Starts automatically on system boot
+- `After=network.target` - Waits for network to be available before starting
+- `Wants=network-online.target` - Ensures network is online before starting
 
 ### Service Management
 
@@ -884,11 +899,19 @@ sudo systemctl restart paxiit-website.service
 # Check status
 sudo systemctl status paxiit-website.service
 
-# Enable auto-start on boot
+# Enable auto-start on boot (REQUIRED for 24/7 operation)
 sudo systemctl enable paxiit-website.service
 
-# Disable auto-start
+# Disable auto-start (NOT RECOMMENDED - breaks 24/7 operation)
 sudo systemctl disable paxiit-website.service
+
+# Verify 24/7 configuration
+systemctl show paxiit-website.service | grep -E 'Restart|StartLimit|WantedBy'
+# Should show:
+# Restart=always
+# StartLimitInterval=0
+# StartLimitBurst=0
+# WantedBy=multi-user.target
 
 # View logs
 sudo journalctl -u paxiit-website.service -f

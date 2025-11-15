@@ -250,6 +250,15 @@
 3. Deployment: Use `deploy.sh` (after approval)
 4. Documentation: Update `README.md` or relevant docs only
 
+#### **5. Production Server 24/7 Operation**
+- **`deploy.sh`** - Automatically configures server for 24/7 operation
+  - Sets `Restart=always` (auto-restart on crash)
+  - Sets `StartLimitInterval=0` and `StartLimitBurst=0` (unlimited restarts)
+  - Enables auto-start on boot
+  - Ensures network is available before starting
+- **Server never goes down** - Configured to restart automatically and start on boot
+- **Monitoring**: Use `ensure-server-running.sh` to verify server status
+
 ---
 
 ## **🎯 SUMMARY**
