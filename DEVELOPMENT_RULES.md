@@ -209,6 +209,49 @@
 
 ---
 
+## **🛠️ STANDARDIZED TOOLS SYSTEM**
+
+### **Single Source of Truth - No Duplicates**
+
+**🔴 MANDATORY: Use ONLY These Standardized Tools**
+
+#### **1. Server Management**
+- **`start.sh`** - **ONLY** server startup script
+  - Cross-platform (Linux/Mac/Windows Git Bash)
+  - **NEVER** use `start.bat` or other startup methods
+  - Usage: `./start.sh` or `bash start.sh`
+
+#### **2. Production Deployment**
+- **`deploy.sh`** - **ONLY** deployment method
+  - Handles: backup, file transfer, server restart, verification
+  - **NEVER** use manual deployment or other scripts
+  - Usage: `./deploy.sh` (requires user approval first)
+
+#### **3. API Key Setup**
+- **`setup-api-keys.sh`** - Interactive API key configuration
+  - For initial AI service setup
+  - Usage: `./setup-api-keys.sh`
+
+#### **4. Documentation Structure**
+- **`README.md`** - Main project documentation
+- **`DEVELOPMENT_RULES.md`** - This file (mandatory rules)
+- **Essential docs only** - No duplicate or outdated documentation
+
+**❌ FORBIDDEN:**
+- Creating duplicate scripts (test-deploy.sh, deploy-v2.sh, etc.)
+- Creating test files in root directory
+- Keeping temporary log files (*.log, *.txt in root)
+- Multiple deployment methods
+- Outdated documentation files
+
+**✅ STANDARDIZED WORKFLOW:**
+1. Development: Use `start.sh` to run dev server
+2. Testing: Test in dev environment (`localhost:8000`)
+3. Deployment: Use `deploy.sh` (after approval)
+4. Documentation: Update `README.md` or relevant docs only
+
+---
+
 ## **🎯 SUMMARY**
 
 **GOLDEN RULE:**
@@ -219,11 +262,21 @@
 > 3. Get user approval
 > 4. Deploy to production
 
+**TOOL RULE:**
+> **"ONE TOOL, ONE PURPOSE, NO DUPLICATES"**
+> 
+> 1. Use standardized tools only
+> 2. No duplicate scripts
+> 3. No test files in production
+> 4. Clean git repository
+
 **NEVER:**
 - Auto-deploy
 - Modify production directly
 - Skip validation
 - Deploy without approval
+- Create duplicate tools
+- Keep temporary test files
 
 ---
 

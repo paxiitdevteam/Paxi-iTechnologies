@@ -237,6 +237,28 @@ chmod +x deploy.sh
 - Wait for explicit user approval before running deploy script
 - The script creates automatic backups before deployment
 
+### Standardized Tools System
+
+**🔴 MANDATORY: Use Only Standardized Tools**
+
+This project follows a **"One Tool, One Purpose"** principle to avoid confusion and errors:
+
+| Tool | Purpose | Usage |
+|------|---------|-------|
+| `start.sh` | Server startup | `./start.sh` |
+| `deploy.sh` | Production deployment | `./deploy.sh` (after approval) |
+| `setup-api-keys.sh` | API key configuration | `./setup-api-keys.sh` |
+
+**Rules:**
+- ✅ **ONE** deployment method (`deploy.sh`)
+- ✅ **ONE** server startup (`start.sh`)
+- ✅ **NO** duplicate scripts
+- ✅ **NO** test files in root
+- ✅ **NO** temporary log files
+- ✅ Clean git repository
+
+**See [DEVELOPMENT_RULES.md](DEVELOPMENT_RULES.md) for complete standardized tools documentation.**
+
 ### Adding New Pages
 1. Create HTML file in `frontend/src/pages/`
 2. Use PMS for all paths
