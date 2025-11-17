@@ -9,6 +9,23 @@ const path = require('path');
 const PMS = require('../utils/pms'); // Path Manager System - SINGLE SOURCE OF TRUTH
 const passwordUtils = require('../utils/password'); // Password hashing utilities
 const { loadContactMessages } = require('./contact'); // Contact messages for admin dashboard
+const visitorTracking = require('../services/visitor-tracking'); // Visitor tracking service
+
+// Import chat functions - need to access loadConversations
+// Since chat.js exports the handler, we'll load conversations directly
+function loadChatConversations() {
+    const conversationsPath = PMS.backend('data', 'chat-conversations.json');
+    if (!fs.existsSync(conversationsPath)) {
+        return [];
+    }
+    try {
+        const fileContent = fs.readFileSync(conversationsPath, 'utf8');
+        return JSON.parse(fileContent);
+    } catch (error) {
+        console.error('[ADMIN] Error loading chat conversations:', error);
+        return [];
+    }
+}
 
 // Session storage - using JSON file for persistence
 let sessions = {};
@@ -98,6 +115,8 @@ function adminHandler(req, res) {
                 handleCreatePage(req, res);
             } else if (endpoint === 'services') {
                 handleCreateService(req, res);
+            } else if (endpoint === 'apps') {
+                handleCreateApp(req, res);
             } else if (endpoint === 'content') {
                 handleCreateContentBlock(req, res);
             } else if (endpoint === 'users') {
@@ -132,6 +151,12 @@ function adminHandler(req, res) {
                 // GET /api/admin/services/:id - Get single service
                 const serviceId = endpoint.replace('services/', '');
                 handleGetService(req, res, serviceId);
+            } else if (endpoint === 'apps') {
+                handleGetApps(req, res);
+            } else if (endpoint.startsWith('apps/')) {
+                // GET /api/admin/apps/:id - Get single app
+                const appId = endpoint.replace('apps/', '');
+                handleGetApp(req, res, appId);
             } else if (endpoint === 'content') {
                 handleGetContentBlocks(req, res);
             } else if (endpoint.startsWith('content/')) {
@@ -156,6 +181,10 @@ function adminHandler(req, res) {
                 // GET /api/admin/media/:filename - Get single media file info
                 const filename = endpoint.replace('media/', '');
                 handleGetMediaFile(req, res, filename);
+            } else if (endpoint === 'visitors' || endpoint === 'visitor-stats') {
+                handleGetVisitorStats(req, res);
+            } else if (endpoint === 'chat-conversations' || endpoint === 'chats') {
+                handleGetChatConversations(req, res);
             } else {
                 apiRouter.send404(res);
             }
@@ -174,6 +203,10 @@ function adminHandler(req, res) {
                 // PUT /api/admin/services/:id - Update specific service
                 const serviceId = endpoint.replace('services/', '');
                 handleUpdateService(req, res, serviceId);
+            } else if (endpoint.startsWith('apps/')) {
+                // PUT /api/admin/apps/:id - Update specific app
+                const appId = endpoint.replace('apps/', '');
+                handleUpdateApp(req, res, appId);
             } else if (endpoint === 'content') {
                 handleUpdateContentBlock(req, res);
             } else if (endpoint.startsWith('content/')) {
@@ -204,6 +237,10 @@ function adminHandler(req, res) {
                 // DELETE /api/admin/services/:id - Delete service
                 const serviceId = endpoint.replace('services/', '');
                 handleDeleteService(req, res, serviceId);
+            } else if (endpoint.startsWith('apps/')) {
+                // DELETE /api/admin/apps/:id - Delete app
+                const appId = endpoint.replace('apps/', '');
+                handleDeleteApp(req, res, appId);
             } else if (endpoint.startsWith('content/')) {
                 // DELETE /api/admin/content/:id - Delete content block
                 const contentId = endpoint.replace('content/', '');
@@ -1034,6 +1071,286 @@ function handleDeleteService(req, res, serviceId) {
     } catch (error) {
         apiRouter.sendError(res, {
             message: 'Error deleting service',
+            error: error.message,
+            statusCode: 500
+        });
+    }
+}
+
+/**
+ * ========== APPS MANAGEMENT ==========
+ */
+
+/**
+ * Load apps data from JSON file - USING PMS (NO HARDCODED PATHS)
+ */
+function loadAppsData() {
+    const appsPath = PMS.backend('data', 'apps.json');
+    
+    if (!fs.existsSync(appsPath)) {
+        console.warn('[ADMIN] Apps data file not found, returning empty array');
+        return [];
+    }
+    
+    try {
+        const fileContent = fs.readFileSync(appsPath, 'utf8');
+        return JSON.parse(fileContent);
+    } catch (error) {
+        console.error('[ADMIN] Error loading apps data:', error);
+        return [];
+    }
+}
+
+/**
+ * Save apps data to JSON file - USING PMS (NO HARDCODED PATHS)
+ */
+function saveAppsData(appsData) {
+    const appsPath = PMS.backend('data', 'apps.json');
+    
+    // Ensure data directory exists
+    const dataDir = PMS.backend('data');
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
+    
+    try {
+        fs.writeFileSync(appsPath, JSON.stringify(appsData, null, 2), 'utf8');
+    } catch (error) {
+        console.error('[ADMIN] Error saving apps data:', error);
+        throw error;
+    }
+}
+
+/**
+ * Handle get apps
+ */
+function handleGetApps(req, res) {
+    // Verify session - USE CONSISTENT PATTERN (trim whitespace)
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+
+    try {
+        const appsData = loadAppsData();
+        apiRouter.sendSuccess(res, {
+            apps: appsData,
+            count: appsData.length
+        }, 'Apps retrieved successfully');
+    } catch (error) {
+        apiRouter.sendError(res, {
+            message: 'Error retrieving apps',
+            error: error.message,
+            statusCode: 500
+        });
+    }
+}
+
+/**
+ * Handle get single app
+ */
+function handleGetApp(req, res, appId) {
+    // Verify session - USE CONSISTENT PATTERN (trim whitespace)
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+
+    try {
+        const id = parseInt(appId);
+        const appsData = loadAppsData();
+        const app = appsData.find(a => a.id === id);
+        
+        if (!app) {
+            return apiRouter.sendError(res, {
+                message: `App not found with ID: ${appId}`,
+                statusCode: 404
+            });
+        }
+        
+        apiRouter.sendSuccess(res, app, 'App retrieved successfully');
+    } catch (error) {
+        apiRouter.sendError(res, {
+            message: 'Error retrieving app',
+            error: error.message,
+            statusCode: 500
+        });
+    }
+}
+
+/**
+ * Handle create app
+ */
+function handleCreateApp(req, res) {
+    // Verify session - USE CONSISTENT PATTERN (trim whitespace)
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        try {
+            const appData = JSON.parse(body);
+            
+            // Validate required fields
+            if (!appData.name || !appData.description) {
+                return apiRouter.sendError(res, {
+                    message: 'Missing required fields: name and description',
+                    statusCode: 400
+                });
+            }
+
+            const appsData = loadAppsData();
+            
+            // Generate new ID
+            const newId = appsData.length > 0 
+                ? Math.max(...appsData.map(a => a.id)) + 1 
+                : 1;
+            
+            // Create new app
+            const newApp = {
+                id: newId,
+                name: appData.name,
+                icon: appData.icon || '🚀',
+                description: appData.description,
+                status: appData.status || 'coming-soon',
+                link: appData.link || ''
+            };
+            
+            appsData.push(newApp);
+            saveAppsData(appsData);
+
+            apiRouter.sendSuccess(res, newApp, 'App created successfully');
+        } catch (error) {
+            apiRouter.sendError(res, {
+                message: 'Error creating app',
+                error: error.message,
+                statusCode: 500
+            });
+        }
+    });
+}
+
+/**
+ * Handle update app
+ */
+function handleUpdateApp(req, res, appId) {
+    // Verify session - USE CONSISTENT PATTERN (trim whitespace)
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        try {
+            const appData = JSON.parse(body);
+            const id = parseInt(appId);
+            const appsData = loadAppsData();
+            
+            if (!appId || isNaN(id)) {
+                return apiRouter.sendError(res, {
+                    message: 'App ID is required',
+                    statusCode: 400
+                });
+            }
+            
+            const appIndex = appsData.findIndex(a => a.id === id);
+            
+            if (appIndex === -1) {
+                return apiRouter.sendError(res, {
+                    message: `App not found with ID: ${appId}`,
+                    statusCode: 404
+                });
+            }
+
+            // Update app (preserve ID)
+            const updatedApp = {
+                ...appsData[appIndex],
+                ...appData,
+                id: id // Ensure ID cannot be changed
+            };
+            
+            appsData[appIndex] = updatedApp;
+            saveAppsData(appsData);
+
+            apiRouter.sendSuccess(res, updatedApp, 'App updated successfully');
+        } catch (error) {
+            apiRouter.sendError(res, {
+                message: 'Error updating app',
+                error: error.message,
+                statusCode: 500
+            });
+        }
+    });
+}
+
+/**
+ * Handle delete app
+ */
+function handleDeleteApp(req, res, appId) {
+    // Verify session - USE CONSISTENT PATTERN (trim whitespace)
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+
+    try {
+        const id = parseInt(appId);
+        const appsData = loadAppsData();
+        const appIndex = appsData.findIndex(a => a.id === id);
+        
+        if (appIndex === -1) {
+            return apiRouter.sendError(res, {
+                message: `App not found with ID: ${appId}`,
+                statusCode: 404
+            });
+        }
+
+        // Remove app
+        const deletedApp = appsData.splice(appIndex, 1)[0];
+        saveAppsData(appsData);
+
+        apiRouter.sendSuccess(res, {
+            id: deletedApp.id,
+            name: deletedApp.name,
+            deleted: true
+        }, 'App deleted successfully');
+    } catch (error) {
+        apiRouter.sendError(res, {
+            message: 'Error deleting app',
             error: error.message,
             statusCode: 500
         });
@@ -2199,6 +2516,7 @@ function handleGetDashboardStats(req, res) {
         const users = loadUsers();
         const settings = loadSettings();
         const contactMessages = loadContactMessages();
+        const visitorStats = visitorTracking.getVisitorStats();
         
         // Calculate statistics
         const stats = {
@@ -2264,6 +2582,14 @@ function handleGetDashboardStats(req, res) {
                 maintenanceMode: settings.features?.maintenanceMode || false,
                 totalDataFiles: 6 // pages, services, content, users, settings, contact-messages
             },
+            visitors: {
+                totalVisitors: visitorStats.totalVisitors || 0,
+                totalPageViews: visitorStats.totalPageViews || 0,
+                uniqueVisitors: visitorStats.uniqueVisitors || 0,
+                firstVisit: visitorStats.firstVisit,
+                lastVisit: visitorStats.lastVisit,
+                topPages: visitorStats.topPages || []
+            },
             recentActivity: getRecentActivity()
         };
         
@@ -2271,6 +2597,83 @@ function handleGetDashboardStats(req, res) {
     } catch (error) {
         apiRouter.sendError(res, {
             message: 'Error retrieving dashboard statistics',
+            error: error.message,
+            statusCode: 500
+        });
+    }
+}
+
+/**
+ * Handle get visitor statistics
+ */
+function handleGetVisitorStats(req, res) {
+    // Verify session
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+
+    try {
+        const visitorStats = visitorTracking.getVisitorStats();
+        apiRouter.sendSuccess(res, visitorStats, 'Visitor statistics retrieved successfully');
+    } catch (error) {
+        apiRouter.sendError(res, {
+            message: 'Error retrieving visitor statistics',
+            error: error.message,
+            statusCode: 500
+        });
+    }
+}
+
+/**
+ * Handle get chat conversations
+ */
+function handleGetChatConversations(req, res) {
+    // Verify session
+    const authHeader = req.headers.authorization;
+    const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
+    
+    if (!sessionId || !sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized',
+            statusCode: 401
+        });
+    }
+
+    try {
+        const conversations = loadChatConversations();
+        
+        // Sort by timestamp (most recent first)
+        const sortedConversations = conversations.sort((a, b) => {
+            const timeA = new Date(a.timestamp || 0).getTime();
+            const timeB = new Date(b.timestamp || 0).getTime();
+            return timeB - timeA;
+        });
+        
+        // Group by session for better organization
+        const sessionsMap = {};
+        sortedConversations.forEach(conv => {
+            const sessionId = conv.sessionId || 'unknown';
+            if (!sessionsMap[sessionId]) {
+                sessionsMap[sessionId] = [];
+            }
+            sessionsMap[sessionId].push(conv);
+        });
+        
+        apiRouter.sendSuccess(res, {
+            conversations: sortedConversations,
+            sessions: sessionsMap,
+            total: sortedConversations.length,
+            uniqueSessions: Object.keys(sessionsMap).length
+        }, 'Chat conversations retrieved successfully');
+    } catch (error) {
+        apiRouter.sendError(res, {
+            message: 'Error retrieving chat conversations',
             error: error.message,
             statusCode: 500
         });

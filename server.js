@@ -30,6 +30,9 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
+// Visitor Tracking Service
+const visitorTracking = require('./backend/services/visitor-tracking');
+
 // Path Manager System (PMS) - SINGLE SOURCE OF TRUTH
 class ServerPathManager {
     constructor() {
@@ -275,15 +278,13 @@ function handleSimpleAPI(req, res, parsedUrl, pathname) {
     
     if (routePath && fs.existsSync(routePath)) {
         try {
-            // For admin.js, NEVER clear cache to preserve sessions object
+            // For admin.js, clear cache only if server restarted (sessions will reload from file)
             // For other routes, clear cache to allow hot reloading
             const resolvedPath = require.resolve(routePath);
             const isAdminRoute = routePath.includes('admin.js');
             
-            if (!isAdminRoute) {
-                // Clear cache for non-admin routes to allow hot reloading
-                delete require.cache[resolvedPath];
-            }
+            // Always clear cache to ensure latest code is loaded (sessions persist in file)
+            delete require.cache[resolvedPath];
             // Always use require() - it will use cached version if available
             routeHandler = require(routePath);
             
@@ -507,6 +508,20 @@ function generateSitemap(req, res) {
 function requestHandler(req, res) {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
+
+    // Track visitor page views (for GET requests to HTML pages)
+    // Note: This is async but we don't wait for it to avoid blocking requests
+    if (req.method === 'GET' && !pathname.startsWith('/api/')) {
+        visitorTracking.trackPageView(req, pathname).then(visitorId => {
+            if (visitorId) {
+                // Note: Can't set cookie here as response may have started
+                // Cookie is set via getVisitorIdCookie in the response handler
+            }
+        }).catch(err => {
+            // Silently fail - don't block requests if tracking fails
+            console.error('[VISITOR TRACKING] Error:', err.message);
+        });
+    }
 
     // Logging
     if (config.enableLogging) {

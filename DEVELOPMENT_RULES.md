@@ -10,6 +10,7 @@
 - **Server**: `http://localhost:8000` (local development server)
 - **Status**: Safe to modify, test, break, and fix
 - **Terminal**: **Git Bash ONLY** - Never use PowerShell or CMD
+- **CRITICAL**: When working on `http://localhost:8000`, you are ALWAYS working on the LOCAL DEV folder, NOT the live production server
 
 **🔴 LIVE/PRODUCTION FOLDER (Production Environment):**
 - **Location**: `/volume1/web/paxiit.com` (NAS: 192.168.1.3:2222)
@@ -115,10 +116,12 @@
 1. Check current working directory: `pwd` (should show `/c/Users/PC-PAXIIT/Desktop/paxiit_website`)
 2. Verify you're in dev folder: `C:\Users\PC-PAXIIT\Desktop\paxiit_website`
 3. Confirm server is running locally: `http://localhost:8000`
-4. **NEVER** work in production path: `/volume1/web/paxiit.com`
-5. **ALWAYS** use Git Bash terminal - Never use PowerShell or CMD
-6. **VERIFY Git Bash**: Run `bash --version` - should show "GNU bash" (not PowerShell/CMD)
-7. **USE Git Bash commands**: Use `&&`, `||`, `grep`, `find`, etc. (not Windows CMD commands)
+4. **CRITICAL RULE**: `http://localhost:8000` = LOCAL DEV FOLDER ONLY, NEVER the live production server
+5. **NEVER** work in production path: `/volume1/web/paxiit.com`
+6. **ALWAYS** use Git Bash terminal - Never use PowerShell or CMD
+7. **VERIFY Git Bash**: Run `bash --version` - should show "GNU bash" (not PowerShell/CMD)
+8. **USE Git Bash commands**: Use `&&`, `||`, `grep`, `find`, etc. (not Windows CMD commands)
+9. **REMEMBER**: All changes to `frontend/src/index.html` in the local dev folder affect `http://localhost:8000` ONLY
 
 **Before ANY deployment:**
 1. Confirm all changes are in dev folder

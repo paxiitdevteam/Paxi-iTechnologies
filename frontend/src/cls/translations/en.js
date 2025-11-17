@@ -57,6 +57,10 @@ export const translations = {
         services: {
             title: "Our Services"
         },
+        appStore: {
+            title: "Our Applications",
+            subtitle: "Explore our SaaS applications and tools developed to solve real-world business challenges."
+        },
         aiTraining: {
             title: "AI Learning & Training Programs",
             subtitle: "Empower your team with cutting-edge AI knowledge. High demand from companies seeking AI expertise and practical training.",

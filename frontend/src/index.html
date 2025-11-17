@@ -700,6 +700,101 @@
                 padding: 3rem 1.5rem;
             }
         }
+        
+        /* App Store Section - Exact match with Services Preview */
+        .app-store-section {
+            padding: 5rem 2rem;
+            background: var(--bg-light);
+        }
+        
+        .app-store-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+        }
+        
+        .app-store-section .section-subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+        
+        .app-store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .app-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .app-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        
+        .app-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .app-status {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+        
+        .app-status.coming-soon {
+            background: linear-gradient(135deg, var(--accent-2) 0%, #ffb88c 100%);
+            color: white;
+        }
+        
+        .app-status.live {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+        
+        .app-card.live-app {
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .app-store-section {
+                padding: 4rem 1.5rem;
+            }
+            
+            .app-store-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -909,6 +1004,18 @@
         </div>
     </section>
     
+    <!-- App Store Section -->
+    <section class="app-store-section">
+        <div class="container">
+            <h2 data-translate="homepage.appStore.title">Our Applications</h2>
+            <p class="section-subtitle" data-translate="homepage.appStore.subtitle">Explore our SaaS applications and tools developed to solve real-world business challenges.</p>
+            
+            <div class="app-store-grid" id="app-store-grid">
+                <!-- Apps will be loaded dynamically from API -->
+            </div>
+        </div>
+    </section>
+    
     <!-- Footer will be loaded dynamically -->
     <div id="footer-container"></div>
     
@@ -1079,6 +1186,85 @@
         
         // Load services preview when page is ready
         document.addEventListener('DOMContentLoaded', loadServicesPreview);
+        
+        // Load apps from API
+        async function loadApps() {
+            try {
+                let apiUrl = '/api/apps';
+                if (window.APIM && typeof window.APIM.getURL === 'function') {
+                    const apimUrl = window.APIM.getURL('apps', 'list');
+                    if (apimUrl) {
+                        try {
+                            const urlObj = new URL(apimUrl);
+                            apiUrl = urlObj.pathname;
+                        } catch (e) {
+                            apiUrl = apimUrl.startsWith('/') ? apimUrl : '/api/apps';
+                        }
+                    }
+                }
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(`Expected JSON but got ${contentType}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.data && result.data.apps) {
+                    displayApps(result.data.apps);
+                }
+            } catch (error) {
+                console.error('Error loading apps:', error);
+                // Silently fail - don't show error to user
+            }
+        }
+        
+        function displayApps(apps) {
+            const container = document.getElementById('app-store-grid');
+            if (!container || !apps || apps.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-light);">No apps available yet.</div>';
+                return;
+            }
+            
+            container.innerHTML = apps.map(app => {
+                const isLive = app.status === 'live' && app.link;
+                const cardClass = isLive ? 'app-card live-app' : 'app-card';
+                const statusClass = app.status === 'live' ? 'live' : 'coming-soon';
+                const statusText = app.status === 'live' ? 'Live' : 'Coming Soon';
+                const dataLink = isLive ? `data-link="${app.link}"` : '';
+                
+                return `
+                    <div class="${cardClass}" ${dataLink}>
+                        <div class="app-icon">${app.icon || '🚀'}</div>
+                        <h3>${app.name || 'App'}</h3>
+                        <p>${app.description || ''}</p>
+                        <div class="app-status ${statusClass}">
+                            <span>${statusText}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Attach click handlers for live apps
+            const liveAppCards = container.querySelectorAll('.app-card.live-app');
+            liveAppCards.forEach(card => {
+                const link = card.getAttribute('data-link');
+                if (link) {
+                    card.addEventListener('click', function() {
+                        window.open(link, '_blank', 'noopener,noreferrer');
+                    });
+                }
+            });
+        }
+        
+        // Load apps when page is ready
+        document.addEventListener('DOMContentLoaded', loadApps);
     </script>
 </body>
 </html>

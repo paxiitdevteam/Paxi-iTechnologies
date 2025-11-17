@@ -528,8 +528,11 @@
             <div class="sidebar">
                 <ul class="sidebar-menu">
                     <li><a href="#" class="menu-link active" data-section="overview">📊 Overview</a></li>
+                    <li><a href="#" class="menu-link" data-section="visitors">👁️ Visitors</a></li>
+                    <li><a href="#" class="menu-link" data-section="chats">💬 Chat Conversations</a></li>
                     <li><a href="#" class="menu-link" data-section="pages">📄 Pages</a></li>
                     <li><a href="#" class="menu-link" data-section="services">🛠️ Services</a></li>
+                    <li><a href="#" class="menu-link" data-section="apps">📱 Apps</a></li>
                     <li><a href="#" class="menu-link" data-section="content">✏️ Content</a></li>
                     <li><a href="#" class="menu-link" data-section="users">👥 Users</a></li>
                     <li><a href="#" class="menu-link" data-section="messages">📧 Messages</a></li>
@@ -595,6 +598,16 @@
                                     <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-contact">0</h3>
                                     <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Contact Messages</p>
                                     <small style="opacity: 0.8;" id="unread-contact"><span id="unread-count">0</span> unread</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <div style="font-size: 3rem;">👁️</div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 2.5rem; font-weight: bold;" id="total-visitors">0</h3>
+                                    <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Total Visitors</p>
+                                    <small style="opacity: 0.8;" id="total-page-views">0 page views</small>
                                 </div>
                             </div>
                         </div>
@@ -666,6 +679,80 @@
                                 <strong>Recent Logins:</strong>
                                 <div id="system-recent-logins" style="color: var(--text-light);">-</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visitors Section -->
+                <div id="visitors" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Website Visitors</h2>
+                        <button class="btn btn-secondary" onclick="loadVisitors()">🔄 Refresh</button>
+                    </div>
+                    
+                    <!-- Visitor Statistics Summary -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--primary);" id="visitor-total">0</h3>
+                            <p style="margin: 0.5rem 0 0 0; color: var(--text-light);">Total Visitors</p>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--primary);" id="visitor-pageviews">0</h3>
+                            <p style="margin: 0.5rem 0 0 0; color: var(--text-light);">Total Page Views</p>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--primary);" id="visitor-unique">0</h3>
+                            <p style="margin: 0.5rem 0 0 0; color: var(--text-light);">Unique Visitors</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Visitors Table -->
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Country</th>
+                                    <th>City</th>
+                                    <th>Source</th>
+                                    <th>Page Location</th>
+                                    <th>First Visit</th>
+                                    <th>Last Visit</th>
+                                    <th>Page Views</th>
+                                    <th>Device/ISP</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visitors-table-body">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 2rem;">Loading visitors...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- SEO Insights -->
+                    <div style="margin-top: 2rem; background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h3 style="margin-top: 0; color: var(--primary);">🔍 SEO Insights</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                            <div>
+                                <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">Traffic Sources</h4>
+                                <div id="traffic-sources-list" style="margin-top: 0.5rem;">
+                                    <div style="text-align: center; padding: 1rem; color: var(--text-light);">Loading...</div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style="color: var(--text-dark); margin-bottom: 0.5rem;">Search Queries</h4>
+                                <div id="search-queries-list" style="margin-top: 0.5rem;">
+                                    <div style="text-align: center; padding: 1rem; color: var(--text-light);">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Pages -->
+                    <div style="margin-top: 2rem; background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h3 style="margin-top: 0; color: var(--primary);">Top Pages</h3>
+                        <div id="top-pages-list" style="margin-top: 1rem;">
+                            <div style="text-align: center; padding: 2rem; color: var(--text-light);">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -793,6 +880,74 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                
+                <!-- Apps Section -->
+                <div id="apps" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Apps Management</h2>
+                        <button class="btn btn-primary" onclick="showCreateAppModal()">+ Create New App</button>
+                    </div>
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>App Name</th>
+                                    <th>Status</th>
+                                    <th>Link</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="apps-table-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem;">Loading apps...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- App Editor Modal -->
+                <div id="app-editor-modal" class="modal" style="display: none;">
+                    <div class="modal-content" style="max-width: 90%; width: 800px; max-height: 90vh;">
+                        <div class="modal-header">
+                            <h3 id="app-modal-title">Edit App</h3>
+                            <button class="modal-close" onclick="closeAppEditor()">&times;</button>
+                        </div>
+                        <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                            <div class="form-group">
+                                <label>App Name *</label>
+                                <input type="text" id="app-name-input" placeholder="App Name" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Icon (Emoji)</label>
+                                <input type="text" id="app-icon-input" placeholder="🚀" maxlength="2" style="width: 100px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                            </div>
+                            <div class="form-group">
+                                <label>Description *</label>
+                                <textarea id="app-description-input" placeholder="App description..." style="width: 100%; min-height: 100px; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="app-status-input" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                    <option value="coming-soon">Coming Soon</option>
+                                    <option value="live">Live</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>App Link (URL)</label>
+                                <input type="url" id="app-link-input" placeholder="https://your-app-url.com" style="width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                <small style="color: var(--text-light);">Required for "Live" apps. Leave empty for "Coming Soon" apps.</small>
+                            </div>
+                            <div id="app-editor-alert" style="margin-top: 1rem;"></div>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem; border-top: 1px solid var(--border);">
+                            <button class="btn btn-secondary" onclick="closeAppEditor()">Cancel</button>
+                            <button class="btn btn-primary" onclick="saveApp()">Save App</button>
+                        </div>
                     </div>
                 </div>
                 
@@ -1018,6 +1173,53 @@
                             <button class="btn btn-secondary" onclick="closeUserEditor()">Cancel</button>
                             <button class="btn btn-primary" onclick="saveUser()">Save User</button>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Chat Conversations Section -->
+                <div id="chats" class="content-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2>Chat Conversations</h2>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <button class="btn btn-secondary" onclick="loadChatConversations()">🔄 Refresh</button>
+                            <select id="chats-filter" onchange="filterChats()" style="padding: 0.5rem; border: 2px solid var(--border); border-radius: 0.5rem;">
+                                <option value="all">All Conversations</option>
+                                <option value="recent">Recent (Last 24h)</option>
+                                <option value="today">Today</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Statistics -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--primary);" id="chat-total">0</h3>
+                            <p style="margin: 0.5rem 0 0 0; color: var(--text-light);">Total Conversations</p>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 style="margin: 0; font-size: 2rem; font-weight: bold; color: var(--primary);" id="chat-sessions">0</h3>
+                            <p style="margin: 0.5rem 0 0 0; color: var(--text-light);">Unique Sessions</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Conversations Table -->
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Session ID</th>
+                                    <th>User Message</th>
+                                    <th>AI Response</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="chats-table-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 2rem;">Loading conversations...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
@@ -1703,6 +1905,28 @@
                 console.error('Error loading services:', error);
             }
             
+            // Load apps
+            try {
+                const apiUrl = getAPIUrl('/api/admin/apps');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        if (data.data.apps) {
+                            renderAppsTable(data.data.apps);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading apps:', error);
+            }
+            
             // Load content blocks
             try {
                 const apiUrl = getAPIUrl('/api/admin/content');
@@ -1822,6 +2046,12 @@
                     document.getElementById('unread-contact').style.fontWeight = 'bold';
                     document.getElementById('unread-contact').style.color = '#ffeb3b';
                 }
+            }
+            
+            // Visitor Stats
+            if (stats.visitors) {
+                document.getElementById('total-visitors').textContent = stats.visitors.totalVisitors || 0;
+                document.getElementById('total-page-views').textContent = `${stats.visitors.totalPageViews || 0} page views`;
             }
             
             // Services by Category Chart
@@ -2251,6 +2481,13 @@
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
         let currentEditingPage = null;
@@ -2866,6 +3103,181 @@
                     loadDashboardData(); // Refresh services list
                 } else {
                     alert('❌ Error: ' + (data.message || 'Failed to delete service'));
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // ========== APPS MANAGEMENT ==========
+        let currentEditingApp = null;
+        let isCreatingNewApp = false;
+        
+        // Render apps table
+        function renderAppsTable(apps) {
+            const tbody = document.getElementById('apps-table-body');
+            
+            if (apps.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No apps found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = apps.map(app => `
+                <tr>
+                    <td style="font-size: 1.5rem; text-align: center;">${app.icon || '🚀'}</td>
+                    <td><strong>${app.name}</strong></td>
+                    <td>
+                        <span style="background: ${app.status === 'live' ? 'linear-gradient(135deg, #006d77 0%, #83c5be 100%)' : 'linear-gradient(135deg, #e29578 0%, #ffb88c 100%)'}; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; font-size: 0.875rem; text-transform: uppercase;">
+                            ${app.status === 'live' ? 'Live' : 'Coming Soon'}
+                        </span>
+                    </td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${app.link ? `<a href="${app.link}" target="_blank" style="color: var(--primary);">${app.link}</a>` : '<span style="color: var(--text-light);">No link</span>'}
+                    </td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${app.description || ''}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm btn-primary" onclick="editApp(${app.id})" title="Edit">✏️</button>
+                            <button class="btn btn-sm" onclick="deleteApp(${app.id})" title="Delete" style="background: var(--error);">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Show create app modal
+        function showCreateAppModal() {
+            currentEditingApp = null;
+            isCreatingNewApp = true;
+            document.getElementById('app-modal-title').textContent = 'Create New App';
+            document.getElementById('app-name-input').value = '';
+            document.getElementById('app-icon-input').value = '🚀';
+            document.getElementById('app-description-input').value = '';
+            document.getElementById('app-status-input').value = 'coming-soon';
+            document.getElementById('app-link-input').value = '';
+            document.getElementById('app-editor-alert').innerHTML = '';
+            document.getElementById('app-editor-modal').style.display = 'flex';
+        }
+        
+        // Edit app
+        async function editApp(appId) {
+            try {
+                const apiUrl = getAPIUrl(`/api/admin/apps/${appId}`);
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data) {
+                        const app = data.data;
+                        currentEditingApp = appId;
+                        isCreatingNewApp = false;
+                        document.getElementById('app-modal-title').textContent = 'Edit App';
+                        document.getElementById('app-name-input').value = app.name || '';
+                        document.getElementById('app-icon-input').value = app.icon || '🚀';
+                        document.getElementById('app-description-input').value = app.description || '';
+                        document.getElementById('app-status-input').value = app.status || 'coming-soon';
+                        document.getElementById('app-link-input').value = app.link || '';
+                        document.getElementById('app-editor-alert').innerHTML = '';
+                        document.getElementById('app-editor-modal').style.display = 'flex';
+                    }
+                }
+            } catch (error) {
+                alert('❌ Error loading app: ' + error.message);
+            }
+        }
+        
+        // Close app editor
+        function closeAppEditor() {
+            document.getElementById('app-editor-modal').style.display = 'none';
+            currentEditingApp = null;
+            isCreatingNewApp = false;
+        }
+        
+        // Save app
+        async function saveApp() {
+            const alertDiv = document.getElementById('app-editor-alert');
+            const name = document.getElementById('app-name-input').value.trim();
+            const icon = document.getElementById('app-icon-input').value.trim();
+            const description = document.getElementById('app-description-input').value.trim();
+            const status = document.getElementById('app-status-input').value;
+            const link = document.getElementById('app-link-input').value.trim();
+            
+            if (!name || !description) {
+                alertDiv.innerHTML = '<div class="alert error">❌ Name and description are required</div>';
+                return;
+            }
+            
+            if (status === 'live' && !link) {
+                alertDiv.innerHTML = '<div class="alert error">❌ Link is required for Live apps</div>';
+                return;
+            }
+            
+            const appData = {
+                name,
+                icon: icon || '🚀',
+                description,
+                status,
+                link: status === 'live' ? link : ''
+            };
+            
+            try {
+                const url = isCreatingNewApp 
+                    ? '/api/admin/apps'
+                    : `/api/admin/apps/${currentEditingApp}`;
+                const method = isCreatingNewApp ? 'POST' : 'PUT';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(appData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alertDiv.innerHTML = '<div class="alert success">✅ App saved successfully!</div>';
+                    setTimeout(() => {
+                        closeAppEditor();
+                        loadDashboardData(); // Refresh apps list
+                    }, 1000);
+                } else {
+                    alertDiv.innerHTML = `<div class="alert error">❌ Error: ${data.message || 'Failed to save app'}</div>`;
+                }
+            } catch (error) {
+                alertDiv.innerHTML = `<div class="alert error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Delete app
+        async function deleteApp(appId) {
+            if (!confirm(`Are you sure you want to delete this app?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/apps/${appId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert('✅ App deleted successfully!');
+                    loadDashboardData(); // Refresh apps list
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Failed to delete app'));
                 }
             } catch (error) {
                 alert('❌ Error: ' + error.message);
@@ -3641,6 +4053,364 @@
         let currentMessageView = null;
         
         // Load contact messages
+        // Load visitors data
+        async function loadVisitors() {
+            if (!sessionId) {
+                console.warn('loadVisitors: No sessionId available');
+                return;
+            }
+            
+            try {
+                const apiUrl = getAPIUrl('/api/admin/visitors');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to load visitors:', response.status);
+                    document.getElementById('visitors-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Error loading visitors</td></tr>';
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    renderVisitors(data.data);
+                } else {
+                    console.error('Invalid visitors data:', data);
+                }
+            } catch (error) {
+                console.error('Error loading visitors:', error);
+                document.getElementById('visitors-table-body').innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Error loading visitors</td></tr>';
+            }
+        }
+        
+        // Render visitors data
+        function renderVisitors(visitorData) {
+            // Update summary stats
+            document.getElementById('visitor-total').textContent = visitorData.totalVisitors || 0;
+            document.getElementById('visitor-pageviews').textContent = visitorData.totalPageViews || 0;
+            document.getElementById('visitor-unique').textContent = visitorData.uniqueVisitors || 0;
+            
+            // Render visitors table
+            const tbody = document.getElementById('visitors-table-body');
+            const visitors = visitorData.visitors || [];
+            
+            if (visitors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-light);">No visitors yet</td></tr>';
+                return;
+            }
+            
+            // Sort by last visit (most recent first)
+            const sortedVisitors = [...visitors].sort((a, b) => new Date(b.lastVisit) - new Date(a.lastVisit));
+            
+            let html = '';
+            sortedVisitors.forEach(visitor => {
+                const firstVisit = new Date(visitor.firstVisit).toLocaleString();
+                const lastVisit = new Date(visitor.lastVisit).toLocaleString();
+                const country = visitor.country || 'Unknown';
+                const city = visitor.city || 'Unknown';
+                const countryCode = visitor.countryCode || 'XX';
+                
+                // Format referrer source
+                let sourceDisplay = 'Direct';
+                let sourceColor = '#666';
+                if (visitor.referrerType === 'Search Engine') {
+                    sourceDisplay = `🔍 ${visitor.referrerSource || 'Search'}`;
+                    sourceColor = '#4CAF50';
+                    if (visitor.searchQuery) {
+                        sourceDisplay += `<br><small style="color: #999; font-size: 0.8rem;">"${visitor.searchQuery.substring(0, 40)}${visitor.searchQuery.length > 40 ? '...' : ''}"</small>`;
+                    }
+                } else if (visitor.referrerType === 'Social Media') {
+                    sourceDisplay = `📱 ${visitor.referrerSource || 'Social'}`;
+                    sourceColor = '#2196F3';
+                } else if (visitor.referrerType === 'External') {
+                    sourceDisplay = `🔗 ${(visitor.referrerSource || 'External').substring(0, 30)}`;
+                    sourceColor = '#FF9800';
+                } else if (visitor.referrerType === 'Internal') {
+                    sourceDisplay = '🔄 Internal';
+                    sourceColor = '#9C27B0';
+                }
+                
+                // Format visited pages
+                const visitedPages = visitor.visitedPages || [];
+                let pagesDisplay = 'N/A';
+                if (visitedPages.length > 0) {
+                    const lastPage = visitedPages[visitedPages.length - 1];
+                    pagesDisplay = `<span style="font-weight: 500;">${lastPage}</span>`;
+                    if (visitedPages.length > 1) {
+                        pagesDisplay += `<br><small style="color: #999; font-size: 0.75rem;">+${visitedPages.length - 1} more</small>`;
+                    }
+                }
+                
+                html += `
+                    <tr>
+                        <td><strong>${countryCode}</strong><br><small style="color: #999;">${country}</small></td>
+                        <td>${city}</td>
+                        <td style="color: ${sourceColor}; font-size: 0.9rem;">${sourceDisplay}</td>
+                        <td style="font-size: 0.85rem;">${pagesDisplay}</td>
+                        <td style="font-size: 0.85rem;">${firstVisit}</td>
+                        <td style="font-size: 0.85rem;">${lastVisit}</td>
+                        <td style="text-align: center;"><strong>${visitor.pageViews || 0}</strong></td>
+                        <td style="font-size: 0.8rem; color: var(--text-light);">${(visitor.isp || visitor.userAgent || 'Unknown').substring(0, 40)}</td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            
+            // Calculate SEO insights
+            const trafficSources = {};
+            const searchQueries = {};
+            
+            visitors.forEach(visitor => {
+                // Count traffic sources
+                const sourceType = visitor.referrerType || 'Direct';
+                trafficSources[sourceType] = (trafficSources[sourceType] || 0) + 1;
+                
+                // Collect search queries
+                if (visitor.searchQuery && visitor.referrerType === 'Search Engine') {
+                    const query = visitor.searchQuery.toLowerCase().trim();
+                    if (query) {
+                        searchQueries[query] = (searchQueries[query] || 0) + 1;
+                    }
+                }
+            });
+            
+            // Render traffic sources
+            const trafficSourcesContainer = document.getElementById('traffic-sources-list');
+            const sourceEntries = Object.entries(trafficSources).sort((a, b) => b[1] - a[1]);
+            if (sourceEntries.length > 0) {
+                let sourcesHtml = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+                sourceEntries.forEach(([source, count]) => {
+                    const percentage = ((count / visitors.length) * 100).toFixed(1);
+                    let icon = '🌐';
+                    let color = '#666';
+                    if (source === 'Search Engine') { icon = '🔍'; color = '#4CAF50'; }
+                    else if (source === 'Social Media') { icon = '📱'; color = '#2196F3'; }
+                    else if (source === 'External') { icon = '🔗'; color = '#FF9800'; }
+                    else if (source === 'Internal') { icon = '🔄'; color = '#9C27B0'; }
+                    
+                    sourcesHtml += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-light); border-radius: 0.25rem;">
+                            <span>${icon} <strong>${source}</strong></span>
+                            <span style="color: ${color}; font-weight: bold;">${count} (${percentage}%)</span>
+                        </div>
+                    `;
+                });
+                sourcesHtml += '</div>';
+                trafficSourcesContainer.innerHTML = sourcesHtml;
+            } else {
+                trafficSourcesContainer.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-light);">No traffic data yet</div>';
+            }
+            
+            // Render search queries
+            const searchQueriesContainer = document.getElementById('search-queries-list');
+            const queryEntries = Object.entries(searchQueries).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            if (queryEntries.length > 0) {
+                let queriesHtml = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+                queryEntries.forEach(([query, count], index) => {
+                    queriesHtml += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-light); border-radius: 0.25rem;">
+                            <span><strong>${index + 1}.</strong> "${query.substring(0, 40)}${query.length > 40 ? '...' : ''}"</span>
+                            <span style="color: #4CAF50; font-weight: bold;">${count}</span>
+                        </div>
+                    `;
+                });
+                queriesHtml += '</div>';
+                searchQueriesContainer.innerHTML = queriesHtml;
+            } else {
+                searchQueriesContainer.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-light);">No search queries yet</div>';
+            }
+            
+            // Render top pages
+            const topPagesContainer = document.getElementById('top-pages-list');
+            if (visitorData.topPages && visitorData.topPages.length > 0) {
+                let pagesHtml = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+                visitorData.topPages.slice(0, 10).forEach((page, index) => {
+                    pagesHtml += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-light); border-radius: 0.25rem;">
+                            <span><strong>${index + 1}.</strong> ${page.path}</span>
+                            <span style="color: var(--primary); font-weight: bold;">${page.views} views</span>
+                        </div>
+                    `;
+                });
+                pagesHtml += '</div>';
+                topPagesContainer.innerHTML = pagesHtml;
+            } else {
+                topPagesContainer.innerHTML = '<div style="text-align: center; padding: 1rem; color: var(--text-light);">No page views yet</div>';
+            }
+        }
+        
+        // Helper function to load visitor analytics (for rendering)
+        function loadVisitorAnalytics() {
+            // Return empty for now - data comes from API
+            return { visitors: [] };
+        }
+        
+        // Chat Conversations
+        let allChatConversations = [];
+        
+        async function loadChatConversations() {
+            if (!sessionId) {
+                console.warn('loadChatConversations: No sessionId available');
+                return;
+            }
+            
+            try {
+                const apiUrl = getAPIUrl('/api/admin/chat-conversations');
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionId}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to load chat conversations:', response.status);
+                    document.getElementById('chats-table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--error);">Error loading conversations</td></tr>';
+                    return;
+                }
+                
+                const data = await response.json();
+                if (data.success && data.data) {
+                    allChatConversations = data.data.conversations || [];
+                    renderChatConversations(data.data);
+                } else {
+                    console.error('Invalid chat conversations data:', data);
+                    document.getElementById('chats-table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--error);">No conversations data</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading chat conversations:', error);
+                document.getElementById('chats-table-body').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--error);">Error loading conversations</td></tr>';
+            }
+        }
+        
+        function renderChatConversations(chatData) {
+            document.getElementById('chat-total').textContent = chatData.total || 0;
+            document.getElementById('chat-sessions').textContent = chatData.uniqueSessions || 0;
+            
+            const tbody = document.getElementById('chats-table-body');
+            const conversations = chatData.conversations || [];
+            
+            if (conversations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-light);">No chat conversations yet</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            conversations.forEach(conv => {
+                const timestamp = new Date(conv.timestamp).toLocaleString();
+                const sessionId = conv.sessionId || 'Unknown';
+                const userMessage = (conv.userMessage || '').substring(0, 100) + (conv.userMessage && conv.userMessage.length > 100 ? '...' : '');
+                const aiResponse = (conv.aiResponse || '').substring(0, 100) + (conv.aiResponse && conv.aiResponse.length > 100 ? '...' : '');
+                
+                html += `
+                    <tr>
+                        <td style="font-size: 0.9rem; color: var(--text-light);">${timestamp}</td>
+                        <td style="font-family: monospace; font-size: 0.85rem; color: var(--text-light);">${sessionId.substring(0, 20)}...</td>
+                        <td style="max-width: 300px; word-wrap: break-word;">${escapeHtml(userMessage) || '<em>No message</em>'}</td>
+                        <td style="max-width: 300px; word-wrap: break-word;">${escapeHtml(aiResponse) || '<em>No response</em>'}</td>
+                        <td>
+                            <button class="btn btn-sm" onclick="viewChatConversation('${conv.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">👁️ View</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        function viewChatConversation(conversationId) {
+            const conversation = allChatConversations.find(c => c.id === conversationId);
+            if (!conversation) {
+                alert('Conversation not found');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 90%; width: 800px; max-height: 90vh;">
+                    <div class="modal-header">
+                        <h3>Chat Conversation</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div class="modal-body" style="overflow-y: auto; max-height: calc(90vh - 120px);">
+                        <div style="margin-bottom: 1rem; padding: 1rem; background: var(--bg-light); border-radius: 0.5rem;">
+                            <p style="margin: 0.25rem 0;"><strong>Session ID:</strong> <code style="font-family: monospace; font-size: 0.9rem;">${conversation.sessionId || 'Unknown'}</code></p>
+                            <p style="margin: 0.25rem 0;"><strong>Time:</strong> ${new Date(conversation.timestamp).toLocaleString()}</p>
+                        </div>
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: var(--primary); margin-bottom: 0.5rem;">👤 User Message:</h4>
+                            <div style="padding: 1rem; background: #e3f2fd; border-left: 4px solid var(--primary); border-radius: 0.25rem; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(conversation.userMessage || 'No message')}</div>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--success); margin-bottom: 0.5rem;">🤖 AI Response:</h4>
+                            <div style="padding: 1rem; background: #e8f5e9; border-left: 4px solid var(--success); border-radius: 0.25rem; white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(conversation.aiResponse || 'No response')}</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        function filterChats() {
+            const filter = document.getElementById('chats-filter')?.value || 'all';
+            const conversations = allChatConversations || [];
+            
+            let filtered = conversations;
+            if (filter === 'recent') {
+                const yesterday = new Date();
+                yesterday.setHours(yesterday.getHours() - 24);
+                filtered = conversations.filter(c => new Date(c.timestamp) >= yesterday);
+            } else if (filter === 'today') {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                filtered = conversations.filter(c => new Date(c.timestamp) >= today);
+            }
+            
+            const tbody = document.getElementById('chats-table-body');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-light);">No conversations found</td></tr>';
+                return;
+            }
+            
+            let html = '';
+            filtered.forEach(conv => {
+                const timestamp = new Date(conv.timestamp).toLocaleString();
+                const sessionId = conv.sessionId || 'Unknown';
+                const userMessage = (conv.userMessage || '').substring(0, 100) + (conv.userMessage && conv.userMessage.length > 100 ? '...' : '');
+                const aiResponse = (conv.aiResponse || '').substring(0, 100) + (conv.aiResponse && conv.aiResponse.length > 100 ? '...' : '');
+                
+                html += `
+                    <tr>
+                        <td style="font-size: 0.9rem; color: var(--text-light);">${timestamp}</td>
+                        <td style="font-family: monospace; font-size: 0.85rem; color: var(--text-light);">${sessionId.substring(0, 20)}...</td>
+                        <td style="max-width: 300px; word-wrap: break-word;">${escapeHtml(userMessage) || '<em>No message</em>'}</td>
+                        <td style="max-width: 300px; word-wrap: break-word;">${escapeHtml(aiResponse) || '<em>No response</em>'}</td>
+                        <td>
+                            <button class="btn btn-sm" onclick="viewChatConversation('${conv.id}')" style="padding: 0.25rem 0.5rem; font-size: 0.85rem;">👁️ View</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
         async function loadContactMessages() {
             if (!sessionId) {
                 console.warn('loadContactMessages: No sessionId available');
