@@ -155,7 +155,15 @@ function contactHandler(req, res) {
                     // Use async IIFE to handle async email sending
                     (async () => {
                         try {
+                            console.log('[CONTACT] Received contact form submission');
+                            console.log('[CONTACT] Request body length:', body.length);
+                            
                             const contactData = JSON.parse(body);
+                            console.log('[CONTACT] Parsed contact data:', {
+                                name: contactData.name,
+                                email: contactData.email,
+                                hasMessage: !!contactData.message
+                            });
                         
                         // Validate required fields
                         if (!contactData.name || !contactData.email || !contactData.message) {
@@ -180,6 +188,31 @@ function contactHandler(req, res) {
                                 },
                                 statusCode: 400
                             });
+                        }
+
+                        // Save contact message to admin dashboard FIRST (before email attempt)
+                        // This ensures messages are saved even if email fails
+                        let savedMessage = null;
+                        try {
+                            console.log('[CONTACT] Saving message to admin dashboard...');
+                            const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Unknown';
+                            savedMessage = saveContactMessage({
+                                name: contactData.name,
+                                email: contactData.email,
+                                phone: contactData.phone || null,
+                                subject: contactData.subject || 'General Inquiry',
+                                message: contactData.message,
+                                ipAddress: ipAddress,
+                                emailSent: false // Will update to true if email succeeds
+                            });
+                            console.log('[CONTACT] ✅ Message saved to admin dashboard:', savedMessage.id);
+                        } catch (saveError) {
+                            console.error('[CONTACT] ❌ CRITICAL: Error saving message to admin dashboard:', saveError);
+                            console.error('[CONTACT] Save error details:', {
+                                message: saveError.message,
+                                stack: saveError.stack
+                            });
+                            // Continue anyway - try to send email even if save failed
                         }
 
                         // Prepare email content for Roundcube webmail
@@ -264,21 +297,22 @@ IP Address: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
                             console.log('   Environment:', isProduction ? 'PRODUCTION' : 'LOCAL DEV');
                             console.log('   SMTP:', `${smtpHost}:${smtpPort}`);
 
-                            // Save contact message to admin dashboard
-                            try {
-                                const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Unknown';
-                                saveContactMessage({
-                                    name: contactData.name,
-                                    email: contactData.email,
-                                    phone: contactData.phone || null,
-                                    subject: contactData.subject || 'General Inquiry',
-                                    message: contactData.message,
-                                    ipAddress: ipAddress,
-                                    emailSent: true
-                                });
-                            } catch (saveError) {
-                                console.error('[CONTACT] Error saving message to admin dashboard:', saveError);
-                                // Don't fail the request if saving fails
+                            // Update saved message to mark email as sent
+                            if (savedMessage) {
+                                try {
+                                    const messages = loadContactMessages();
+                                    const messageIndex = messages.findIndex(m => m.id === savedMessage.id);
+                                    if (messageIndex !== -1) {
+                                        messages[messageIndex].emailSent = true;
+                                        messages[messageIndex].emailError = null;
+                                        const messagesPath = PMS.backend('data', 'contact-messages.json');
+                                        fs.writeFileSync(messagesPath, JSON.stringify(messages, null, 2), 'utf8');
+                                        console.log('[CONTACT] ✅ Updated message to mark email as sent');
+                                    }
+                                } catch (updateError) {
+                                    console.error('[CONTACT] ⚠️  Could not update message email status:', updateError);
+                                    // Non-critical - message is already saved
+                                }
                             }
 
                             // Return success - email sent to Roundcube
@@ -304,22 +338,41 @@ IP Address: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
                                 console.error('   ⚠️  This is UNEXPECTED in production - check Mail Station SMTP configuration');
                             }
                             
-                            // Save contact message to admin dashboard even if email failed
-                            try {
-                                const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Unknown';
-                                saveContactMessage({
-                                    name: contactData.name,
-                                    email: contactData.email,
-                                    phone: contactData.phone || null,
-                                    subject: contactData.subject || 'General Inquiry',
-                                    message: contactData.message,
-                                    ipAddress: ipAddress,
-                                    emailSent: false,
-                                    emailError: emailError.message
-                                });
-                            } catch (saveError) {
-                                console.error('[CONTACT] Error saving message to admin dashboard:', saveError);
-                                // Don't fail the request if saving fails
+                            // Update saved message to mark email as failed (message already saved above)
+                            if (savedMessage) {
+                                try {
+                                    const messages = loadContactMessages();
+                                    const messageIndex = messages.findIndex(m => m.id === savedMessage.id);
+                                    if (messageIndex !== -1) {
+                                        messages[messageIndex].emailSent = false;
+                                        messages[messageIndex].emailError = emailError.message;
+                                        const messagesPath = PMS.backend('data', 'contact-messages.json');
+                                        fs.writeFileSync(messagesPath, JSON.stringify(messages, null, 2), 'utf8');
+                                        console.log('[CONTACT] ✅ Updated message to mark email as failed');
+                                    }
+                                } catch (updateError) {
+                                    console.error('[CONTACT] ⚠️  Could not update message email status:', updateError);
+                                    // Non-critical - message is already saved
+                                }
+                            } else {
+                                // If initial save failed, try to save now (last resort)
+                                try {
+                                    console.log('[CONTACT] Attempting to save message (initial save failed)...');
+                                    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'Unknown';
+                                    const lastResortMessage = saveContactMessage({
+                                        name: contactData.name,
+                                        email: contactData.email,
+                                        phone: contactData.phone || null,
+                                        subject: contactData.subject || 'General Inquiry',
+                                        message: contactData.message,
+                                        ipAddress: ipAddress,
+                                        emailSent: false,
+                                        emailError: emailError.message
+                                    });
+                                    console.log('[CONTACT] ✅ Message saved (last resort):', lastResortMessage.id);
+                                } catch (saveError) {
+                                    console.error('[CONTACT] ❌ CRITICAL: Could not save message at all:', saveError);
+                                }
                             }
                             
                             // Still return success to user, but log the error
@@ -339,6 +392,7 @@ IP Address: ${req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
                     }
                 })(); // End async IIFE
             });
+            } // End else block
             break;
 
         case 'GET':
