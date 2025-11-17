@@ -51,7 +51,7 @@ function appsHandler(req, res) {
     switch (method) {
         case 'GET':
             // Get apps list or single app
-            if (pathname === '/api/apps' || pathname === '/api/apps/') {
+            if (pathname === '/api/apps' || pathname === '/api/apps/' || pathname === '/api/apps/list') {
                 // List all apps
                 const appsData = loadAppsData();
                 apiRouter.sendSuccess(res, {
@@ -59,18 +59,26 @@ function appsHandler(req, res) {
                     count: appsData.length
                 }, 'Apps retrieved successfully');
             } else if (pathname.startsWith('/api/apps/')) {
-                // Get single app by ID
-                const appId = parseInt(pathParts[pathParts.length - 1]);
-                const appsData = loadAppsData();
-                const app = appsData.find(a => a.id === appId);
+                // Check if it's a numeric ID (single app) or 'list' endpoint
+                const lastPart = pathParts[pathParts.length - 1];
+                const appId = parseInt(lastPart);
                 
-                if (app) {
-                    apiRouter.sendSuccess(res, app, 'App retrieved successfully');
+                // If it's a number, treat as app ID
+                if (!isNaN(appId) && lastPart === appId.toString()) {
+                    const appsData = loadAppsData();
+                    const app = appsData.find(a => a.id === appId);
+                    
+                    if (app) {
+                        apiRouter.sendSuccess(res, app, 'App retrieved successfully');
+                    } else {
+                        apiRouter.sendError(res, {
+                            message: 'App not found',
+                            statusCode: 404
+                        });
+                    }
                 } else {
-                    apiRouter.sendError(res, {
-                        message: 'App not found',
-                        statusCode: 404
-                    });
+                    // Unknown path
+                    apiRouter.send404(res);
                 }
             } else {
                 apiRouter.send404(res);
