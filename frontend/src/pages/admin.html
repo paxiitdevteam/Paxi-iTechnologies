@@ -535,7 +535,7 @@
                     <li><a href="#" class="menu-link" data-section="apps">📱 Apps</a></li>
                     <li><a href="#" class="menu-link" data-section="content">✏️ Content</a></li>
                     <li><a href="#" class="menu-link" data-section="users">👥 Users</a></li>
-                    <li><a href="#" class="menu-link" data-section="messages">📧 Messages</a></li>
+                    <li><a href="#" class="menu-link" data-section="messages">📧 Messages <span id="messages-badge" style="display: none; background: #ff4444; color: white; border-radius: 10px; padding: 2px 6px; font-size: 0.75rem; margin-left: 5px;">0</span></a></li>
                     <li><a href="#" class="menu-link" data-section="media">🎬 Media</a></li>
                     <li><a href="#" class="menu-link" data-section="settings">⚙️ Settings</a></li>
                 </ul>
@@ -1228,11 +1228,12 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <h2>Contact Messages</h2>
                         <div style="display: flex; gap: 1rem; align-items: center;">
-                            <button class="btn btn-secondary" onclick="loadContactMessages()">🔄 Refresh</button>
+                            <button id="messages-refresh-btn" class="btn btn-secondary" onclick="loadContactMessages(true)">🔄 Refresh</button>
                             <select id="messages-filter" onchange="filterMessages()" style="padding: 0.5rem; border: 2px solid var(--border); border-radius: 0.5rem;">
                                 <option value="all">All Messages</option>
                                 <option value="unread">Unread Only</option>
                             </select>
+                            <div id="messages-alert" style="display: none; padding: 0.5rem 1rem; background: #d4edda; color: #155724; border-radius: 0.5rem; border: 1px solid #c3e6cb;"></div>
                         </div>
                     </div>
                     <div class="table">
@@ -1972,8 +1973,8 @@
                 console.error('Error loading users:', error);
             }
             
-            // Load contact messages
-            await loadContactMessages();
+            // Load contact messages (silent - no loading indicator)
+            await loadContactMessages(false);
             
             // Load settings
             try {
@@ -4411,10 +4412,24 @@
             tbody.innerHTML = html;
         }
         
-        async function loadContactMessages() {
+        // Track last message count for notifications
+        let lastMessageCount = 0;
+        let lastUnreadCount = 0;
+        let messageCheckInterval = null;
+        
+        async function loadContactMessages(showLoading = false) {
             if (!sessionId) {
                 console.warn('loadContactMessages: No sessionId available');
                 return;
+            }
+            
+            const refreshBtn = document.getElementById('messages-refresh-btn');
+            const tbody = document.getElementById('messages-table-body');
+            
+            // Show loading state
+            if (showLoading && refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '⏳ Loading...';
             }
             
             try {
@@ -4433,20 +4448,147 @@
                     const data = await response.json();
                     if (data.success && data.data) {
                         allMessages = data.data.messages || [];
+                        const unreadCount = data.data.unread || 0;
+                        const totalCount = data.data.total || 0;
+                        
                         renderMessagesTable(allMessages);
+                        updateMessagesBadge(unreadCount);
+                        
+                        // Check for new messages and show notification
+                        if (lastMessageCount > 0 && totalCount > lastMessageCount) {
+                            const newMessages = totalCount - lastMessageCount;
+                            showNewMessageNotification(newMessages, unreadCount);
+                        }
+                        
+                        lastMessageCount = totalCount;
+                        lastUnreadCount = unreadCount;
+                        
+                        // Hide alert after successful load
+                        const alertDiv = document.getElementById('messages-alert');
+                        if (alertDiv) {
+                            alertDiv.style.display = 'none';
+                        }
                     } else {
-                        document.getElementById('messages-table-body').innerHTML = 
+                        tbody.innerHTML = 
                             '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">No messages data in response</td></tr>';
                     }
                 } else {
                     const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-                    document.getElementById('messages-table-body').innerHTML = 
+                    tbody.innerHTML = 
                         `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Error: ${errorData.message || 'Failed to load messages'}</td></tr>`;
+                    
+                    // Show error alert
+                    const alertDiv = document.getElementById('messages-alert');
+                    if (alertDiv) {
+                        alertDiv.style.display = 'block';
+                        alertDiv.style.background = '#f8d7da';
+                        alertDiv.style.color = '#721c24';
+                        alertDiv.style.borderColor = '#f5c6cb';
+                        alertDiv.textContent = `Error: ${errorData.message || 'Failed to load messages'}`;
+                    }
                 }
             } catch (error) {
                 console.error('Error loading contact messages:', error);
-                document.getElementById('messages-table-body').innerHTML = 
-                    '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Error loading messages</td></tr>';
+                tbody.innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Error loading messages: ' + error.message + '</td></tr>';
+                
+                // Show error alert
+                const alertDiv = document.getElementById('messages-alert');
+                if (alertDiv) {
+                    alertDiv.style.display = 'block';
+                    alertDiv.style.background = '#f8d7da';
+                    alertDiv.style.color = '#721c24';
+                    alertDiv.style.borderColor = '#f5c6cb';
+                    alertDiv.textContent = 'Error loading messages. Please try again.';
+                }
+            } finally {
+                // Reset button state
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.textContent = '🔄 Refresh';
+                }
+            }
+        }
+        
+        // Update messages badge in sidebar
+        function updateMessagesBadge(unreadCount) {
+            const badge = document.getElementById('messages-badge');
+            if (badge) {
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+        
+        // Show notification for new messages
+        function showNewMessageNotification(newCount, unreadCount) {
+            // Show browser notification if permission granted
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(`New Contact Message${newCount > 1 ? 's' : ''}`, {
+                    body: `You have ${newCount} new message${newCount > 1 ? 's' : ''} (${unreadCount} unread total)`,
+                    icon: '/frontend/src/assets/images/logo.png',
+                    tag: 'new-message',
+                    requireInteraction: false
+                });
+            }
+            
+            // Show alert in admin panel
+            const alertDiv = document.getElementById('messages-alert');
+            if (alertDiv) {
+                alertDiv.style.display = 'block';
+                alertDiv.style.background = '#d4edda';
+                alertDiv.style.color = '#155724';
+                alertDiv.style.borderColor = '#c3e6cb';
+                alertDiv.textContent = `🔔 ${newCount} new message${newCount > 1 ? 's' : ''} received! (${unreadCount} unread)`;
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    alertDiv.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Update badge
+            updateMessagesBadge(unreadCount);
+        }
+        
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        console.log('✅ Notification permission granted');
+                    }
+                });
+            }
+        }
+        
+        // Start auto-refresh for messages (check every 30 seconds)
+        function startMessageAutoRefresh() {
+            if (messageCheckInterval) {
+                clearInterval(messageCheckInterval);
+            }
+            
+            messageCheckInterval = setInterval(() => {
+                // Only check if messages section is visible or user is on dashboard
+                const messagesSection = document.getElementById('messages');
+                const overviewSection = document.getElementById('overview');
+                const isMessagesVisible = messagesSection && messagesSection.classList.contains('active');
+                const isOverviewVisible = overviewSection && overviewSection.classList.contains('active');
+                
+                if (isMessagesVisible || isOverviewVisible) {
+                    loadContactMessages(false); // Silent refresh
+                }
+            }, 30000); // Check every 30 seconds
+        }
+        
+        // Stop auto-refresh
+        function stopMessageAutoRefresh() {
+            if (messageCheckInterval) {
+                clearInterval(messageCheckInterval);
+                messageCheckInterval = null;
             }
         }
         
@@ -4533,15 +4675,31 @@
         
         // Load messages when messages section is shown
         document.addEventListener('DOMContentLoaded', () => {
+            // Request notification permission
+            requestNotificationPermission();
+            
+            // Start auto-refresh
+            startMessageAutoRefresh();
+            
             // Add event listener for messages section
             const messagesLink = document.querySelector('[data-section="messages"]');
             if (messagesLink) {
                 messagesLink.addEventListener('click', () => {
                     setTimeout(() => {
-                        loadContactMessages();
+                        loadContactMessages(true);
                     }, 100);
                 });
             }
+            
+            // Load initial message count for badge
+            if (sessionId) {
+                loadContactMessages(false);
+            }
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            stopMessageAutoRefresh();
         });
     </script>
 </body>
