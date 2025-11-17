@@ -2779,9 +2779,30 @@ function handleGetContactMessages(req, res) {
     const authHeader = req.headers.authorization;
     const sessionId = authHeader ? authHeader.replace('Bearer ', '').trim() : null;
     
-    if (!sessionId || !sessions[sessionId]) {
+    // Reload sessions from file to get latest (in case they were updated)
+    sessions = loadSessions();
+    
+    if (!sessionId) {
         return apiRouter.sendError(res, {
-            message: 'Unauthorized',
+            message: 'Unauthorized - No session ID provided',
+            statusCode: 401
+        });
+    }
+    
+    if (!sessions[sessionId]) {
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized - Session not found or expired',
+            statusCode: 401
+        });
+    }
+    
+    // Check if session expired
+    const session = sessions[sessionId];
+    if (new Date(session.expiresAt) < new Date()) {
+        delete sessions[sessionId];
+        saveSessions();
+        return apiRouter.sendError(res, {
+            message: 'Unauthorized - Session expired',
             statusCode: 401
         });
     }

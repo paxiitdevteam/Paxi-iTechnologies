@@ -4472,6 +4472,39 @@
                         tbody.innerHTML = 
                             '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">No messages data in response</td></tr>';
                     }
+                } else if (response.status === 401) {
+                    // Session expired - try to refresh session or redirect to login
+                    console.warn('Session expired, attempting to refresh...');
+                    const errorData = await response.json().catch(() => ({ message: 'Unauthorized' }));
+                    
+                    // Try to check session status
+                    try {
+                        await checkSession();
+                        // If session check passes, retry loading messages
+                        if (sessionId) {
+                            console.log('Session refreshed, retrying message load...');
+                            return loadContactMessages(showLoading);
+                        }
+                    } catch (checkError) {
+                        console.error('Session check failed:', checkError);
+                    }
+                    
+                    // If we get here, session is truly expired
+                    tbody.innerHTML = 
+                        '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--error);">Session expired. Please refresh the page or log in again.</td></tr>';
+                    
+                    // Show error alert
+                    const alertDiv = document.getElementById('messages-alert');
+                    if (alertDiv) {
+                        alertDiv.style.display = 'block';
+                        alertDiv.style.background = '#f8d7da';
+                        alertDiv.style.color = '#721c24';
+                        alertDiv.style.borderColor = '#f5c6cb';
+                        alertDiv.textContent = 'Session expired. Please refresh the page.';
+                    }
+                    
+                    // Stop auto-refresh if session expired
+                    stopMessageAutoRefresh();
                 } else {
                     const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
                     tbody.innerHTML = 
