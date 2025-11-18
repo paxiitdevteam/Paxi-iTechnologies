@@ -216,7 +216,12 @@ else
     echo -e "${YELLOW}⚠️  Could not reload systemd daemon (non-critical)${NC}"
 fi
 
-# Ensure service is enabled for auto-start on boot (non-critical if it fails)
+# Ensure service is unmasked and enabled for auto-start on boot (non-critical if it fails)
+if execute_sudo "systemctl unmask paxiit-website.service" "unmask service"; then
+    echo -e "${GREEN}✅ Service unmasked${NC}"
+else
+    echo -e "${YELLOW}⚠️  Could not unmask service (may already be unmasked)${NC}"
+fi
 if execute_sudo "systemctl enable paxiit-website.service" "enable service"; then
     echo -e "${GREEN}✅ Auto-start on boot enabled${NC}"
 else
