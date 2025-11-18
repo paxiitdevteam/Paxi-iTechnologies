@@ -58,6 +58,10 @@ fi
 sleep 2
 echo ""
 
+# Dynamic data files that should persist between deployments
+DYNAMIC_DATA_FILES=("contact-messages.json" "chat-conversations.json" "chat-sessions.json" "chat-analytics.json" "chat-learning.json" "visitor-analytics.json" "sessions.json")
+DYNAMIC_BACKUP_DIR="/tmp/paxiit_dynamic_data_backup"
+
 # Step 3: Backup existing deployment (optional)
 echo -e "${YELLOW}Step 3: Creating backup...${NC}"
 BACKUP_DATE=$(date +%Y%m%d_%H%M%S)
@@ -68,8 +72,23 @@ else
 fi
 echo ""
 
-# Step 4: Clean production directory
-echo -e "${YELLOW}Step 4: Cleaning production directory...${NC}"
+# Step 4: Back up dynamic data files
+echo -e "${YELLOW}Step 4: Backing up dynamic data...${NC}"
+ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "
+    mkdir -p $DYNAMIC_BACKUP_DIR
+    rm -f $DYNAMIC_BACKUP_DIR/*
+    for file in ${DYNAMIC_DATA_FILES[@]}; do
+        if [ -f $NAS_PATH/backend/data/\$file ]; then
+            cp $NAS_PATH/backend/data/\$file $DYNAMIC_BACKUP_DIR/\$file
+            echo 'Backed up dynamic file:' \$file
+        fi
+    done
+" 2>/dev/null
+echo -e "${GREEN}✅ Dynamic data backed up${NC}"
+echo ""
+
+# Step 5: Clean production directory
+echo -e "${YELLOW}Step 5: Cleaning production directory...${NC}"
 if ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "cd $NAS_PATH && rm -rf * .[^.]* 2>/dev/null" 2>&1; then
     echo -e "${GREEN}✅ Production directory cleaned${NC}"
 else
@@ -77,8 +96,8 @@ else
 fi
 echo ""
 
-# Step 5: Deploy files
-echo -e "${YELLOW}Step 5: Deploying files to production...${NC}"
+# Step 6: Deploy files
+echo -e "${YELLOW}Step 6: Deploying files to production...${NC}"
 cd "$LOCAL_PATH"
 if tar --exclude='node_modules' \
     --exclude='.git' \
@@ -94,8 +113,21 @@ else
 fi
 echo ""
 
-# Step 6: Install dependencies
-echo -e "${YELLOW}Step 6: Installing dependencies...${NC}"
+# Restore dynamic data
+echo -e "${YELLOW}Restoring dynamic data...${NC}"
+ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "
+    for file in ${DYNAMIC_DATA_FILES[@]}; do
+        if [ -f $DYNAMIC_BACKUP_DIR/\$file ]; then
+            cp $DYNAMIC_BACKUP_DIR/\$file $NAS_PATH/backend/data/\$file
+            echo 'Restored dynamic file:' \$file
+        fi
+    done
+" 2>/dev/null
+echo -e "${GREEN}✅ Dynamic data restored${NC}"
+echo ""
+
+# Step 7: Install dependencies
+echo -e "${YELLOW}Step 7: Installing dependencies...${NC}"
 if ssh -p $NAS_PORT -o ConnectTimeout=30 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "cd $NAS_PATH && export PATH=$NODE_PATH:\$PATH && npm install --production 2>&1 | tail -10" 2>&1; then
     echo -e "${GREEN}✅ Dependencies installed${NC}"
 else
@@ -104,8 +136,8 @@ else
 fi
 echo ""
 
-# Step 7: Verify deployment
-echo -e "${YELLOW}Step 7: Verifying deployment...${NC}"
+# Step 8: Verify deployment
+echo -e "${YELLOW}Step 8: Verifying deployment...${NC}"
 VERIFY_FILES=(
     "server.js"
     "package.json"
@@ -131,8 +163,8 @@ PAGE_COUNT_PROD=$(ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking
 echo -e "${GREEN}✅ $PAGE_COUNT_PROD pages deployed${NC}"
 echo ""
 
-# Step 8: Configure systemd service for 24/7 operation
-echo -e "${YELLOW}Step 8: Configuring server for 24/7 operation...${NC}"
+# Step 9: Configure systemd service for 24/7 operation
+echo -e "${YELLOW}Step 9: Configuring server for 24/7 operation...${NC}"
 
 # Function to execute sudo commands with better error handling
 execute_sudo() {
@@ -267,8 +299,8 @@ else
 fi
 echo ""
 
-# Step 9: Test endpoints
-echo -e "${YELLOW}Step 9: Testing endpoints...${NC}"
+# Step 10: Test endpoints
+echo -e "${YELLOW}Step 10: Testing endpoints...${NC}"
 sleep 2
 
 test_endpoint() {
@@ -290,8 +322,8 @@ test_endpoint "http://localhost:8000/contact.html" "Contact" || exit 1
 test_endpoint "http://localhost:8000/api/test" "API Test" || exit 1
 echo ""
 
-# Step 10: Show server status
-echo -e "${YELLOW}Step 10: Server status...${NC}"
+# Step 11: Show server status
+echo -e "${YELLOW}Step 11: Server status...${NC}"
 ssh -p $NAS_PORT -o ConnectTimeout=10 -o StrictHostKeyChecking=no $NAS_USER@$NAS_HOST "cd $NAS_PATH && tail -10 server.log 2>/dev/null | grep -E 'listening|error|PMS' || tail -10 server.log 2>/dev/null || echo 'No server.log found'" 2>&1
 echo ""
 
