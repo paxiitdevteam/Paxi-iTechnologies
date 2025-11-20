@@ -503,11 +503,104 @@ function generateSitemap(req, res) {
 }
 
 /**
+ * Security: Check if path is a sensitive file that should be blocked
+ */
+function isSensitivePath(pathname) {
+    const sensitivePatterns = [
+        // Environment files
+        /\.env$/i,
+        /\.env\./i,
+        /\.env\.(local|development|production|test|save|bak|example)$/i,
+        /.*\.env$/i,
+        /twilio\.env$/i,
+        /sendgrid\.env$/i,
+        /secrets\.env$/i,
+        
+        // Git files
+        /\.git\/config$/i,
+        /\.git\/HEAD$/i,
+        /\.git\/index$/i,
+        /\.git\/objects\//i,
+        /\.gitignore$/i,
+        /\.gitattributes$/i,
+        
+        // Configuration files
+        /\.config\.(yaml|yml|json|js)$/i,
+        /config\.(yaml|yml|json|js)$/i,
+        /\.config$/i,
+        
+        // PHP info and debug files
+        /phpinfo\.php$/i,
+        /phpinfo$/i,
+        /debug\//i,
+        /\.php$/i,
+        
+        // Admin and sensitive directories
+        /\/admin\/\.env$/i,
+        /\/app\/\.env$/i,
+        /\/api\/\.env$/i,
+        /\/backend\/\.env$/i,
+        /\/dev\/\.env$/i,
+        /\/staging\/\.env$/i,
+        /\/web\/\.env$/i,
+        /\/laravel\/\.env$/i,
+        /\/core\/\.env$/i,
+        /\/images\/\.env$/i,
+        
+        // Backup and temporary files
+        /\.(bak|backup|old|save|tmp|temp|swp|swo)$/i,
+        
+        // Database files
+        /\.(sqlite|sqlite3|db|db-journal)$/i,
+        
+        // Secret files
+        /\.(pem|key|cert|crt|p12|pfx|secret)$/i,
+        /id_rsa$/i,
+        /id_rsa\.pub$/i,
+        
+        // System files
+        /\.DS_Store$/i,
+        /Thumbs\.db$/i,
+        /desktop\.ini$/i,
+        
+        // Test endpoints (if not needed publicly)
+        /^\/test$/i,
+        /^\/test\/$/i,
+    ];
+    
+    return sensitivePatterns.some(pattern => pattern.test(pathname));
+}
+
+/**
  * Request handler
  */
 function requestHandler(req, res) {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
+
+    // 🔒 SECURITY: Block access to sensitive files immediately
+    if (isSensitivePath(pathname)) {
+        const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || 'unknown';
+        const userAgent = req.headers['user-agent'] || 'unknown';
+        
+        // Log security attempt
+        console.warn(`🚨 [SECURITY] Blocked sensitive file access attempt:`);
+        console.warn(`   Path: ${pathname}`);
+        console.warn(`   IP: ${clientIP}`);
+        console.warn(`   User-Agent: ${userAgent}`);
+        console.warn(`   Method: ${req.method}`);
+        console.warn(`   Time: ${new Date().toISOString()}`);
+        
+        // Return 403 Forbidden (not 404 - we want to make it clear access is denied)
+        if (!res.headersSent) {
+            res.writeHead(403, { 
+                'Content-Type': 'text/html',
+                'X-Content-Type-Options': 'nosniff'
+            });
+            res.end('<!DOCTYPE html><html><head><title>403 Forbidden</title></head><body><h1>403 - Forbidden</h1><p>Access to this resource is not allowed.</p></body></html>');
+        }
+        return;
+    }
 
     // Track visitor page views (for GET requests to HTML pages)
     // Note: This is async but we don't wait for it to avoid blocking requests
