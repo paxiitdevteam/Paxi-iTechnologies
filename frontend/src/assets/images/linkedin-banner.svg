@@ -1,0 +1,21 @@
+<svg width="1192" height="220" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#006d77;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#83c5be;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1192" height="220" fill="url(#bgGradient)"/>
+  
+  <!-- Logo Text: Paxi iTechnologies -->
+  <text x="596" y="100" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">
+    Paxi iTechnologies
+  </text>
+  
+  <!-- Tagline -->
+  <text x="596" y="150" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" opacity="0.95">
+    Smart IT Management. Clear Results.
+  </text>
+</svg>
+

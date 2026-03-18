@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Paxi iTechnologies - Smart IT Management. Clear Results. We build clear, modern, and smart IT systems with real-world results.">
+    <title>Paxi iTechnologies - Smart IT Management | Clear Results</title>
+    
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://paxiit.com/">
+    <meta property="og:title" content="Paxi iTechnologies - Smart IT Management | Clear Results">
+    <meta property="og:description" content="We build clear, modern, and smart IT systems with real-world results. Smart IT Management. Clear Results.">
+    <meta property="og:image" content="https://paxiit.com/assets/images/logo-og.svg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Paxi iTechnologies Logo">
+    <meta property="og:image:type" content="image/svg+xml">
+    <meta property="og:site_name" content="Paxi iTechnologies">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://paxiit.com/">
+    <meta name="twitter:title" content="Paxi iTechnologies - Smart IT Management | Clear Results">
+    <meta name="twitter:description" content="We build clear, modern, and smart IT systems with real-world results.">
+    <meta name="twitter:image" content="https://paxiit.com/assets/images/logo-og.svg">
+    <meta name="twitter:image:alt" content="Paxi iTechnologies Logo">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://paxiit.com/">
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Paxi iTechnologies",
+        "alternateName": "Paxiit",
+        "url": "https://paxiit.com",
+        "logo": "https://paxiit.com/assets/images/logo-og.svg",
+        "description": "Smart IT Management. Clear Results. We build clear, modern, and smart IT systems with real-world results.",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "49 AVE LUCIE AUBRAC",
+            "addressLocality": "BONNEUIL-SUR-MARNE",
+            "addressRegion": "VAL DE MARNE",
+            "postalCode": "94380",
+            "addressCountry": "FR"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+33-7-82-39-13-11",
+            "contactType": "customer service",
+            "email": "contact@paxiit.com",
+            "availableLanguage": ["en", "fr", "ar", "de", "es"]
+        },
+        "sameAs": [
+            "https://www.linkedin.com/company/paxi-itechnologies"
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Paxi iTechnologies",
+        "image": "https://paxiit.com/assets/images/logo-og.svg",
+        "description": "Smart IT Management. Clear Results. We provide IT project management, cloud infrastructure, AI solutions, and training programs.",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "49 AVE LUCIE AUBRAC",
+            "addressLocality": "BONNEUIL-SUR-MARNE",
+            "addressRegion": "VAL DE MARNE",
+            "postalCode": "94380",
+            "addressCountry": "FR"
+        },
+        "telephone": "+33-7-82-39-13-11",
+        "email": "contact@paxiit.com",
+        "priceRange": "$$",
+        "openingHours": "Mo-Fr 09:00-18:00"
+    }
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/images/favicon.svg">
+    <link rel="manifest" href="/assets/images/site.webmanifest">
+    
+    <!-- Systems - Load in order -->
+    <script src="/services/path-manager.js?v=2.0.0"></script>
+    <script src="/services/port-manager.js?v=2.0.0"></script>
+    <script src="/services/api-path-manager.js?v=2.0.0"></script>
+    <script type="module" src="/cls/lang-core.js?v=2.1.0"></script>
+    <script src="/cls/lang-switcher.js?v=2.0.0"></script>
+    <script src="/components/translation-plugin.js?v=2.1.0"></script>
+    <script src="/services/cookie-manager.js?v=2.0.0"></script>
+    <!-- Chat Widget - Load after PMS/APIM/CLS -->
+    <script src="/components/chat-widget/chat-widget.js?v=1.0.0"></script>
+    
+    <!-- Simple initialization -->
+    <script>
+        (function() {
+            'use strict';
+            if (window.__PAGE_INIT__) return;
+            window.__PAGE_INIT__ = true;
+            
+            async function init() {
+                // Initialize language system FIRST (must be async)
+                if (typeof window.CLS !== 'undefined' && !window.CLS.initialized) {
+                    await window.CLS.initialize();
+                }
+                
+                // Wait a bit for translations to load
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Initialize language switcher
+                if (typeof window.LanguageSwitcher !== 'undefined') {
+                    const container = document.getElementById('lang-switcher');
+                    if (container) {
+                        const switcher = new window.LanguageSwitcher('lang-switcher');
+                        switcher.initialize();
+                    }
+                }
+                
+                // Initialize translation plugin (processes data-translate attributes)
+                // Position: bottom-left (chat widget is bottom-right)
+                if (typeof window.TranslationPlugin !== 'undefined') {
+                    window.translationPlugin = new window.TranslationPlugin({
+                        googleTranslateEnabled: true,
+                        clsEnabled: true,
+                        position: 'bottom-left',
+                        showWidget: true
+                    });
+                    window.translationPlugin.initialize();
+                }
+                
+                // Initialize cookie manager
+                if (typeof window.cookieManager !== 'undefined' && typeof window.cookieManager.initialize === 'function') {
+                    window.cookieManager.initialize();
+                }
+            }
+            
+            // Wait for DOM and systems to be ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                setTimeout(init, 100);
+            }
+        })();
+    </script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="/assets/css/fonts.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #006d77;
+            --secondary-color: #83c5be;
+            --accent-color: #ffddd2;
+            --accent-2: #e29578;
+            --bg-light: #edf6f9;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-white: #ffffff;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: 
+                linear-gradient(135deg, rgba(0, 109, 119, 0.85) 0%, rgba(131, 197, 190, 0.85) 50%, rgba(0, 109, 119, 0.85) 100%),
+                url('/assets/images/linkedin-banner.svg') center/cover no-repeat;
+            color: white;
+            padding: 8rem 2rem 6rem;
+            text-align: center;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        
+        .hero-content p {
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        /* Services Preview */
+        .services-preview {
+            padding: 5rem 2rem;
+            background: var(--bg-light);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .services-preview h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .service-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        
+        .service-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* AI Training Section */
+        .ai-training-section {
+            padding: 6rem 2rem;
+            background: var(--bg-white);
+        }
+        
+        .ai-training-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .ai-training-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        .ai-training-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Why AI Training Section */
+        .ai-why-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 5rem;
+            padding: 3rem;
+            background: var(--bg-light);
+            border-radius: 1rem;
+        }
+        
+        .ai-why-text h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .ai-why-text p {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .ai-benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .ai-benefits-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .ai-benefits-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .ai-why-image {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .ai-why-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* AI Examples Section */
+        .ai-examples-section {
+            margin-bottom: 5rem;
+        }
+        
+        .ai-examples-section h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .examples-intro {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .ai-examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .ai-example-card {
+            background: var(--bg-white);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border-color);
+        }
+        
+        .ai-example-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .example-image {
+            width: 100%;
+            height: 180px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            background: var(--bg-light);
+        }
+        
+        .example-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .ai-example-card h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+        }
+        
+        .ai-example-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        
+        /* Training Programs Section */
+        .training-programs-section {
+            margin-bottom: 5rem;
+            padding: 4rem 2rem;
+            background: var(--bg-light);
+            border-radius: 1rem;
+        }
+        
+        .training-programs-section h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .programs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .program-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .program-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .program-card h4 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .program-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
+        /* CTA Section */
+        .ai-training-cta {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 1rem;
+            color: white;
+        }
+        
+        .ai-training-cta h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .ai-training-cta p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .ai-training-cta .btn-primary {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .ai-training-cta .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .ai-training-cta .btn-secondary:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        /* AI Services Section */
+        .ai-services-section {
+            margin-bottom: 5rem;
+            padding: 4rem 2rem;
+            background: var(--bg-white);
+            border-radius: 1rem;
+        }
+        
+        .ai-services-section h3 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .services-intro {
+            text-align: center;
+            font-size: 1.15rem;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+        
+        .ai-services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .ai-service-item {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .ai-service-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+        
+        .service-icon-large {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ai-service-item h4 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        
+        .ai-service-item p {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 0.95rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 6rem 1.5rem 4rem;
+                min-height: 70vh;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-training-section {
+                padding: 4rem 1.5rem;
+            }
+            
+            .ai-why-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 1.5rem;
+            }
+            
+            .ai-examples-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .programs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-training-cta {
+                padding: 3rem 1.5rem;
+            }
+            
+            .ai-training-cta h3 {
+                font-size: 1.75rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .cta-buttons .btn {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .ai-services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .ai-services-section {
+                padding: 3rem 1.5rem;
+            }
+        }
+        
+        /* App Store Section - Exact match with Services Preview */
+        .app-store-section {
+            padding: 5rem 2rem;
+            background: var(--bg-light);
+        }
+        
+        .app-store-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+        }
+        
+        .app-store-section .section-subtitle {
+            text-align: center;
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+        
+        .app-store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .app-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .app-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+        
+        .app-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .app-status {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+        
+        .app-status.coming-soon {
+            background: linear-gradient(135deg, var(--accent-2) 0%, #ffb88c 100%);
+            color: white;
+        }
+        
+        .app-status.live {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+        }
+        
+        .app-card.live-app {
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .app-store-section {
+                padding: 4rem 1.5rem;
+            }
+            
+            .app-store-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-container"></div>
+    
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 data-translate="homepage.hero.title">Smart IT Management. Clear Results.</h1>
+            <p data-translate="homepage.hero.subtitle">We build clear, modern, and smart IT systems with real-world results.</p>
+            <div class="hero-buttons">
+                <a href="/services.html" class="btn btn-primary" data-translate="homepage.hero.cta.services">Our Services</a>
+                <a href="/contact.html" class="btn btn-secondary" data-translate="homepage.hero.cta.contact">Get in Touch</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- AI Learning & Training Section -->
+    <section class="ai-training-section">
+        <div class="container">
+            <div class="ai-training-header">
+                <h2 data-translate="homepage.aiTraining.title">AI Learning & Training Programs</h2>
+                <p class="section-subtitle" data-translate="homepage.aiTraining.subtitle">Empower your team with cutting-edge AI knowledge. High demand from companies seeking AI expertise and practical training.</p>
+            </div>
+            
+            <div class="ai-training-content">
+                <!-- Why AI Training -->
+                <div class="ai-why-section">
+                    <div class="ai-why-text">
+                        <h3 data-translate="homepage.aiTraining.why.title">Why AI Training Matters</h3>
+                        <p data-translate="homepage.aiTraining.why.description">Companies across industries are seeking AI expertise to stay competitive. Our comprehensive training programs bridge the gap between AI potential and practical implementation.</p>
+                        <ul class="ai-benefits-list">
+                            <li data-translate="homepage.aiTraining.why.benefit1">Hands-on experience with real-world AI projects</li>
+                            <li data-translate="homepage.aiTraining.why.benefit2">Industry-relevant curriculum designed by AI practitioners</li>
+                            <li data-translate="homepage.aiTraining.why.benefit3">Customized training programs for your organization</li>
+                            <li data-translate="homepage.aiTraining.why.benefit4">Ongoing support and mentorship</li>
+                        </ul>
+                    </div>
+                    <div class="ai-why-image">
+                        <img src="/assets/images/linkedin-banner-simple.svg" alt="AI Training Program" loading="lazy">
+                    </div>
+                </div>
+                
+                <!-- AI Examples - What We're Doing -->
+                <div class="ai-examples-section">
+                    <h3 data-translate="homepage.aiTraining.examples.title">AI in Action: Our Real-World Examples</h3>
+                    <p class="examples-intro" data-translate="homepage.aiTraining.examples.intro">See how we're leveraging AI to drive innovation and deliver results:</p>
+                    
+                    <div class="ai-examples-grid">
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/logo-og.svg" alt="AI Consulting" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example1.title">AI Consulting & Strategy</h4>
+                            <p data-translate="homepage.aiTraining.examples.example1.description">Strategic AI implementation consulting helping businesses identify opportunities and develop AI roadmaps.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/logo-og.svg" alt="AI Process Automation" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example2.title">AI-Powered Process Automation</h4>
+                            <p data-translate="homepage.aiTraining.examples.example2.description">Intelligent automation solutions that streamline workflows and reduce manual effort by up to 80%.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/logo-og.svg" alt="AI Analytics" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example3.title">AI-Driven Analytics</h4>
+                            <p data-translate="homepage.aiTraining.examples.example3.description">Advanced analytics platforms using machine learning to extract actionable insights from complex data.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/logo-og.svg" alt="AI Integration" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example4.title">AI System Integration</h4>
+                            <p data-translate="homepage.aiTraining.examples.example4.description">Seamless integration of AI capabilities into existing business systems and workflows.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/logo-og.svg" alt="AI Applications" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example5.title">Custom AI Applications</h4>
+                            <p data-translate="homepage.aiTraining.examples.example5.description">Building tailored AI applications that solve specific business challenges and drive growth.</p>
+                        </div>
+                        
+                        <div class="ai-example-card">
+                            <div class="example-image">
+                                <img src="/assets/images/logo-og.svg" alt="AI API Deployment" loading="lazy">
+                            </div>
+                            <h4 data-translate="homepage.aiTraining.examples.example6.title">AI API Development & Deployment</h4>
+                            <p data-translate="homepage.aiTraining.examples.example6.description">Production-ready AI APIs and deployment strategies for scalable AI solutions.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Training Programs -->
+                <div class="training-programs-section">
+                    <h3 data-translate="homepage.aiTraining.programs.title">Our Training Programs</h3>
+                    <div class="programs-grid">
+                        <div class="program-card">
+                            <div class="program-icon">🎓</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program1.title">AI Fundamentals</h4>
+                            <p data-translate="homepage.aiTraining.programs.program1.description">Introduction to AI concepts, machine learning basics, and practical applications for business professionals.</p>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="program-icon">🤖</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program2.title">Advanced AI Development</h4>
+                            <p data-translate="homepage.aiTraining.programs.program2.description">Deep dive into AI model development, training, and deployment for technical teams.</p>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="program-icon">💼</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program3.title">AI for Business Leaders</h4>
+                            <p data-translate="homepage.aiTraining.programs.program3.description">Strategic AI implementation, ROI analysis, and organizational transformation for executives.</p>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="program-icon">🔧</div>
+                            <h4 data-translate="homepage.aiTraining.programs.program4.title">Custom Corporate Training</h4>
+                            <p data-translate="homepage.aiTraining.programs.program4.description">Tailored training programs designed specifically for your organization's needs and goals.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Services & Solutions Section -->
+                <div class="ai-services-section">
+                    <h3 data-translate="homepage.aiTraining.services.title">AI Services & Solutions We Offer</h3>
+                    <p class="services-intro" data-translate="homepage.aiTraining.services.intro">Practical AI solutions that drive real business value. We focus on AI applications, tools, and integrations - not machine learning model development.</p>
+                    
+                    <div class="ai-services-grid">
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">💬</div>
+                            <h4 data-translate="homepage.aiTraining.services.service1.title">AI Chatbots & Conversational AI</h4>
+                            <p data-translate="homepage.aiTraining.services.service1.description">Intelligent chatbots and virtual assistants using AI platforms like ChatGPT, Claude, and custom conversational AI solutions.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">✍️</div>
+                            <h4 data-translate="homepage.aiTraining.services.service2.title">Prompt Engineering & Optimization</h4>
+                            <p data-translate="homepage.aiTraining.services.service2.description">Expert prompt engineering to maximize AI tool effectiveness. Training teams on best practices for AI interactions.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🔄</div>
+                            <h4 data-translate="homepage.aiTraining.services.service3.title">AI Workflow Automation</h4>
+                            <p data-translate="homepage.aiTraining.services.service3.description">Automate business processes using AI tools. Integrate AI into existing workflows for enhanced productivity.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">📊</div>
+                            <h4 data-translate="homepage.aiTraining.services.service4.title">AI-Powered Business Intelligence</h4>
+                            <p data-translate="homepage.aiTraining.services.service4.description">Transform data into insights using AI analytics tools. AI-enhanced reporting and decision-making support.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🔌</div>
+                            <h4 data-translate="homepage.aiTraining.services.service5.title">AI Platform Integration</h4>
+                            <p data-translate="homepage.aiTraining.services.service5.description">Seamlessly integrate AI platforms (OpenAI, Anthropic, Google AI) into your business systems and applications.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">📝</div>
+                            <h4 data-translate="homepage.aiTraining.services.service6.title">AI Content Generation Solutions</h4>
+                            <p data-translate="homepage.aiTraining.services.service6.description">Leverage AI for content creation, document generation, and automated content workflows.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🛠️</div>
+                            <h4 data-translate="homepage.aiTraining.services.service7.title">Custom AI Application Development</h4>
+                            <p data-translate="homepage.aiTraining.services.service7.description">Build custom AI-powered applications tailored to your specific business needs using existing AI platforms.</p>
+                        </div>
+                        
+                        <div class="ai-service-item">
+                            <div class="service-icon-large">🔍</div>
+                            <h4 data-translate="homepage.aiTraining.services.service8.title">AI Search & Information Retrieval</h4>
+                            <p data-translate="homepage.aiTraining.services.service8.description">Implement intelligent search solutions and AI-powered information retrieval systems for better data access.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CTA Section -->
+                <div class="ai-training-cta">
+                    <h3 data-translate="homepage.aiTraining.cta.title">Ready to Transform Your Team with AI?</h3>
+                    <p data-translate="homepage.aiTraining.cta.description">Join the companies already investing in AI education. Let's discuss how we can help your organization.</p>
+                    <div class="cta-buttons">
+                        <a href="/contact.html" class="btn btn-primary" data-translate="homepage.aiTraining.cta.button1">Request Training Info</a>
+                        <a href="/services.html" class="btn btn-secondary" data-translate="homepage.aiTraining.cta.button2">View All Services</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Services Preview Section -->
+    <section class="services-preview">
+        <div class="container">
+            <h2 data-translate="homepage.services.title">Our Services</h2>
+            <div class="services-grid" id="services-preview">
+                <!-- Services will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- App Store Section -->
+    <section class="app-store-section">
+        <div class="container">
+            <h2 data-translate="homepage.appStore.title">Our Applications</h2>
+            <p class="section-subtitle" data-translate="homepage.appStore.subtitle">Explore our SaaS applications and tools developed to solve real-world business challenges.</p>
+            
+            <div class="app-store-grid" id="app-store-grid">
+                <!-- Apps will be loaded dynamically from API -->
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-container"></div>
+    
+    <!-- Load Header and Footer - Simple approach like other pages -->
+    <script>
+        // Mobile menu initialization function (extracted from header.html)
+        function initMobileMenu() {
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle && navLinks) {
+                // Remove existing listeners to prevent duplicates
+                const newToggle = menuToggle.cloneNode(true);
+                menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+                
+                const newNavLinks = navLinks.cloneNode(true);
+                navLinks.parentNode.replaceChild(newNavLinks, navLinks);
+                
+                // Re-query after clone
+                const freshToggle = document.querySelector('.mobile-menu-toggle');
+                const freshNavLinks = document.querySelector('.nav-links');
+                
+                if (freshToggle && freshNavLinks) {
+                    freshToggle.addEventListener('click', function() {
+                        const isActive = freshNavLinks.classList.toggle('active');
+                        freshToggle.classList.toggle('active');
+                        freshToggle.setAttribute('aria-expanded', isActive);
+                    });
+                    
+                    // Handle dropdown toggle on mobile
+                    const dropdowns = freshNavLinks.querySelectorAll('.dropdown');
+                    dropdowns.forEach(dropdown => {
+                        const toggle = dropdown.querySelector('.dropdown-toggle');
+                        if (toggle) {
+                            toggle.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                dropdown.classList.toggle('active');
+                            });
+                        }
+                    });
+                    
+                    // Close menu when clicking on a link
+                    freshNavLinks.querySelectorAll('a:not(.dropdown-toggle)').forEach(link => {
+                        link.addEventListener('click', function() {
+                            if (freshNavLinks.classList.contains('active')) {
+                                freshNavLinks.classList.remove('active');
+                                freshToggle.classList.remove('active');
+                                freshToggle.setAttribute('aria-expanded', 'false');
+                                dropdowns.forEach(d => d.classList.remove('active'));
+                            }
+                        });
+                    });
+                    
+                    // Close menu when clicking outside
+                    document.addEventListener('click', function(event) {
+                        const isClickInsideNav = freshNavLinks.contains(event.target);
+                        const isClickOnToggle = freshToggle.contains(event.target);
+                        
+                        if (!isClickInsideNav && !isClickOnToggle && freshNavLinks.classList.contains('active')) {
+                            freshNavLinks.classList.remove('active');
+                            freshToggle.classList.remove('active');
+                            freshToggle.setAttribute('aria-expanded', 'false');
+                            dropdowns.forEach(d => d.classList.remove('active'));
+                        }
+                    });
+                }
+            }
+        }
+        
+        // Load header and footer - Simple fetch approach (same as other working pages)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load header
+            fetch('/components/header.html')
+                .then(r => r.text())
+                .then(html => {
+                    const container = document.getElementById('header-container');
+                    if (container) {
+                        // Extract and insert HTML (scripts won't run from innerHTML)
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = html;
+                        
+                        // Remove script tags (we'll initialize manually)
+                        const scripts = tempDiv.querySelectorAll('script');
+                        scripts.forEach(script => script.remove());
+                        
+                        container.innerHTML = tempDiv.innerHTML;
+                        
+                        // Initialize mobile menu after header is inserted
+                        setTimeout(() => {
+                            initMobileMenu();
+                        }, 100);
+                        
+                        // Set active nav link
+                        const navLinks = container.querySelectorAll('.nav-links a');
+                        navLinks.forEach(link => {
+                            if (link.getAttribute('href') === '/' || link.getAttribute('href') === '/index.html') {
+                                link.style.color = 'var(--primary-color, #006d77)';
+                                link.style.fontWeight = '600';
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Error loading header:', err));
+            
+            // Load footer
+            fetch('/components/footer.html')
+                .then(r => r.text())
+                .then(html => {
+                    const container = document.getElementById('footer-container');
+                    if (container) {
+                        container.innerHTML = html;
+                    }
+                })
+                .catch(err => console.error('Error loading footer:', err));
+        });
+        
+        // Load services preview
+        async function loadServicesPreview() {
+            try {
+                let apiUrl = '/api/services';
+                if (window.APIM && typeof window.APIM.getURL === 'function') {
+                    const apimUrl = window.APIM.getURL('services', 'list');
+                    if (apimUrl) {
+                        try {
+                            const urlObj = new URL(apimUrl);
+                            apiUrl = urlObj.pathname;
+                        } catch (e) {
+                            apiUrl = apimUrl.startsWith('/') ? apimUrl : '/api/services';
+                        }
+                    }
+                }
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(`Expected JSON but got ${contentType}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.data && result.data.services) {
+                    displayServicesPreview(result.data.services.slice(0, 6)); // Show first 6 services
+                }
+            } catch (error) {
+                console.error('Error loading services preview:', error);
+                // Silently fail - don't show error to user
+            }
+        }
+        
+        function displayServicesPreview(services) {
+            const container = document.getElementById('services-preview');
+            if (!container || !services || services.length === 0) return;
+            
+            container.innerHTML = services.map(service => `
+                <div class="service-card">
+                    <div class="service-icon">${service.icon || '📋'}</div>
+                    <h3>${service.name || 'Service'}</h3>
+                    <p>${service.description || ''}</p>
+                    <a href="/services.html" class="btn btn-link">Learn More</a>
+                </div>
+            `).join('');
+        }
+        
+        // Load services preview when page is ready
+        document.addEventListener('DOMContentLoaded', loadServicesPreview);
+        
+        // Load apps from API
+        async function loadApps() {
+            try {
+                let apiUrl = '/api/apps';
+                if (window.APIM && typeof window.APIM.getURL === 'function') {
+                    const apimUrl = window.APIM.getURL('apps', 'list');
+                    if (apimUrl) {
+                        try {
+                            const urlObj = new URL(apimUrl);
+                            apiUrl = urlObj.pathname;
+                        } catch (e) {
+                            apiUrl = apimUrl.startsWith('/') ? apimUrl : '/api/apps';
+                        }
+                    }
+                }
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(`Expected JSON but got ${contentType}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.data && result.data.apps) {
+                    displayApps(result.data.apps);
+                }
+            } catch (error) {
+                console.error('Error loading apps:', error);
+                // Silently fail - don't show error to user
+            }
+        }
+        
+        function displayApps(apps) {
+            const container = document.getElementById('app-store-grid');
+            if (!container || !apps || apps.length === 0) {
+                container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-light);">No apps available yet.</div>';
+                return;
+            }
+            
+            container.innerHTML = apps.map(app => {
+                const isLive = app.status === 'live' && app.link;
+                const cardClass = isLive ? 'app-card live-app' : 'app-card';
+                const statusClass = app.status === 'live' ? 'live' : 'coming-soon';
+                const statusText = app.status === 'live' ? 'Live' : 'Coming Soon';
+                const dataLink = isLive ? `data-link="${app.link}"` : '';
+                
+                return `
+                    <div class="${cardClass}" ${dataLink}>
+                        <div class="app-icon">${app.icon || '🚀'}</div>
+                        <h3>${app.name || 'App'}</h3>
+                        <p>${app.description || ''}</p>
+                        <div class="app-status ${statusClass}">
+                            <span>${statusText}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Attach click handlers for live apps
+            const liveAppCards = container.querySelectorAll('.app-card.live-app');
+            liveAppCards.forEach(card => {
+                const link = card.getAttribute('data-link');
+                if (link) {
+                    card.addEventListener('click', function() {
+                        window.open(link, '_blank', 'noopener,noreferrer');
+                    });
+                }
+            });
+        }
+        
+        // Load apps when page is ready
+        document.addEventListener('DOMContentLoaded', loadApps);
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "Paxi iTechnologies",
+  "short_name": "Paxi iTech",
+  "icons": [
+    {
+      "src": "/assets/images/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/assets/images/favicon.ico",
+      "sizes": "32x32",
+      "type": "image/x-icon"
+    }
+  ],
+  "theme_color": "#006d77",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}
+

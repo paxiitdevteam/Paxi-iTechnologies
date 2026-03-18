@@ -1,0 +1,21 @@
+# robots.txt for Paxi iTechnologies
+# https://paxiit.com/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+Disallow: /backend/
+Disallow: /node_modules/
+
+# Allow important pages
+Allow: /index.html
+Allow: /pages/
+Allow: /assets/
+
+# Sitemap location
+Sitemap: https://paxiit.com/sitemap.xml
+
+# Crawl-delay (optional - adjust if needed)
+Crawl-delay: 1
+

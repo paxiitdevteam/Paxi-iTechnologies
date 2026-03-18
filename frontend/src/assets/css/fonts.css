@@ -1,0 +1,204 @@
+/**
+ * Font System - Using System Fonts and Project Fonts
+ * 
+ * This file defines font families using:
+ * 1. System fonts (already available on devices - no downloads)
+ * 2. Fonts from frontend/src/assets/fonts/ folder (if available)
+ * 
+ * Font files should be placed in: frontend/src/assets/fonts/
+ * Supported formats: .woff2, .woff, .ttf, .otf
+ */
+
+/* Font Path Base - Using relative path from CSS file */
+/* CSS file is in: frontend/src/assets/css/fonts.css */
+/* Fonts folder is: frontend/src/assets/fonts/ */
+:root {
+    --font-path: '../fonts/';
+}
+
+/* 
+ * @font-face declarations for custom fonts
+ * Add your font files to frontend/src/assets/fonts/ and uncomment/modify below
+ * 
+ * Example:
+ * @font-face {
+ *     font-family: 'CustomFont';
+ *     src: url('../fonts/CustomFont-Regular.woff2') format('woff2'),
+ *          url('../fonts/CustomFont-Regular.woff') format('woff');
+ *     font-weight: 400;
+ *     font-style: normal;
+ *     font-display: swap;
+ * }
+ */
+
+:root {
+    /* Primary Font Stack - System Fonts (default, no downloads) */
+    /* If custom fonts are added, update these variables to use them */
+    --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    
+    /* Secondary Font Stack - Web-Safe Serif */
+    --font-serif: Georgia, 'Times New Roman', Times, serif;
+    
+    /* Monospace Font Stack - For Code/Technical Content */
+    --font-mono: 'Courier New', Courier, 'Lucida Console', Monaco, monospace;
+    
+    /* Display Font Stack - For Headings (System Fonts) */
+    /* If custom display font is added, update this variable */
+    --font-display: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    
+    /* Font Weights */
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Font Sizes */
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;      /* 16px */
+    --font-size-lg: 1.125rem;    /* 18px */
+    --font-size-xl: 1.25rem;     /* 20px */
+    --font-size-2xl: 1.5rem;     /* 24px */
+    --font-size-3xl: 1.875rem;   /* 30px */
+    --font-size-4xl: 2.25rem;    /* 36px */
+    --font-size-5xl: 3rem;       /* 48px */
+}
+
+/* Base Font Styles */
+body {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-normal);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.2;
+    margin-bottom: 0.5em;
+}
+
+h1 {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
+}
+
+h2 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+}
+
+h3 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+}
+
+h4 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+}
+
+h5 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+}
+
+h6 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Paragraphs */
+p {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+}
+
+/* Links */
+a {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Code and Technical Content */
+code, pre, kbd, samp {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+/* Buttons */
+button, .btn {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+}
+
+/* Navigation */
+nav, .nav-links {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Logo */
+.logo {
+    font-family: var(--font-display);
+    font-weight: var(--font-weight-bold);
+}
+
+/* Small Text */
+small, .text-sm {
+    font-size: var(--font-size-sm);
+}
+
+/* Large Text */
+.text-lg {
+    font-size: var(--font-size-lg);
+}
+
+.text-xl {
+    font-size: var(--font-size-xl);
+}
+
+/* Utility Classes */
+.font-primary {
+    font-family: var(--font-primary);
+}
+
+.font-serif {
+    font-family: var(--font-serif);
+}
+
+.font-mono {
+    font-family: var(--font-mono);
+}
+
+.font-display {
+    font-family: var(--font-display);
+}
+
+.font-light {
+    font-weight: var(--font-weight-light);
+}
+
+.font-normal {
+    font-weight: var(--font-weight-normal);
+}
+
+.font-medium {
+    font-weight: var(--font-weight-medium);
+}
+
+.font-semibold {
+    font-weight: var(--font-weight-semibold);
+}
+
+.font-bold {
+    font-weight: var(--font-weight-bold);
+}
+

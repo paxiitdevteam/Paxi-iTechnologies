@@ -1,0 +1,156 @@
+/**
+ * Arabic Translations
+ * Centralized Language System - Arabic Language File
+ */
+
+export const translations = {
+    // Common
+    common: {
+        welcome: "مرحباً",
+        hello: "مرحبا",
+        goodbye: "وداعاً",
+        yes: "نعم",
+        no: "لا",
+        ok: "موافق",
+        cancel: "إلغاء",
+        save: "حفظ",
+        delete: "حذف",
+        edit: "تعديل",
+        close: "إغلاق",
+        back: "رجوع",
+        next: "التالي",
+        previous: "السابق",
+        submit: "إرسال",
+        loading: "جاري التحميل...",
+        error: "خطأ",
+        success: "نجاح"
+    },
+
+    // Navigation
+    nav: {
+        home: "الرئيسية",
+        about: "من نحن",
+        services: "الخدمات",
+        blog: "المدونة",
+        contact: "اتصل بنا"
+    },
+
+    // Homepage
+    home: {
+        title: "مرحباً بك في Paxiit",
+        subtitle: "إدارة IT ذكية. نتائج واضحة.",
+        description: "نبني أنظمة IT واضحة وحديثة وذكية — مع نتائج حقيقية.",
+        cta: "ابدأ الآن",
+        learnMore: "اعرف المزيد"
+    },
+
+    // Homepage Hero Section
+    homepage: {
+        hero: {
+            title: "إدارة IT ذكية. نتائج واضحة.",
+            subtitle: "نبني أنظمة IT واضحة وحديثة وذكية مع نتائج حقيقية.",
+            cta: {
+                services: "خدماتنا",
+                contact: "اتصل بنا"
+            }
+        },
+        services: {
+            title: "خدماتنا"
+        }
+    },
+
+    // About
+    about: {
+        title: "من نحن",
+        mission: "مهمتنا",
+        missionText: "نبني أنظمة IT واضحة وحديثة وذكية — مع نتائج حقيقية.",
+        vision: "رؤيتنا",
+        visionText: "أن نكون المزود الرائد للحلول IT المبتكرة.",
+        values: "قيمنا",
+        value1: "الابتكار",
+        value2: "التميز",
+        value3: "النزاهة"
+    },
+
+    // Services
+    services: {
+        title: "خدماتنا",
+        subtitle: "ما نفعله",
+        service1: "إدارة مشاريع IT",
+        service2: "حلول السحابة والبنية التحتية",
+        service3: "الذكاء الاصطناعي وهندسة الأوامر",
+        service4: "الأمان والامتثال"
+    },
+
+    // Contact
+    contact: {
+        title: "اتصل بنا",
+        name: "اسمك",
+        email: "بريدك الإلكتروني",
+        message: "رسالتك",
+        send: "إرسال الرسالة",
+        placeholderName: "أدخل اسمك",
+        placeholderEmail: "أدخل بريدك الإلكتروني",
+        placeholderMessage: "أدخل رسالتك",
+        // File Upload
+        fileUpload: "رفع ملفات المشروع (اختياري)",
+        fileUploadHelp: "يمكنك رفع ملفات PDF، Word، Excel، PowerPoint، أو النصوص. الحجم الأقصى: 10 ميجابايت لكل ملف.",
+        fileUploaded: "تم رفع الملف بنجاح"
+    },
+
+    // Footer
+    footer: {
+        copyright: "© {{year}} Paxiit. جميع الحقوق محفوظة.",
+        privacy: "سياسة الخصوصية",
+        terms: "شروط الخدمة",
+        legal: "قانوني"
+    },
+
+    // Chat Widget
+    chat: {
+        title: "تحدث معنا",
+        statusOnline: "● متصل",
+        statusOffline: "● غير متصل",
+        welcome: "👋 مرحباً! أنا مساعدك الذكي. يمكنني مساعدتك في التعرف على خدماتنا، والإجابة على أسئلة حول برامج التدريب على الذكاء الاصطناعي، وتقديم معلومات الاتصال، والمزيد. كيف يمكنني مساعدتك اليوم؟",
+        placeholder: "اكتب رسالتك...",
+        send: "إرسال",
+        close: "إغلاق الدردشة",
+        open: "فتح الدردشة",
+        typing: "يكتب...",
+        error: "عذراً، حدث خطأ. يرجى المحاولة مرة أخرى أو استخدام نموذج الاتصال.",
+        noResponse: "لم يتم استلام رد. يرجى المحاولة مرة أخرى.",
+        sessionExpired: "انتهت صلاحية جلستك. يرجى تحديث الصفحة.",
+        messageTooLong: "الرسالة طويلة جداً. يرجى الحفاظ عليها أقل من 1000 حرف.",
+        emptyMessage: "يرجى إدخال رسالة.",
+        escalate: "التحويل إلى الدعم البشري",
+        feedback: "تقييم هذه المحادثة",
+        history: "سجل المحادثة",
+        clearChat: "مسح الدردشة",
+        clearChatConfirm: "هل أنت متأكد من أنك تريد مسح هذه المحادثة؟",
+        newChat: "دردشة جديدة",
+        voiceInput: "الإدخال الصوتي",
+        voiceInputStart: "ابدأ بالحديث...",
+        voiceInputStop: "إيقاف التسجيل",
+        voiceInputListening: "يستمع...",
+        voiceInputError: "الإدخال الصوتي غير مدعوم في متصفحك",
+        voiceInputPermission: "يرجى السماح بالوصول إلى الميكروفون",
+        fileUpload: "رفع ملف",
+        fileUploadSelect: "اختر ملف",
+        fileUploadRemove: "إزالة الملف",
+        fileUploadError: "فشل رفع الملف",
+        fileUploadTooLarge: "الملف كبير جداً. الحجم الأقصى: 10 ميجابايت",
+        fileUploadInvalid: "نوع ملف غير صالح. يرجى رفع ملفات PDF أو المستندات",
+        fileUploaded: "تم رفع الملف بنجاح",
+        fileUploading: "جاري رفع الملف...",
+        feedbackTitle: "قيم تجربتك",
+        feedbackSubmit: "إرسال التقييم",
+        feedbackThanks: "شكراً لتعليقاتك!",
+        escalateTitle: "التحدث مع الدعم البشري",
+        escalateMessage: "هل تريد تحويل هذه المحادثة إلى فريق الدعم البشري لدينا؟",
+        escalateConfirm: "نعم، اربطني",
+        escalateCancel: "إلغاء"
+    }
+};
+
+export default translations;
+

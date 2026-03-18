@@ -1,0 +1,356 @@
+<!-- Header Component -->
+<!-- Reusable header with navigation and language switcher -->
+<!-- Uses PMS for paths and CLS for translations -->
+
+<header>
+    <nav>
+        <a href="/" class="logo">Paxi iTechnologies</a>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links">
+            <li><a href="/" data-translate="nav.home">Home</a></li>
+            <li><a href="/about.html" data-translate="nav.about">About</a></li>
+            <li><a href="/services.html" data-translate="nav.services">Services</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" onclick="return false;">Company <span class="dropdown-arrow">▼</span></a>
+                <ul class="dropdown-menu">
+            <li><a href="/press.html">Press</a></li>
+            <li><a href="/media.html">Media</a></li>
+            <li><a href="/career.html">Careers</a></li>
+                </ul>
+            </li>
+            <li><a href="/contact.html" data-translate="nav.contact">Contact</a></li>
+            <li class="lang-switcher-container">
+                <div id="lang-switcher"></div>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<style>
+    /* Header Styles */
+    header {
+        background: var(--bg-white, #ffffff);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color, #2563eb);
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .logo:hover {
+        color: var(--secondary-color, #1e40af);
+    }
+    
+    .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .nav-links a {
+        text-decoration: none;
+        color: var(--text-dark, #1f2937);
+        font-weight: 500;
+        transition: color 0.2s ease;
+        font-size: 1rem;
+        display: inline-block;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .nav-links a:hover {
+        color: var(--primary-color, #2563eb);
+    }
+    
+    .lang-switcher-container {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    
+    /* Dropdown Menu Styles */
+    .dropdown {
+        position: relative;
+    }
+    
+    .dropdown-toggle {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        position: relative;
+    }
+    
+    .dropdown-arrow {
+        font-size: 0.7rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .dropdown:hover .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        background: var(--bg-white, #ffffff);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border-radius: 0.5rem;
+        min-width: 180px;
+        padding: 0.5rem 0;
+        list-style: none;
+        z-index: 1001;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(-10px);
+        transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    }
+    
+    .dropdown:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+    
+    /* Create invisible bridge to prevent gap */
+    .dropdown::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        height: 0.5rem;
+        background: transparent;
+        z-index: 1000;
+    }
+    
+    .dropdown-menu li {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .dropdown-menu a {
+        display: block;
+        padding: 0.75rem 1.5rem;
+        color: var(--text-dark, #1f2937);
+        text-decoration: none;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    
+    .dropdown-menu a:hover {
+        background-color: var(--primary-color, #2563eb);
+        color: white;
+    }
+    
+    
+    /* Mobile Menu Toggle */
+    .mobile-menu-toggle {
+        display: none;
+        flex-direction: column;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        gap: 4px;
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .mobile-menu-toggle span {
+        display: block;
+        width: 24px;
+        height: 3px;
+        background: var(--text-dark, #1f2937);
+        border-radius: 2px;
+        transition: all 0.3s;
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+    
+    .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        nav {
+            flex-wrap: wrap;
+            padding: 1rem;
+            position: relative;
+        }
+        
+        .mobile-menu-toggle {
+            display: flex !important;
+            order: 2;
+        }
+        
+        .logo {
+            order: 1;
+            flex: 1;
+        }
+        
+        .nav-links {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            gap: 0;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-links.active {
+            display: flex;
+        }
+        
+        .nav-links li {
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-links a {
+            display: block;
+            padding: 0.5rem 0;
+            font-size: 1rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .lang-switcher-container {
+            width: 100%;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-left: 0;
+        }
+        
+        .dropdown {
+            width: 100%;
+        }
+        
+        .dropdown-toggle {
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .dropdown-menu {
+            position: static;
+            display: none;
+            box-shadow: none;
+            border-radius: 0;
+            margin-top: 0;
+            padding: 0;
+            background: rgba(0, 0, 0, 0.02);
+        }
+        
+        .dropdown.active .dropdown-menu {
+            display: block;
+        }
+        
+        .dropdown-menu a {
+            padding-left: 2rem;
+        }
+    }
+</style>
+
+<script>
+    // Mobile menu toggle functionality
+    (function() {
+        'use strict';
+        
+        function initMobileMenu() {
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const navLinks = document.querySelector('.nav-links');
+            
+            if (menuToggle && navLinks) {
+                menuToggle.addEventListener('click', function() {
+                    const isActive = navLinks.classList.toggle('active');
+                    menuToggle.classList.toggle('active');
+                    menuToggle.setAttribute('aria-expanded', isActive);
+                });
+                
+                // Handle dropdown toggle on mobile
+                const dropdowns = navLinks.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    if (toggle) {
+                        toggle.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            dropdown.classList.toggle('active');
+                        });
+                    }
+                });
+                
+                // Close menu when clicking on a link (only if menu is open)
+                navLinks.querySelectorAll('a:not(.dropdown-toggle)').forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (navLinks.classList.contains('active')) {
+                            navLinks.classList.remove('active');
+                            menuToggle.classList.remove('active');
+                            menuToggle.setAttribute('aria-expanded', 'false');
+                            // Close all dropdowns
+                            dropdowns.forEach(d => d.classList.remove('active'));
+                        }
+                    });
+                });
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    const isClickInsideNav = navLinks.contains(event.target);
+                    const isClickOnToggle = menuToggle.contains(event.target);
+                    
+                    if (!isClickInsideNav && !isClickOnToggle && navLinks.classList.contains('active')) {
+                        navLinks.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                        // Close all dropdowns
+                        dropdowns.forEach(d => d.classList.remove('active'));
+                    }
+                });
+            }
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMobileMenu);
+        } else {
+            initMobileMenu();
+        }
+    })();
+</script>
+
+
