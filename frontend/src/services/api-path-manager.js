@@ -319,6 +319,12 @@ class APIPathManager {
      * Verify backend connection using PMS - IMPROVED ERROR HANDLING
      */
     async verifyBackendConnection() {
+        // If PMS already determined backend is down, skip verification to avoid spam.
+        const pmsStatus = this.getBackendStatus();
+        if (pmsStatus && pmsStatus.backendCheckFailed) {
+            return false;
+        }
+
         if (typeof window !== 'undefined' && window.PMS && typeof window.PMS.verifyBackend === 'function') {
             try {
                 const isConnected = await window.PMS.verifyBackend();
@@ -330,22 +336,19 @@ class APIPathManager {
                         url: this.baseURL || window.PMS.getBaseURL('api'),
                         timestamp: status.lastCheck
                     });
-                } else {
-                    console.warn('⚠️ APIM: Backend connection failed via PMS', {
-                        message: status.message,
-                        status: status.status,
-                        url: this.baseURL || window.PMS.getBaseURL('api'),
-                        timestamp: status.lastCheck,
-                        suggestion: 'Check server logs and ensure server.js is running'
-                    });
                 }
                 return isConnected;
             } catch (error) {
-                console.warn('⚠️ APIM: Backend verification error:', {
-                    error: error.message,
-                    url: this.baseURL || (window.PMS ? window.PMS.getBaseURL('api') : 'unknown'),
-                    suggestion: 'Verify server is running and accessible'
-                });
+                // PMS already logs failures; only surface unexpected verification exceptions once.
+                const globalWarnKey = '__PAXIIT_APIM_BACKEND_VERIFICATION_ERROR_WARNED__';
+                if (typeof window !== 'undefined' && !window[globalWarnKey]) {
+                    if (typeof window !== 'undefined') window[globalWarnKey] = true;
+                    console.warn('⚠️ APIM: Backend verification error:', {
+                        error: error.message,
+                        url: this.baseURL || (window.PMS ? window.PMS.getBaseURL('api') : 'unknown'),
+                        suggestion: 'Verify server is running and accessible'
+                    });
+                }
                 return false;
             }
         } else {
@@ -401,6 +404,7 @@ class APIPathManager {
             checkBackend = true, // Option to skip backend check
             ...fetchOptions
         } = options;
+        let shouldCheckBackend = checkBackend;
 
         // Get URL first (needed for logging)
         const url = this.getURL(category, endpoint, params);
@@ -409,19 +413,36 @@ class APIPathManager {
         }
 
         // Check backend connection if enabled (non-blocking)
-        if (checkBackend) {
+        if (shouldCheckBackend) {
             try {
-                await this.ensureBackendConnection();
-            } catch (error) {
-                // If backend check fails, still attempt request but log detailed warning
+                // If PMS already knows backend is down, don't re-run checks or warn repeatedly.
                 const status = this.getBackendStatus();
-                console.warn('⚠️ APIM: Backend check failed, proceeding with request anyway', {
-                    error: error.message,
-                    backendStatus: status,
-                    endpoint: `${category}.${endpoint}`,
-                    url: url,
-                    suggestion: 'Request will be attempted but may fail if backend is not running'
-                });
+                if (status && status.backendCheckFailed) {
+                    shouldCheckBackend = false;
+                }
+            } catch (e) {
+                // If status lookup fails for any reason, fall back to normal behavior.
+            }
+
+            if (shouldCheckBackend) {
+                try {
+                    await this.ensureBackendConnection();
+                } catch (error) {
+                    // If backend check fails, still attempt request but avoid repeated warnings.
+                    const warnOnceKey = '__PAXIIT_APIM_BACKEND_CHECK_WARNED_ONCE__';
+                    if (typeof window !== 'undefined') {
+                        if (window[warnOnceKey]) return;
+                        window[warnOnceKey] = true;
+                    }
+
+                    const status = this.getBackendStatus();
+                    console.warn('⚠️ APIM: Backend check failed (limited mode)', {
+                        error: error.message,
+                        backendStatus: status,
+                        endpoint: `${category}.${endpoint}`,
+                        url: url
+                    });
+                }
             }
         }
 

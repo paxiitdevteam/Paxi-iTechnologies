@@ -18,6 +18,12 @@ class ChatWidget {
         this.isListening = false; // Voice input state
         this.uploadedFiles = []; // Track uploaded files
         this.voiceBaseText = ''; // Base text before voice input (to prevent duplication)
+
+        // When backend is unreachable (static GitHub Pages / NAS down),
+        // avoid spamming network errors in the console.
+        this.backendUnavailable = false;
+        this.backendWarned = false;
+
         this.initialize();
     }
 
@@ -119,7 +125,25 @@ class ChatWidget {
                 console.log('[Chat Widget] Session created with fallback method');
             }
         } catch (error) {
-            console.error('[Chat Widget] Fallback session creation failed:', error);
+            this.handleBackendError(error, 'fallback');
+        }
+    }
+
+    handleBackendError(error, context = 'api') {
+        const msg = error && (error.message || error.toString()) ? String(error.message || error) : '';
+        const isConn =
+            msg.includes('ERR_CONNECTION_REFUSED') ||
+            msg.includes('ECONNREFUSED') ||
+            msg.includes('Failed to fetch') ||
+            msg.includes('NetworkError');
+
+        this.backendUnavailable = isConn ? true : this.backendUnavailable;
+
+        if (!this.backendWarned && isConn) {
+            this.backendWarned = true;
+            console.warn(`[Chat Widget] Backend unreachable (${context}). Chat will run in limited mode.`);
+        } else if (!isConn) {
+            console.error('[Chat Widget] Backend error:', error);
         }
     }
 
@@ -274,17 +298,10 @@ class ChatWidget {
             return;
         }
         
-        // Use PMS to get CSS path - SINGLE SOURCE OF TRUTH
-        // PMS.frontend() returns paths like /components/chat-widget/chat-styles.css
-        let cssPath = window.PMS.frontend('components', 'chat-widget', 'chat-styles.css');
-        
-        // Ensure path is a web URL (starts with /)
-        if (!cssPath.startsWith('/')) {
-            cssPath = '/' + cssPath;
-        }
-        
-        // Remove any double slashes
-        cssPath = cssPath.replace(/\/+/g, '/');
+        // Use PMS to get CSS path (static GitHub Pages expects /components/...)
+        let cssPath = window.PMS.component('chat-widget/chat-styles.css');
+        // Ensure it's relative (no leading slash) so it works under GitHub Pages subpaths
+        cssPath = cssPath.replace(/^\/+/, '');
         
         console.log('[Chat Widget] Loading CSS from:', cssPath);
         
@@ -307,6 +324,10 @@ class ChatWidget {
      */
     async initializeSession() {
         try {
+            if (this.backendUnavailable) {
+                return;
+            }
+
             // Wait for APIM to be available (uses PMS internally)
             if (typeof window === 'undefined' || typeof window.APIM === 'undefined') {
                 console.warn('[Chat Widget] APIM not available, waiting...');
@@ -343,10 +364,13 @@ class ChatWidget {
                 this.sessionId = data.data.sessionId;
                 localStorage.setItem('chatSessionId', this.sessionId);
             } else {
-                console.error('[Chat Widget] Failed to create session:', data);
+                // If API responds but doesn't include expected payload, keep it quiet.
+                if (!this.backendUnavailable) {
+                    console.warn('[Chat Widget] Failed to create session (unexpected response).');
+                }
             }
         } catch (error) {
-            console.error('[Chat Widget] Error initializing session:', error);
+            this.handleBackendError(error, 'session');
         }
     }
 

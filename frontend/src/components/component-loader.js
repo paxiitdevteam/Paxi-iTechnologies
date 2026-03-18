@@ -93,7 +93,7 @@ class ComponentLoader {
         }
         // Only use fallback if PMS is completely unavailable
         console.warn(`⚠️ PMS not available, using fallback path for ${componentName}`);
-        const path = `/components/${componentName}.html`;
+        const path = `components/${componentName}.html`;
         console.log(`📁 Component path (fallback - PMS not available): ${componentName} -> ${path}`);
         return path;
     }

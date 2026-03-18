@@ -76,10 +76,11 @@ class LanguageSystem {
      */
     async loadLanguage(langCode) {
         try {
-            // Use absolute path for translation file with cache-busting
+            // Use relative path so GitHub Pages project subpaths work.
             // Add timestamp to force browser to reload (bypass cache)
             const cacheBuster = `?v=2.1.0&t=${Date.now()}`;
-            const translationPath = `/cls/translations/${langCode}.js${cacheBuster}`;
+            // lang-core.js is loaded from: /cls/lang-core.js (module), so translations are in ./translations/
+            const translationPath = `./translations/${langCode}.js${cacheBuster}`;
             
             // Dynamic import
             const module = await import(translationPath);

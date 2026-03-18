@@ -82,6 +82,9 @@ out/
 # GitHub Pages output (generated)
 docs/
 
+# Local static-site simulation folder (not for GitHub)
+local-gh/
+
 # Testing
 coverage/
 .nyc_output/

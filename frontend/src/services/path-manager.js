@@ -9,6 +9,9 @@ class PathManager {
         this.basePath = '';
         this.isProduction = false;
         this.backendStatus = null;
+        this.backendCheckAttempted = false;
+        // Ensure only one backend test runs at a time (prevents duplicate /api/test calls).
+        this.backendVerifyPromise = null;
         this.initialize();
     }
 
@@ -64,12 +67,56 @@ class PathManager {
         
         // Initialize backend connection (async, non-blocking)
         if (typeof window !== 'undefined') {
+            // In GitHub Pages/static mode there is no backend; skip the probe entirely.
+            if (this.shouldDisableBackendProbe()) {
+                const nowIso = new Date().toISOString();
+                this.backendCheckAttempted = true;
+                this.backendStatus = {
+                    connected: false,
+                    lastCheck: nowIso,
+                    status: 0,
+                    message: 'Backend probe disabled (static mode)',
+                    backendCheckAttempted: true,
+                    backendCheckFailed: true
+                };
+                return;
+            }
+
             // Run backend check after a short delay to ensure DOM is ready
             setTimeout(() => {
                 this.initializeBackend().catch(err => {
                     console.warn('PMS: Backend initialization check failed:', err);
                 });
             }, 100);
+        }
+    }
+
+    /**
+     * Decide whether we should run the backend connectivity probe.
+     * This is used to avoid noisy console logs when the backend is intentionally not running
+     * (for example: GitHub Pages and the local /repo/ static simulation).
+     */
+    shouldDisableBackendProbe() {
+        try {
+            if (typeof window === 'undefined') return false;
+
+            // Manual override (set true to disable probing)
+            if (window.__PAXIIT_DISABLE_BACKEND_CHECK__ === true) return true;
+
+            const path = window.location && window.location.pathname ? window.location.pathname : '';
+            const hostname = window.location && window.location.hostname ? window.location.hostname : '';
+
+            // Local static simulation uses /repo/ prefix.
+            if (path.includes('/repo/')) return true;
+            if (path.includes('/docs/')) return true;
+
+            // Deployed GitHub Pages hosts include github.io
+            if (hostname.includes('github.io')) return true;
+
+            return false;
+        } catch (e) {
+            // If detection fails for any reason, don't disable probing.
+            return false;
         }
     }
 
@@ -160,13 +207,13 @@ class PathManager {
 
     /**
      * Navigate to a page
-     * FIXED: Always use absolute paths - works identically in dev and production
+     * Use relative links so GitHub Pages project subpaths work too.
      */
     navigateTo(page, params = {}) {
-        // Always use absolute path - server.js resolves correctly
+        // Use relative path; browser will resolve it correctly under GitHub Pages.
         // Remove .html extension if page already has it
         const pageName = page.endsWith('.html') ? page.replace('.html', '') : page;
-        const pagePath = `/${pageName}.html`;
+        const pagePath = `${pageName}.html`;
         
         if (typeof window !== 'undefined') {
             let url = pagePath;
@@ -182,7 +229,7 @@ class PathManager {
 
     /**
      * Get asset path
-     * FIXED: Always return absolute paths - works identically in dev and production
+     * Use relative links so GitHub Pages project subpaths work too.
      */
     asset(type, filename) {
         const assetTypes = {
@@ -194,17 +241,15 @@ class PathManager {
         
         const assetPath = assetTypes[type] || 'assets';
         
-        // Always return absolute path - server.js resolves correctly in both environments
-        return `/assets/${assetPath}/${filename}`;
+        return `assets/${assetPath}/${filename}`;
     }
 
     /**
      * Get component path
-     * FIXED: Always return absolute paths - works identically in dev and production
+     * Use relative links so GitHub Pages project subpaths work too.
      */
     component(name) {
-        // Always return absolute path - server.js resolves correctly in both environments
-        return `/components/${name}`;
+        return `components/${name}`;
     }
 
     /**
@@ -429,14 +474,53 @@ class PathManager {
      * Verify backend is reachable
      */
     async verifyBackend() {
-        const result = await this.testBackendConnection();
-        this.backendStatus = {
-            connected: result.success,
-            lastCheck: new Date().toISOString(),
-            status: result.status,
-            message: result.message
-        };
-        return result.success;
+        // Shared promise across concurrent callers (PMS + APIM race).
+        const globalKey = '__PAXIIT_BACKEND_VERIFY_PROMISE__';
+        if (typeof window !== 'undefined') {
+            if (window[globalKey]) {
+                return await window[globalKey];
+            }
+        }
+        if (this.backendVerifyPromise) {
+            return await this.backendVerifyPromise;
+        }
+
+        // If we've already confirmed backend is down, avoid repeated network attempts.
+        const status = this.backendStatus || {};
+        if (this.backendCheckAttempted && status.backendCheckFailed) {
+            return false;
+        }
+
+        // Mark attempted immediately so other instances can reuse the in-flight promise.
+        this.backendCheckAttempted = true;
+
+        const promise = (async () => {
+            const result = await this.testBackendConnection();
+            this.backendStatus = {
+                connected: result.success,
+                lastCheck: new Date().toISOString(),
+                status: result.status,
+                message: result.message,
+                backendCheckAttempted: true,
+                backendCheckFailed: !result.success
+            };
+            return result.success;
+        })();
+
+        this.backendVerifyPromise = promise;
+        if (typeof window !== 'undefined') {
+            window[globalKey] = promise;
+        }
+
+        try {
+            return await promise;
+        } finally {
+            // Keep backendCheckAttempted + backendStatus; only clear the in-flight promise.
+            if (typeof window !== 'undefined' && window[globalKey] === promise) {
+                window[globalKey] = null;
+            }
+            this.backendVerifyPromise = null;
+        }
     }
 
     /**
@@ -447,7 +531,9 @@ class PathManager {
             connected: false,
             lastCheck: null,
             status: null,
-            message: 'Backend status not checked yet'
+            message: 'Backend status not checked yet',
+            backendCheckAttempted: false,
+            backendCheckFailed: false
         };
     }
 
@@ -515,6 +601,10 @@ class PathManager {
      */
     async initializeBackend() {
         try {
+            // Avoid backend check spam (only try once per page load)
+            if (this.backendCheckAttempted) return;
+            this.backendCheckAttempted = true;
+
             // Verify backend on initialization
             const isConnected = await this.verifyBackend();
             
@@ -536,12 +626,13 @@ class PathManager {
                 });
             }
         } catch (error) {
-            console.warn('⚠️ PMS: Backend initialization error:', error.message);
             this.backendStatus = {
                 connected: false,
                 lastCheck: new Date().toISOString(),
                 status: null,
-                message: `Initialization error: ${error.message}`
+                message: `Initialization error: ${error.message}`,
+                backendCheckAttempted: true,
+                backendCheckFailed: true
             };
         }
     }

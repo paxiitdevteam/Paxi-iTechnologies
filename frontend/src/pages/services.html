@@ -167,28 +167,31 @@
                         throw new Error('Invalid response format: ' + JSON.stringify(result).substring(0, 200));
                     }
                 } catch (error) {
-                    // Log error details clearly for debugging
-                    console.error('❌ Error loading services:', error);
-                    console.error('📋 Error Name:', error.name);
-                    console.error('💬 Error Message:', error.message);
-                    console.error('📍 Error Stack:', error.stack);
-                    console.error('🔗 API URL attempted:', typeof apiUrl !== 'undefined' ? apiUrl : 'Not set (error before URL construction)');
-                    console.error('🌐 Current page URL:', window.location.href);
-                    
-                    // Check if it's a network/fetch error
-                    if (error instanceof TypeError && error.message.includes('fetch')) {
-                        console.error('⚠️ Network error - Check if server is running on port 8000');
-                    }
-                    if (error instanceof SyntaxError) {
-                        console.error('⚠️ JSON parsing error - Check API response format');
-                    }
+                    // NAS/backend is optional for the public static site.
+                    // If the backend is unreachable, keep the UI quiet (avoid console spam).
+                    const msg = error && (error.message || error.toString()) ? String(error.message || error) : '';
+                    const isConn =
+                        msg.includes('ERR_CONNECTION_REFUSED') ||
+                        msg.includes('ECONNREFUSED') ||
+                        msg.includes('Failed to fetch') ||
+                        msg.includes('NetworkError');
                     
                     const errorDiv = document.getElementById('services-error');
                     const loadingDiv = document.getElementById('services-loading');
                     if (errorDiv) {
                         errorDiv.style.display = 'block';
-                        const errorMsg = error.message || 'Unknown error';
-                        errorDiv.textContent = `Failed to load services: ${errorMsg}. Check browser console (F12) for details.`;
+                        if (isConn) {
+                            errorDiv.textContent = 'Services are available shortly. Please check back later.';
+                            // Only warn once to avoid spamming the console.
+                            if (!window.__SERVICES_BACKEND_WARNED__) {
+                                window.__SERVICES_BACKEND_WARNED__ = true;
+                                console.warn('[Services] Backend unreachable - showing limited static UI.');
+                            }
+                        } else {
+                            const errorMsg = error.message || 'Unknown error';
+                            errorDiv.textContent = `Failed to load services: ${errorMsg}`;
+                            console.error('[Services] Error loading services:', error);
+                        }
                     }
                     if (loadingDiv) loadingDiv.style.display = 'none';
                 }
