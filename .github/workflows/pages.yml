@@ -32,7 +32,9 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          # Upload the contents of `docs/` at the artifact root.
+          # This prevents an extra top-level `docs/` directory from being created on GitHub Pages.
+          path: docs/.
 
   deploy:
     needs: build
