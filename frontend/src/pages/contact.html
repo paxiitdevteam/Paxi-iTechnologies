@@ -427,7 +427,7 @@
                         // force Render backend URL to avoid broken /api routing on GitHub/custom static domains.
                         try {
                             const host = window.location.hostname || '';
-                            const isStaticHost = host.includes('github.io') || host === 'paxiit.com' || host === 'www.paxiit.com';
+                            const isStaticHost = host.includes('github.io');
                             if (isStaticHost && (!apiUrl || apiUrl.startsWith('/'))) {
                                 apiUrl = `https://paxiit-backend.onrender.com/api/contact`;
                             }

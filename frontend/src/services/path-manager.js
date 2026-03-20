@@ -294,7 +294,7 @@ class PathManager {
             // For GitHub Pages/custom static hosting, route API calls to Render backend.
             if (protocol === 'https:') {
                 const renderApiBase = 'https://paxiit-backend.onrender.com';
-                const isStaticHost = hostname.includes('github.io') || hostname === 'paxiit.com' || hostname === 'www.paxiit.com';
+                const isStaticHost = hostname.includes('github.io');
                 if (isStaticHost) {
                     return renderApiBase;
                 }

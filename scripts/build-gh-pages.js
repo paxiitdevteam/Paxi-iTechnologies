@@ -152,7 +152,25 @@ function main() {
   // GitHub Pages: disable Jekyll
   fs.writeFileSync(path.join(OUT, '.nojekyll'), '', 'utf8');
 
-  // Public URL: https://paxiitdevteam.github.io/Paxi-iTechnologies/ (no CNAME file)
+  // Friendly 404 → home (project site: /Paxi-iTechnologies/)
+  const notFoundHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found – Paxi iTechnologies</title>
+  <style>body{font-family:system-ui,sans-serif;max-width:36rem;margin:4rem auto;padding:0 1rem;text-align:center}</style>
+</head>
+<body>
+  <h1>Page not found</h1>
+  <p><a href="index.html">Back to home</a></p>
+  <p><small>Official site: <a href="https://paxiitdevteam.github.io/Paxi-iTechnologies/">GitHub Pages</a></small></p>
+</body>
+</html>
+`;
+  fs.writeFileSync(path.join(OUT, '404.html'), notFoundHtml, 'utf8');
+
+  // Public URL: https://paxiitdevteam.github.io/Paxi-iTechnologies/ (no custom domain)
 
   // Root entry
   copyFile(path.join(SRC, 'index.html'), path.join(OUT, 'index.html'));

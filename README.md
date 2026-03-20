@@ -2,6 +2,15 @@
 
 Official website for Paxi iTechnologies - Smart IT Management. Clear Results.
 
+## 🌐 Official public site (bookmark this)
+
+**https://paxiitdevteam.github.io/Paxi-iTechnologies/**
+
+Use this **exact** URL (HTTPS, includes `/Paxi-iTechnologies/`).  
+`http://paxiit.com` is **not** used for hosting right now—update bookmarks and avoid typing `...` in the address bar.
+
+GitHub Pages setup: repo **Settings → Pages → Build and deployment** must be **GitHub Actions** (workflow `.github/workflows/pages.yml`).
+
 ## 🚀 Features
 
 - **Modern Frontend**: Responsive, multi-language website
