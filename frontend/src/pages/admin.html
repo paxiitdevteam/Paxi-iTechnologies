@@ -1517,8 +1517,14 @@
             const protocol = window.location.protocol;
             const cleanPath = path.startsWith('/') ? path : '/' + path;
             
-            // HTTPS: Use relative path through Nginx reverse proxy
+            // HTTPS:
+            // - If static-hosted on GitHub/custom domain, use Render backend directly
+            // - Otherwise, keep relative path for reverse-proxy setups
             if (protocol === 'https:') {
+                const host = window.location.hostname || '';
+                if (host.includes('github.io') || host === 'paxiit.com' || host === 'www.paxiit.com') {
+                    return `https://paxiit-backend.onrender.com${cleanPath}`;
+                }
                 return cleanPath;
             }
             

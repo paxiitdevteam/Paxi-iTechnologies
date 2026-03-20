@@ -288,10 +288,14 @@ class PathManager {
             const protocol = window.location.protocol; // Detects http: or https:
             const hostname = window.location.hostname;
             
-            // If HTTPS, use relative URLs (goes through Nginx reverse proxy)
-            // If HTTP, use direct port access
+            // If HTTPS, default to same-origin relative URLs.
+            // For GitHub Pages/custom static hosting, route API calls to Render backend.
             if (protocol === 'https:') {
-                // Return empty string for relative URLs when using HTTPS
+                const renderApiBase = 'https://paxiit-backend.onrender.com';
+                const isStaticHost = hostname.includes('github.io') || hostname === 'paxiit.com' || hostname === 'www.paxiit.com';
+                if (isStaticHost) {
+                    return renderApiBase;
+                }
                 return '';
             }
             

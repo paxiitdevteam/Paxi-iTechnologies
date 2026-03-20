@@ -412,14 +412,27 @@
                     }
                     
                     try {
-                        // Send directly to API - API will send email to Roundcube webmail
+                        // Send to backend API.
+                        // Prefer APIM URL builders, then enforce a safe host fallback for static hosting.
                         let apiUrl = '/api/contact';
                         if (window.APIM) {
-                            if (window.APIM.endpoints && window.APIM.endpoints.contact && window.APIM.endpoints.contact.send) {
-                                apiUrl = window.APIM.endpoints.contact.send;
+                            if (typeof window.APIM.getAPIUrl === 'function') {
+                                apiUrl = window.APIM.getAPIUrl('/api/contact') || apiUrl;
                             } else if (typeof window.APIM.getURL === 'function') {
                                 apiUrl = window.APIM.getURL('contact', 'send') || apiUrl;
                             }
+                        }
+                        
+                        // If APIM is unavailable or still resolving to relative path on static hosting,
+                        // force Render backend URL to avoid broken /api routing on GitHub/custom static domains.
+                        try {
+                            const host = window.location.hostname || '';
+                            const isStaticHost = host.includes('github.io') || host === 'paxiit.com' || host === 'www.paxiit.com';
+                            if (isStaticHost && (!apiUrl || apiUrl.startsWith('/'))) {
+                                apiUrl = `https://paxiit-backend.onrender.com/api/contact`;
+                            }
+                        } catch (e) {
+                            // Keep existing apiUrl if host detection fails.
                         }
                         
                         // If files are uploaded, use FormData, otherwise use JSON
@@ -462,7 +475,12 @@
                             body: requestBody
                         });
                         
-                        const result = await response.json();
+                        let result = null;
+                        try {
+                            result = await response.json();
+                        } catch (parseError) {
+                            result = { success: false, message: `Unexpected server response (${response.status})` };
+                        }
                         
                         if (response.ok && result.success) {
                             // Success - email sent to Roundcube
@@ -498,7 +516,7 @@
                             }
                         } else {
                             // API returned error
-                            throw new Error(result.message || 'Failed to send message');
+                            throw new Error(result?.message || `Failed to send message (${response.status})`);
                         }
                     } catch (error) {
                         console.error('Error sending contact form:', error);
