@@ -1,5 +1,5 @@
 # robots.txt for Paxi iTechnologies
-# https://paxiit.com/robots.txt
+# https://paxiitdevteam.github.io/Paxi-iTechnologies/robots.txt
 
 User-agent: *
 Allow: /
@@ -14,7 +14,7 @@ Allow: /pages/
 Allow: /assets/
 
 # Sitemap location
-Sitemap: https://paxiit.com/sitemap.xml
+Sitemap: https://paxiitdevteam.github.io/Paxi-iTechnologies/sitemap.xml
 
 # Crawl-delay (optional - adjust if needed)
 Crawl-delay: 1

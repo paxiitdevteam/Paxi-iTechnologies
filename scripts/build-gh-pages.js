@@ -152,9 +152,7 @@ function main() {
   // GitHub Pages: disable Jekyll
   fs.writeFileSync(path.join(OUT, '.nojekyll'), '', 'utf8');
 
-  // Custom domain (apex). Must match GoDaddy DNS + repo Settings → Pages → Custom domain.
-  // Without this file in the deployed artifact, the custom host may not route correctly.
-  fs.writeFileSync(path.join(OUT, 'CNAME'), 'paxiit.com\n', 'utf8');
+  // Public URL: https://paxiitdevteam.github.io/Paxi-iTechnologies/ (no CNAME file)
 
   // Root entry
   copyFile(path.join(SRC, 'index.html'), path.join(OUT, 'index.html'));

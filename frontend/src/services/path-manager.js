@@ -2,6 +2,8 @@
  * Path Manager System (PMS)
  * Centralized path management for the entire application
  * Single source of truth for all file paths
+ *
+ * Public static site (GitHub Pages): https://paxiitdevteam.github.io/Paxi-iTechnologies/
  */
 
 class PathManager {

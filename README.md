@@ -307,7 +307,7 @@ Copyright © 2025 Paxi iTechnologies. All rights reserved.
 
 ## 🔗 Links
 
-- **Website**: https://paxiit.com
+- **Website (GitHub Pages)**: https://paxiitdevteam.github.io/Paxi-iTechnologies/
 - **GitHub**: https://github.com/paxiitdevteam/Paxi-iTechnologies
 
 ## 👥 Contributing
