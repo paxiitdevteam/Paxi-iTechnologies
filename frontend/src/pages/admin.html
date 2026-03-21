@@ -1512,47 +1512,26 @@
         let sessionId = null;
         let currentUser = null;
         
-        // API URL helper using PMS (Path Manager System) - Handles HTTPS via Nginx proxy
+        // API URL helper — all admin fetches must use this (GitHub Pages → Render, local → :8000).
         function getAPIUrl(path) {
-            const protocol = window.location.protocol;
             const cleanPath = path.startsWith('/') ? path : '/' + path;
-            
-            // HTTPS:
-            // - If static-hosted on GitHub Pages, use Render backend directly
-            // - Otherwise, keep relative path for reverse-proxy setups
-            if (protocol === 'https:') {
+            if (window.PMS && typeof window.PMS.getBaseURL === 'function') {
+                const base = window.PMS.getBaseURL('api');
+                let rel = cleanPath;
+                if (window.PMS.api && !cleanPath.startsWith('/api/')) {
+                    rel = window.PMS.api(cleanPath);
+                }
+                return base ? `${base}${rel}` : rel;
+            }
+            if (window.location.protocol === 'https:') {
                 const host = window.location.hostname || '';
                 if (host.includes('github.io')) {
                     return `https://paxiit-backend.onrender.com${cleanPath}`;
                 }
                 return cleanPath;
             }
-            
-            // HTTP: Use PMS correctly - RESPECT PMS PATHS
-            if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
-                try {
-                    // PMS.getBaseURL('api') returns base URL like "http://localhost:8000"
-                    const baseURL = window.PMS.getBaseURL('api');
-                    // PMS.api() already handles /api prefix correctly
-                    // Pass the path as-is (it already has /api/admin/contact-messages)
-                    const apiPath = window.PMS.api(cleanPath);
-                    // Combine: baseURL + apiPath
-                    // baseURL is "http://localhost:8000", apiPath is "/api/admin/contact-messages"
-                    const fullUrl = baseURL + apiPath;
-                    return fullUrl;
-                } catch (error) {
-                    console.error('⚠️ Error constructing PMS API URL:', error);
-                    // Fallback
-                    const hostname = window.location.hostname;
-                    const port = 8000;
-                    return `http://${hostname}:${port}${cleanPath}`;
-                }
-            }
-            // Fallback only if PMS not loaded
-            console.warn('⚠️ PMS not available, using fallback');
-            const hostname = window.location.hostname;
-            const port = 8000;
-            return `http://${hostname}:${port}${cleanPath}`;
+            const hostname = window.location.hostname || 'localhost';
+            return `http://${hostname}:8000${cleanPath}`;
         }
         
         // Test backend connection - Use getAPIUrl() helper for HTTPS compatibility
@@ -2306,7 +2285,7 @@
                 formData.append('file', file);
                 
                 try {
-                    const response = await fetch('/api/admin/media-upload', {
+                    const response = await fetch(getAPIUrl('/api/admin/media-upload'), {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${sessionId}`
@@ -2406,7 +2385,7 @@
             }
             
             try {
-                const response = await fetch(`/api/admin/media/${encodeURIComponent(filename)}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/media/${encodeURIComponent(filename)}`), {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -2526,7 +2505,7 @@
         // View page (read-only)
         async function viewPage(pageName) {
             try {
-                const response = await fetch(`/api/admin/pages/${encodeURIComponent(pageName)}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/pages/${encodeURIComponent(pageName)}`), {
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
                         'Content-Type': 'application/json'
@@ -2559,7 +2538,7 @@
         // Edit page
         async function editPage(pageName) {
             try {
-                const response = await fetch(`/api/admin/pages/${encodeURIComponent(pageName)}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/pages/${encodeURIComponent(pageName)}`), {
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
                         'Content-Type': 'application/json'
@@ -2618,8 +2597,8 @@
             
             try {
                 const url = isCreatingNewPage 
-                    ? '/api/admin/pages'
-                    : `/api/admin/pages/${encodeURIComponent(currentEditingPage)}`;
+                    ? getAPIUrl('/api/admin/pages')
+                    : getAPIUrl(`/api/admin/pages/${encodeURIComponent(currentEditingPage)}`);
                 const method = isCreatingNewPage ? 'POST' : 'PUT';
                 
                 const response = await fetch(url, {
@@ -2657,7 +2636,7 @@
             }
             
             try {
-                const response = await fetch(`/api/admin/pages/${encodeURIComponent(pageName)}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/pages/${encodeURIComponent(pageName)}`), {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -2827,7 +2806,7 @@
                 formData.append('file', file);
                 
                 try {
-                    const response = await fetch('/api/admin/media-upload', {
+                    const response = await fetch(getAPIUrl('/api/admin/media-upload'), {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${sessionId}`
@@ -2923,7 +2902,7 @@
         // View service (read-only)
         async function viewService(serviceId) {
             try {
-                const response = await fetch(`/api/admin/services/${serviceId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/services/${serviceId}`), {
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
                         'Content-Type': 'application/json'
@@ -2950,7 +2929,7 @@
         // Edit service
         async function editService(serviceId) {
             try {
-                const response = await fetch(`/api/admin/services/${serviceId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/services/${serviceId}`), {
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
                         'Content-Type': 'application/json'
@@ -3059,8 +3038,8 @@
             
             try {
                 const url = isCreatingNewService 
-                    ? '/api/admin/services'
-                    : `/api/admin/services/${currentEditingService}`;
+                    ? getAPIUrl('/api/admin/services')
+                    : getAPIUrl(`/api/admin/services/${currentEditingService}`);
                 const method = isCreatingNewService ? 'POST' : 'PUT';
                 
                 const response = await fetch(url, {
@@ -3095,7 +3074,7 @@
             }
             
             try {
-                const response = await fetch(`/api/admin/services/${serviceId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/services/${serviceId}`), {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -3234,8 +3213,8 @@
             
             try {
                 const url = isCreatingNewApp 
-                    ? '/api/admin/apps'
-                    : `/api/admin/apps/${currentEditingApp}`;
+                    ? getAPIUrl('/api/admin/apps')
+                    : getAPIUrl(`/api/admin/apps/${currentEditingApp}`);
                 const method = isCreatingNewApp ? 'POST' : 'PUT';
                 
                 const response = await fetch(url, {
@@ -3270,7 +3249,7 @@
             }
             
             try {
-                const response = await fetch(`/api/admin/apps/${appId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/apps/${appId}`), {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -3355,7 +3334,7 @@
         // View content block (read-only)
         async function viewContentBlock(contentId) {
             try {
-                const response = await fetch(`/api/admin/content/${contentId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/content/${contentId}`), {
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
                         'Content-Type': 'application/json'
@@ -3382,7 +3361,7 @@
         // Edit content block
         async function editContentBlock(contentId) {
             try {
-                const response = await fetch(`/api/admin/content/${contentId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/content/${contentId}`), {
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
                         'Content-Type': 'application/json'
@@ -3471,8 +3450,8 @@
             
             try {
                 const url = isCreatingNewContent 
-                    ? '/api/admin/content'
-                    : `/api/admin/content/${currentEditingContent}`;
+                    ? getAPIUrl('/api/admin/content')
+                    : getAPIUrl(`/api/admin/content/${currentEditingContent}`);
                 const method = isCreatingNewContent ? 'POST' : 'PUT';
                 
                 const response = await fetch(url, {
@@ -3507,7 +3486,7 @@
             }
             
             try {
-                const response = await fetch(`/api/admin/content/${contentId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/content/${contentId}`), {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -3583,7 +3562,7 @@
         // Edit user
         async function editUser(userId) {
             try {
-                const response = await fetch(`/api/admin/users/${userId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/users/${userId}`), {
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
                         'Content-Type': 'application/json'
@@ -3664,8 +3643,8 @@
             
             try {
                 const url = isCreatingNewUser 
-                    ? '/api/admin/users'
-                    : `/api/admin/users/${currentEditingUser}`;
+                    ? getAPIUrl('/api/admin/users')
+                    : getAPIUrl(`/api/admin/users/${currentEditingUser}`);
                 const method = isCreatingNewUser ? 'POST' : 'PUT';
                 
                 const response = await fetch(url, {
@@ -3700,7 +3679,7 @@
             }
             
             try {
-                const response = await fetch(`/api/admin/users/${userId}`, {
+                const response = await fetch(getAPIUrl(`/api/admin/users/${userId}`), {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -3799,7 +3778,7 @@
             const alertDiv = document.getElementById('settings-alert');
             
             try {
-                const response = await fetch('/api/admin/settings', {
+                const response = await fetch(getAPIUrl('/api/admin/settings'), {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -3862,7 +3841,7 @@
             }
             
             try {
-                const response = await fetch('/api/admin/change-password', {
+                const response = await fetch(getAPIUrl('/api/admin/change-password'), {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
@@ -3912,7 +3891,7 @@
             }
             
             try {
-                const response = await fetch('/api/admin/password-reset-request', {
+                const response = await fetch(getAPIUrl('/api/admin/password-reset-request'), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -4030,7 +4009,7 @@
             const alertDiv = document.getElementById('permissions-alert');
             
             try {
-                const response = await fetch('/api/admin/permissions', {
+                const response = await fetch(getAPIUrl('/api/admin/permissions'), {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${sessionId}`,
