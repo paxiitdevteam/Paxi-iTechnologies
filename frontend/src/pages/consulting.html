@@ -41,6 +41,8 @@
     <script src="/cls/lang-switcher.js"></script>
     <script src="/components/translation-plugin.js"></script>
     <script src="/services/cookie-manager.js"></script>
+    <!-- Chat Widget -->
+    <script src="components/chat-widget/chat-widget.js?v=1.0.0"></script>
     
     <!-- Simple initialization -->
     <script>
@@ -869,6 +871,73 @@
             <p data-translate="footer.copyright" data-translate-params='{"year": "2025"}'><span id="current-year">2025</span></p>
         </div>
     </footer>
+    <!-- Chat Callout (attract users to chat) -->
+    <div id="chat-callout" style="display:none; position:fixed; bottom:92px; right:20px; z-index:10002; background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px 12px; box-shadow:0 10px 30px rgba(0,0,0,0.12); max-width:260px; align-items:center; gap:10px;">
+        <div style="line-height:1.2;">
+            <div style="font-weight:700; color:#006d77; margin-bottom:2px;">Need help?</div>
+            <div style="font-size:0.9rem; color:#374151;">Chat with our AI assistant</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
+            <button id="chat-callout-open" style="background:#006d77; color:#fff; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; font-weight:700;">Chat</button>
+            <button id="chat-callout-close" style="background:transparent; border:none; color:#6b7280; font-size:20px; cursor:pointer; line-height:1; padding:0 6px;">×</button>
+        </div>
+    </div>
+    <script>
+        (function() {
+            'use strict';
+            const CALLOUT_KEY = '__PAXIIT_CHAT_CALLOUT_SHOWN__';
+            const showAfterMs = 5000;
+
+            function safeGetLocalStorage() {
+                try { return window.localStorage; } catch (e) { return null; }
+            }
+
+            function showCallout() {
+                try {
+                    const ls = safeGetLocalStorage();
+                    if (ls && ls.getItem(CALLOUT_KEY)) return;
+                    if (window.chatWidget && window.chatWidget.isOpen) return;
+
+                    const el = document.getElementById('chat-callout');
+                    if (!el) return;
+                    el.style.display = 'flex';
+
+                    if (ls) ls.setItem(CALLOUT_KEY, '1');
+                } catch (e) {
+                    // Non-critical
+                }
+            }
+
+            function wire() {
+                const openBtn = document.getElementById('chat-callout-open');
+                const closeBtn = document.getElementById('chat-callout-close');
+                if (openBtn) {
+                    openBtn.addEventListener('click', function() {
+                        try {
+                            if (window.chatWidget && typeof window.chatWidget.open === 'function') {
+                                window.chatWidget.open();
+                            } else if (window.chatWidget && typeof window.chatWidget.toggle === 'function') {
+                                window.chatWidget.toggle();
+                            }
+                        } catch (e) {}
+                        const el = document.getElementById('chat-callout');
+                        if (el) el.style.display = 'none';
+                    });
+                }
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        const el = document.getElementById('chat-callout');
+                        if (el) el.style.display = 'none';
+                    });
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                wire();
+                setTimeout(showCallout, showAfterMs);
+            }, { once: true });
+        })();
+    </script>
 </body>
 </html>
 
