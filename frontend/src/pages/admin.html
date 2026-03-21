@@ -4568,7 +4568,7 @@
             if ('Notification' in window && Notification.permission === 'granted') {
                 new Notification(`New Contact Message${newCount > 1 ? 's' : ''}`, {
                     body: `You have ${newCount} new message${newCount > 1 ? 's' : ''} (${unreadCount} unread total)`,
-                    icon: '/frontend/src/assets/images/logo.png',
+                    icon: (() => { try { return new URL('assets/images/logo-og.svg', window.location.href).href; } catch (e) { return undefined; } })(),
                     tag: 'new-message',
                     requireInteraction: false
                 });

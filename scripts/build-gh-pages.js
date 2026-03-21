@@ -75,7 +75,8 @@ function rewriteInFile(filePath) {
 
 function rewriteDocsPaths(outDir, pageFiles) {
   // Rewrite all HTML/JS/CSS/text files under docs/
-  const exts = new Set(['.html', '.js', '.css', '.json', '.txt', '.xml']);
+  // Include .webmanifest — icon "src" values must be relative on project Pages (not /assets/...).
+  const exts = new Set(['.html', '.js', '.css', '.json', '.txt', '.xml', '.webmanifest']);
 
   function walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

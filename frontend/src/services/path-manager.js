@@ -230,8 +230,10 @@ class PathManager {
     }
 
     /**
-     * Get asset path
-     * Use relative links so GitHub Pages project subpaths work too.
+     * Get asset path (no leading slash): e.g. assets/images/foo.svg
+     * Use in HTML/JS when the document lives at the site root (index.html, about.html, …).
+     * Local `server.js` still serves `/assets/...` from site root; GitHub Pages build rewrites
+     * leading `/assets/` in HTML to this shape so images work under /repo-name/.
      */
     asset(type, filename) {
         const assetTypes = {
