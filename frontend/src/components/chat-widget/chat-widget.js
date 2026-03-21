@@ -114,8 +114,16 @@ class ChatWidget {
      */
     async initializeSessionFallback() {
         try {
-            const baseUrl = window.location.origin;
-            const sessionUrl = `${baseUrl}/api/chat/session`;
+            let sessionUrl;
+            if (window.APIM && typeof window.APIM.getAPIUrl === 'function') {
+                sessionUrl = window.APIM.getAPIUrl('/api/chat/session');
+            } else if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
+                const b = window.PMS.getBaseURL('api');
+                const p = window.PMS.api('/chat/session');
+                sessionUrl = b ? `${b}${p}` : p;
+            } else {
+                sessionUrl = `${window.location.origin}/api/chat/session`;
+            }
             const response = await fetch(sessionUrl);
             const data = await response.json();
             

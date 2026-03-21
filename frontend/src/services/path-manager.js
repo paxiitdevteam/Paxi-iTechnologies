@@ -4,7 +4,18 @@
  * Single source of truth for all file paths
  *
  * Public static site (GitHub Pages): https://paxiitdevteam.github.io/Paxi-iTechnologies/
+ *
+ * Optional override (custom domain Pages, staging API, etc.):
+ *   window.__PAXIIT_API_BASE__ = 'https://your-api.example.com';
  */
+
+function getPublicApiBase() {
+    if (typeof window !== 'undefined' && typeof window.__PAXIIT_API_BASE__ === 'string') {
+        const trimmed = window.__PAXIIT_API_BASE__.trim().replace(/\/$/, '');
+        if (trimmed) return trimmed;
+    }
+    return 'https://paxiit-backend.onrender.com';
+}
 
 class PathManager {
     constructor() {
@@ -69,7 +80,7 @@ class PathManager {
         
         // Initialize backend connection (async, non-blocking)
         if (typeof window !== 'undefined') {
-            // In GitHub Pages/static mode there is no backend; skip the probe entirely.
+            // Skip probe only for local static simulation (/repo/, /docs/) — GitHub Pages uses Render API.
             if (this.shouldDisableBackendProbe()) {
                 const nowIso = new Date().toISOString();
                 this.backendCheckAttempted = true;
@@ -111,9 +122,6 @@ class PathManager {
             // Local static simulation uses /repo/ prefix.
             if (path.includes('/repo/')) return true;
             if (path.includes('/docs/')) return true;
-
-            // Deployed GitHub Pages hosts include github.io
-            if (hostname.includes('github.io')) return true;
 
             return false;
         } catch (e) {
@@ -295,10 +303,11 @@ class PathManager {
             // If HTTPS, default to same-origin relative URLs.
             // For GitHub Pages/custom static hosting, route API calls to Render backend.
             if (protocol === 'https:') {
-                const renderApiBase = 'https://paxiit-backend.onrender.com';
-                const isStaticHost = hostname.includes('github.io');
-                if (isStaticHost) {
-                    return renderApiBase;
+                const isGithubPages = hostname.includes('github.io');
+                const hasCustomApiBase =
+                    typeof window.__PAXIIT_API_BASE__ === 'string' && window.__PAXIIT_API_BASE__.trim() !== '';
+                if (isGithubPages || hasCustomApiBase) {
+                    return getPublicApiBase();
                 }
                 return '';
             }
@@ -345,17 +354,10 @@ class PathManager {
             // HTTPS: Use relative path through Nginx reverse proxy
             // HTTP: Use direct port access
             const protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:';
-            let testURL;
-            
-            if (protocol === 'https:') {
-                // HTTPS: Use relative path (goes through Nginx proxy)
-                testURL = '/api/test';
-            } else {
-                // HTTP: Use direct port access
-                const baseURL = this.getBaseURL('api');
-                const testEndpoint = this.api('/test');
-                testURL = `${baseURL}${testEndpoint}`;
-            }
+            const baseURL = this.getBaseURL('api');
+            const testEndpoint = this.api('/test');
+            // GitHub Pages / Render: full URL. Local HTTPS behind proxy: baseURL '' → same-origin /api/test.
+            const testURL = baseURL ? `${baseURL}${testEndpoint}` : testEndpoint;
             
             // Create timeout controller for compatibility (increased timeout)
             const controller = new AbortController();
@@ -381,9 +383,10 @@ class PathManager {
                     throw new Error('Backend connection timeout (10s) - Server may not be running');
                 } else if (fetchError.message.includes('Failed to fetch') || fetchError.message.includes('NetworkError')) {
                     const protocol = typeof window !== 'undefined' ? window.location.protocol : 'http:';
-                    const errorMsg = protocol === 'https:' 
-                        ? 'Backend not reachable - Check if Nginx reverse proxy is configured for /api/'
-                        : 'Backend not reachable - Check if server is running on ' + this.getBaseURL('api');
+                    const hintBase = this.getBaseURL('api') || '(same-origin /api)';
+                    const errorMsg = protocol === 'https:' && !this.getBaseURL('api')
+                        ? 'Backend not reachable - Check reverse proxy for /api/ or set window.__PAXIIT_API_BASE__'
+                        : 'Backend not reachable - Check if server is running at ' + hintBase;
                     throw new Error(errorMsg);
                 } else {
                     throw fetchError;

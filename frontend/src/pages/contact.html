@@ -208,14 +208,13 @@
             
             async function loadServices() {
                 try {
-                    // Get API URL using APIM or fallback
                     let apiUrl = '/api/services';
-                    if (window.APIM) {
-                        if (window.APIM.endpoints && window.APIM.endpoints.services && window.APIM.endpoints.services.list) {
-                            apiUrl = window.APIM.endpoints.services.list;
-                        } else if (typeof window.APIM.getURL === 'function') {
-                            apiUrl = window.APIM.getURL('services', 'list') || apiUrl;
-                        }
+                    if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
+                        const baseURL = window.PMS.getBaseURL('api');
+                        const apiPath = window.PMS.api('/services');
+                        apiUrl = baseURL ? `${baseURL}${apiPath}` : apiPath;
+                    } else if (window.APIM && typeof window.APIM.getURL === 'function') {
+                        apiUrl = window.APIM.getURL('services', 'list') || apiUrl;
                     }
                     
                     const response = await fetch(apiUrl);
@@ -412,27 +411,18 @@
                     }
                     
                     try {
-                        // Send to backend API.
-                        // Prefer APIM URL builders, then enforce a safe host fallback for static hosting.
+                        // Send to backend API (PMS → full Render URL on GitHub Pages; APIM as fallback).
                         let apiUrl = '/api/contact';
-                        if (window.APIM) {
+                        if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
+                            const baseURL = window.PMS.getBaseURL('api');
+                            const apiPath = window.PMS.api('/contact');
+                            apiUrl = baseURL ? `${baseURL}${apiPath}` : apiPath;
+                        } else if (window.APIM) {
                             if (typeof window.APIM.getAPIUrl === 'function') {
                                 apiUrl = window.APIM.getAPIUrl('/api/contact') || apiUrl;
                             } else if (typeof window.APIM.getURL === 'function') {
                                 apiUrl = window.APIM.getURL('contact', 'send') || apiUrl;
                             }
-                        }
-                        
-                        // If APIM is unavailable or still resolving to relative path on static hosting,
-                        // force Render backend URL to avoid broken /api routing on GitHub/custom static domains.
-                        try {
-                            const host = window.location.hostname || '';
-                            const isStaticHost = host.includes('github.io');
-                            if (isStaticHost && (!apiUrl || apiUrl.startsWith('/'))) {
-                                apiUrl = `https://paxiit-backend.onrender.com/api/contact`;
-                            }
-                        } catch (e) {
-                            // Keep existing apiUrl if host detection fails.
                         }
                         
                         // If files are uploaded, use FormData, otherwise use JSON

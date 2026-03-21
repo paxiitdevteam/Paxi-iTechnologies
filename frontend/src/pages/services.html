@@ -111,23 +111,15 @@
                     
                     // Use PMS if available (CORRECT WAY)
                     if (window.PMS && typeof window.PMS.getBaseURL === 'function' && typeof window.PMS.api === 'function') {
-                        const baseURL = window.PMS.getBaseURL('api'); // Returns '' for HTTPS (relative), or full URL for HTTP
-                        const apiPath = window.PMS.api('/services'); // Gets /api/services
-                        // If baseURL is empty (HTTPS), use relative path; otherwise use full URL
+                        const baseURL = window.PMS.getBaseURL('api'); // GitHub Pages HTTPS → Render base; local HTTP → host:port
+                        const apiPath = window.PMS.api('/services'); // /api/services
                         apiUrl = baseURL ? `${baseURL}${apiPath}` : apiPath;
-                    } 
-                    // Try APIM if PMS not available
+                    }
+                    // Try APIM if PMS not available (must keep full URL on static hosting)
                     else if (window.APIM && typeof window.APIM.getURL === 'function') {
                         const apimUrl = window.APIM.getURL('services', 'list');
                         if (apimUrl) {
-                            // Extract path from full URL if needed
-                            try {
-                                const urlObj = new URL(apimUrl);
-                                apiUrl = urlObj.pathname; // Use just the path part
-                            } catch (e) {
-                                // If it's already a path, use it directly
-                                apiUrl = apimUrl.startsWith('/') ? apimUrl : '/api/services';
-                            }
+                            apiUrl = apimUrl;
                         }
                     }
                     
