@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Project Management Suite",
+    "icon": "🚀",
+    "description": "Comprehensive project management and collaboration platform",
+    "status": "coming-soon",
+    "link": ""
+  },
+  {
+    "id": 2,
+    "name": "AI Chat Assistant",
+    "icon": "💬",
+    "description": "Intelligent chatbot solution for customer support",
+    "status": "coming-soon",
+    "link": ""
+  },
+  {
+    "id": 3,
+    "name": "Analytics Dashboard",
+    "icon": "📊",
+    "description": "Real-time business analytics and reporting tool",
+    "status": "coming-soon",
+    "link": ""
+  },
+  {
+    "id": 4,
+    "name": "Security Manager",
+    "icon": "🔐",
+    "description": "Enterprise-grade security and compliance management",
+    "status": "coming-soon",
+    "link": ""
+  },
+  {
+    "id": 5,
+    "name": "Cloud Storage",
+    "icon": "☁️",
+    "description": "Secure cloud storage and file management solution",
+    "status": "coming-soon",
+    "link": ""
+  },
+  {
+    "id": 6,
+    "name": "Email Automation",
+    "icon": "📧",
+    "description": "Automated email marketing and communication platform",
+    "status": "coming-soon",
+    "link": ""
+  }
+]
+

@@ -1,0 +1,31 @@
+{
+  "name": "paxiit-website",
+  "version": "1.0.0",
+  "description": "Paxiit Website - Smart IT Management",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "server": "node server.js",
+    "test": "node server.js",
+    "build:gh-pages": "node scripts/build-gh-pages.js"
+  },
+  "keywords": [
+    "paxiit",
+    "website",
+    "it-management"
+  ],
+  "author": "Paxiit",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "nodemailer": "^6.10.1",
+    "openai": "^4.104.0"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.20.0"
+  }
+}
