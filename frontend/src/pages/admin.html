@@ -2407,6 +2407,25 @@
         }
         
         // Render pages table
+        function getPublicPageUrl(pageName) {
+            const safeName = String(pageName || '').replace(/^\/+/, '');
+            const pathname = (window.location && window.location.pathname) ? window.location.pathname : '';
+            // Derive GitHub Pages project base from /<repo>/admin.html => /<repo>
+            const base = pathname
+                .replace(/\/admin\.html$/i, '')
+                .replace(/\/$/, '');
+
+            // If we're at the domain root (e.g. /admin.html), base becomes ''.
+            if (!base) {
+                if (safeName === 'index.html') return '/';
+                return `/${safeName}`;
+            }
+
+            // index.html is served at the repo root: /<repo>/
+            if (safeName === 'index.html') return `${base}/`;
+            return `${base}/${safeName}`;
+        }
+
         function renderPagesTable(pages) {
             const tbody = document.getElementById('pages-table-body');
             
@@ -2415,22 +2434,25 @@
                 return;
             }
             
-            tbody.innerHTML = pages.map(page => `
+            tbody.innerHTML = pages.map(page => {
+                const publicUrl = getPublicPageUrl(page.name);
+                return `
                 <tr>
                     <td><strong>${page.name}</strong></td>
-                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                    <td><a href="${publicUrl}" target="_blank">${publicUrl}</a></td>
                     <td>${formatBytes(page.size)}</td>
                     <td>${formatDate(page.modified)}</td>
                     <td>
                         <div style="display: flex; gap: 0.5rem;">
                             <button class="btn btn-sm btn-secondary" onclick="viewPage('${page.name}')" title="View">👁️</button>
                             <button class="btn btn-sm btn-primary" onclick="editPage('${page.name}')" title="Edit">✏️</button>
-                            <button class="btn btn-sm" onclick="previewPageInBrowser('${page.url}')" title="Preview" style="background: var(--success);">🔗</button>
+                            <button class="btn btn-sm" onclick="previewPageInBrowser('${publicUrl}')" title="Preview" style="background: var(--success);">🔗</button>
                             ${page.name !== 'admin.html' && page.name !== 'index.html' ? `<button class="btn btn-sm" onclick="deletePage('${page.name}')" title="Delete" style="background: var(--error);">🗑️</button>` : ''}
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
         
         // Menu navigation
