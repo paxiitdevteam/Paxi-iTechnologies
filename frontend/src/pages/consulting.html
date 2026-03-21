@@ -932,10 +932,15 @@
                 }
             }
 
-            document.addEventListener('DOMContentLoaded', function() {
+            const start = function() {
                 wire();
                 setTimeout(showCallout, showAfterMs);
-            }, { once: true });
+            };
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', start, { once: true });
+            } else {
+                start();
+            }
         })();
     </script>
 </body>
